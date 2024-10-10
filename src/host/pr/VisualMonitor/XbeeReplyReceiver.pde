@@ -47,7 +47,6 @@ public class XbRR {
     if ((rbuf[2] & 16) != 0) {
       for (int suid = 1; suid <= 13; suid++) {
         if ((bytesToUint16(rbuf, 0) & (1 << (suid - 1))) != 0) {
-          //print("Got Reply from SUID " + suid);
           Basilisk b = bs.get(suid - 1);
           b.mode = rbuf[3];
           b.lpsx = bytesToFloat(rbuf, 4);
@@ -55,6 +54,7 @@ public class XbRR {
           b.yaw = bytesToFloat(rbuf, 12);
           b.phil = bytesToFloat(rbuf, 16);
           b.phir = bytesToFloat(rbuf, 20);
+          b.lastRplTime = millis();
 
           break;
         }

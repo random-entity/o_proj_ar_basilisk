@@ -116,6 +116,7 @@ class XbeeCommandReceiver {
               temp_rbuf.decoded.u.save_others_reply.lpsy;
           roster::db[other_suid - 1].yaw =
               temp_rbuf.decoded.u.save_others_reply.yaw;
+          roster::updated_time[other_suid - 1] = micros();
 
           // Serial.print("Received Reply from SUID ");
           // Serial.println(other_suid);
@@ -136,6 +137,8 @@ class XbeeCommandReceiver {
       // just set the waiting send flag now.
 
       XbeeReplySender::waiting_send_ = true;
+      // XbeeReplySender::turn += 1;
+      // if (XbeeReplySender::turn >= 13) XbeeReplySender::turn = 0;
 
       // Serial.println("Poll received, send flag set");
       // Serial.print("FD ");

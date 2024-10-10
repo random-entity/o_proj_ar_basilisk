@@ -4,15 +4,14 @@ public class Basilisk {
   float yaw;
   float phil = 0.0, phir = 0.0;
   int mode;
+  int lastRplTime = 0;
   static final float hb = 30;
   static final float f = 15;
-  static final float collthr = 100;
+  static final float collthr = 50;
 
   public Basilisk(int _suid) {
     suid = _suid;
   }
-  
-  public void update(float _lpsx, float _lpsy) {}
 
   public void display() {
     pushMatrix();  // Enter Basilisk local xy (+y = yaw)
@@ -24,6 +23,13 @@ public class Basilisk {
     fill(0);
     textSize(15);
     text(suid, 0, 15);
+    textSize(10);
+    int elapsed = millis() - lastRplTime;
+    if (elapsed < 3000) {
+      text(elapsed / 1000.0, 0, 25);
+    } else {
+      text(">3s", 0, 25);
+    }
     popMatrix();
 
     // Draw center, heading, bar, collision boundary

@@ -89,11 +89,17 @@ void SerialReplySender(Basilisk& b) {
   for (uint8_t suid = 1; suid <= 13; suid++) {
     Serial.print(suid);
     Serial.print(" -> ");
-    Serial.print(roster::db[suid - 1].x);
-    Serial.print(", ");
-    Serial.print(roster::db[suid - 1].y);
-    Serial.print(", ");
-    Serial.print(roster::db[suid - 1].yaw);
+    if (suid == b.cfg_.suid) {
+      Serial.print("self");
+    } else {
+      Serial.print(roster::db[suid - 1].x);
+      Serial.print(", ");
+      Serial.print(roster::db[suid - 1].y);
+      Serial.print(", ");
+      Serial.print(roster::db[suid - 1].yaw);
+      Serial.print(", ");
+      Serial.print((micros() - roster::updated_time[suid - 1]) * 1e-6, 6);
+    }
     Serial.print(";  ");
     if (suid == 7) Serial.println();
   }

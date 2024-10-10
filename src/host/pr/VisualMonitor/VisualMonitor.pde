@@ -3,6 +3,13 @@ import processing.serial.*;
 Serial xbPort;
 XbRR rr;
 
+void runXbRR() {
+  while (true) {
+    rr.Run();
+    delay(1);
+  }
+}
+
 // ALL lengths in cm
 final float stageDimX = 860, stageDimY = 910;
 final float lpsBoundMinX = 150, lpsBoundMaxX = 710, lpsBoundMinY = 150, lpsBoundMaxY = 760;
@@ -15,9 +22,10 @@ void setup() {
   printArray(ports);
   xbPort = new Serial(this, "/dev/ttyUSB1", 115200);
   rr = new XbRR(xbPort);
+  thread("runXbRR");
 
-  size(1000, 1000);
-  frameRate(1000);
+  size(1600, 1000);
+  frameRate(5);
 
   marginX = (width - stageDimX) / 2;
   marginY = (height - stageDimY) / 2;
@@ -29,8 +37,6 @@ void setup() {
 }
 
 void draw() {
-  rr.Run();
-
   background(255);
 
   pushMatrix();  // Enter stage local xy

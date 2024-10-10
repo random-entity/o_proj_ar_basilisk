@@ -14,6 +14,7 @@ class XbeeReplySender {
   inline static bool waiting_send_ = false;
   inline static uint32_t TEMP_start_bytes_us;
   // inline static uint32_t send_at_us;
+  // inline static uint8_t turn;
 
   // Should be called before use.
   inline static bool Setup(Basilisk* b) {
@@ -22,6 +23,7 @@ class XbeeReplySender {
       return false;
     }
     b_ = b;
+    // turn = b_->cfg_.suid - 1;
     xbee_rpl_.decoded.suids = 1 << (b->cfg_.suid - 1);
     Serial.println("XbeeReplySender: Setup complete");
     return true;
@@ -31,7 +33,7 @@ class XbeeReplySender {
   inline static void Run() {
     using namespace timing::xb;
 
-    const static auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid - 1);
+    const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid - 1);
 
     if (!waiting_send_) return;
     if (globals::poll_clk_us < sndtim_us) return;
