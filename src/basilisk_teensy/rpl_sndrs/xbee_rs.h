@@ -11,8 +11,8 @@
 class XbeeReplySender {
  public:
   inline static Basilisk* b_;
-  inline static bool waiting_send_ = false;
-  inline static uint32_t TEMP_start_bytes_us;
+  // inline static bool waiting_send_ = false;
+  // inline static uint32_t TEMP_start_bytes_us;
   // inline static uint32_t send_at_us;
   // inline static uint8_t turn;
 
@@ -33,23 +33,25 @@ class XbeeReplySender {
   inline static void Run() {
     using namespace timing::xb;
 
-    const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid);
-
-    if (!waiting_send_) return;
-    if (globals::poll_clk_us < sndtim_us) return;
-    waiting_send_ = false;
-    if (globals::poll_clk_us >= sndtim_us + rpl_snd_tmot_us) {
-      Serial.println("RS timeout");
-      return;
+    static const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid);
+    const auto phase = globals::poll_clk_us % (span * 100000);
+    if (sndtim_us <= phase && phase < sndtim_us + rpl_snd_tmot_us) {
+      Send();
     }
 
+    // static const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid);
+    // if (!waiting_send_) return;
+    // if (globals::poll_clk_us < sndtim_us) return;
+    // waiting_send_ = false;
+    // if (globals::poll_clk_us >= sndtim_us + rpl_snd_tmot_us) {
+    //   Serial.println("RS timeout");
+    //   return;
+    // }
     // Serial.println("********");
     // Serial.println("My Reply");
     // Serial.print("RB ");
     // Serial.println(globals::poll_clk_us);
-
-    Send();
-
+    // Send();
     // Serial.print("RD ");
     // Serial.println(globals::poll_clk_us);
   }

@@ -23,7 +23,7 @@ uint64_t GetTeensyId() {
 }
 
 inline static const std::map<uint64_t, uint8_t> teensyid_to_suid = {
-    {0x331841D265F82946, 1},   //
+    {0x322F51D7653F900A, 1},   //
     {0x3C18A1D265F8296A, 2},   //
     {0x134231D2677F0531, 3},   //
     {0x162111D764FE06E6, 4},   //
@@ -35,5 +35,5 @@ inline static const std::map<uint64_t, uint8_t> teensyid_to_suid = {
     {0x2A4231D2677F0531, 10},  //
     {0x313511D764FE06E6, 11},  //
     {0x422511D764FE06E6, 12},  //
-    {0x1B2511D764FE06E6, 13},
+    {0x3B2A51D7653F900A, 13},
 };

@@ -56,8 +56,8 @@ class XbeeCommandReceiver {
       buf_idx = 0;
       got_full_packet = false;
       start_time_us = micros();
-      globals::poll_clk_us = 0;  // Reset at start bytes anyway,
-                                 // then set/reset waiting send flag later.
+      // globals::poll_clk_us = 0;  // Reset at start bytes anyway,
+      // then set/reset waiting send flag later.
 
       // Serial.println("*****");
       // Serial.print("SUID ");
@@ -78,6 +78,7 @@ class XbeeCommandReceiver {
 
       if (!got_full_packet) Serial.println("TIMEOUT!");
 
+      while (XBEE_SERIAL.available() > 0) XBEE_SERIAL.read();
       receiving_ = false;
       start = 0;
       return;
@@ -131,23 +132,37 @@ class XbeeCommandReceiver {
       start = 0;
       return;
     } else if (temp_rbuf.decoded.oneshots & (1 << ONESHOT_GlobalPoll)) {
+      globals::poll_clk_us = 0;  // Just synch.
+
+      receiving_ = false;
+      start = 0;
+      return;
+
       // This is a global Poll. SUIDs field does not matter. Reserve Reply send
       // as soon as 0 <= (poll clock) - (c_lim + (suid - 1) * r) < 100us holds.
       // Since poll clock is already reset to 0us at start bytes reception,
       // just set the waiting send flag now.
 
-      XbeeReplySender::waiting_send_ = true;
+      // XbeeReplySender::waiting_send_ = true;
       // XbeeReplySender::turn += 1;
       // if (XbeeReplySender::turn >= 13) XbeeReplySender::turn = 0;
 
       // Serial.println("Poll received, send flag set");
       // Serial.print("FD ");
       // Serial.println(micros() - start_time_us);
-      receiving_ = false;
-      start = 0;
-      return;
     } else {
       // This is neither a Reply nor a Poll, so it must be a normal Command.
+
+      // Assuming Commands come in 100ms interval, synch poll clock using that
+      // fact.
+      globals::poll_clk_us = [] {
+        uint32_t result = 0;
+        while (!(globals::poll_clk_us <= result + 50000 &&
+                 result < globals::poll_clk_us + 50000)) {
+          result += 100000;
+        }
+        return result;
+      }();
 
       if (temp_rbuf.decoded.suids & (1 << (b_->cfg_.suid - 1))) {
         // This Command is for me. Copy to memory and set waiting parse flag,

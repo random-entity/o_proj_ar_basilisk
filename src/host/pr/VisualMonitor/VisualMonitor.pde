@@ -6,7 +6,6 @@ XbRR rr;
 void runXbRR() {
   while (true) {
     rr.Run();
-    delay(1);
   }
 }
 
@@ -20,12 +19,12 @@ ArrayList<Basilisk> bs;
 void setup() {
   String[] ports = Serial.list();
   printArray(ports);
-  xbPort = new Serial(this, "/dev/ttyUSB1", 115200);
+  xbPort = new Serial(this, "/dev/ttyUSB0", 115200);
   rr = new XbRR(xbPort);
   thread("runXbRR");
 
-  size(1600, 1000);
-  frameRate(5);
+  size(1300, 1000);
+  frameRate(2);
 
   marginX = (width - stageDimX) / 2;
   marginY = (height - stageDimY) / 2;

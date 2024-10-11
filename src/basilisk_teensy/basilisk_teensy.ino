@@ -13,7 +13,7 @@
 Basilisk::Configuration cfg{
     .suid =
         [] {
-          uint8_t suid = 13;  // SUID 13 can't find its TeensyID from map.
+          uint8_t suid = 0;
           const auto teensyid = GetTeensyId();
           if (teensyid_to_suid.find(teensyid) != teensyid_to_suid.end()) {
             suid = teensyid_to_suid.at(teensyid);
@@ -70,10 +70,13 @@ void setup() {
     Serial.print(timing::xb::suid_to_sndtim_us.at(suid));
     Serial.print(", ");
   }
-  Serial.println();
+  Serial.print("span -> ");
+  Serial.println(timing::xb::span);
 
   Serial.println("setup() done");
   Serial.println("******************************************");
+
+  // while (1);
 }
 
 void loop() {
