@@ -19,6 +19,10 @@
 // 99 BounceWalk(tgt_yaw = random)
 
 // * PPP
+// 80 WalkToPosInField to grid arrangment
+// 81 ~ 88 WalkToPosInField to circular arrangment
+// 91 ~ 98 Sufi to target yaw relative to center
+// 101 ~ 108 WalkToDir relative to current yaw
 // 1000 ~ 2999 Pivot
 // 3100 ~ 3299 PivSpin
 // 3300 ~ 3399 Sufi
@@ -184,7 +188,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
         c.acclim = globals::stdval::acclim::standard;
         c.min_stepdur = 0;
         c.max_stepdur = globals::stdval::maxdur::safe;
-        c.interval = 0;
+        c.interval = 100;
         c.steps = -1;
 
         return;
@@ -279,7 +283,27 @@ void ModeRunners::DoPreset(Basilisk* b) {
         return;
       }
 
-      if (80 <= idx && idx <= 89) {
+      if (idx == 80) {  // 9   10   11   12   13
+                        // 5      6     7      8
+                        // 1      2     3      4
+        static const auto& suid = b->cfg_.suid;
+        static const uint8_t row = suid <= 4 ? 0 : suid <= 8 ? 1 : 2;
+        static const uint8_t col = suid <= 12 ? (suid - 1) % 4 : 4;
+
+        m = M::WalkToPosInField;
+        auto& c = b->cmd_.walk_to_pos_in_field;
+        static double x =
+            row < 2
+                ? (b->cfg_.lps.minx * (3 - col) + b->cfg_.lps.maxx * col) / 3.0
+                : (b->cfg_.lps.minx * (4 - col) + b->cfg_.lps.maxx * col) / 4.0;
+        static double y =
+            (b->cfg_.lps.miny * (2 - row) + b->cfg_.lps.maxy * row) / 2.0;
+        c.tgt_pos = Vec2{x, y};
+
+        return;
+      }
+
+      if (81 <= idx && idx <= 88) {  // mod 10 == SENW where SUID 1, 9 at
         uint8_t digits[4];
         for (uint8_t i = 0; i < 4; i++) {
           digits[i] = idx % 10;
@@ -287,19 +311,87 @@ void ModeRunners::DoPreset(Basilisk* b) {
         }
 
         m = M::WalkToPosInField;
-
         auto& c = b->cmd_.walk_to_pos_in_field;
 
-        auto center = Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
-                           (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
+        static const auto center =
+            Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
+                 (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
 
         if (b->cfg_.suid <= 8) {
-          double arg = (digits[0] + b->cfg_.suid) * 0.125;
-          c.tgt_pos = center + 350.0 * Vec2{arg};
+          double arg = (digits[0] + b->cfg_.suid - 4) * 0.125;
+          c.tgt_pos = center + 330.0 * Vec2{arg};
+        } else if (b->cfg_.suid <= 12) {
+          double arg = (digits[0] + b->cfg_.suid * 2 - 21) * 0.125;
+          c.tgt_pos = center + 165.0 * Vec2{arg};
         } else {
-          double arg = (digits[0] + b->cfg_.suid * 2) * 0.125;
-          c.tgt_pos = center + 175.0 * Vec2{arg};
+          c.tgt_pos = center;
         }
+
+        return;
+      }
+
+      if (91 <= idx && idx <= 98) {
+        uint8_t digits[4];
+        for (uint8_t i = 0; i < 4; i++) {
+          digits[i] = idx % 10;
+          idx /= 10;
+        }
+
+        m = M::Sufi;
+        auto& c = b->cmd_.sufi;
+
+        static const auto center =
+            Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
+                 (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
+
+        c.init_didimbal = BOOL_L;
+        c.dest_yaw = nearest_pmn(
+            b->imu_.GetYaw(true),
+            (center - b->lps_.GetPos()).arg() + ((digits[0] - 1) / 8.0));
+        c.exit_thr = 0.01;
+        c.stride = 30.0 / 360.0;
+        c.bend[IDX_L] = 0.0;
+        c.bend[IDX_L] = 0.0;
+        c.speed = globals::stdval::speed::normal;
+        c.acclim = globals::stdval::acclim::standard;
+        c.min_stepdur = 0;
+        c.max_stepdur = globals::stdval::maxdur::safe;
+        c.interval = 0;
+        c.steps = 2;
+
+        return;
+      }
+
+      if (101 <= idx && idx <= 108) {
+        uint8_t digits[4];
+        for (uint8_t i = 0; i < 4; i++) {
+          digits[i] = idx % 10;
+          idx /= 10;
+        }
+
+        m = M::WalkToDir;
+        auto& c = b->cmd_.walk_to_dir;
+
+        static const auto center =
+            Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
+                 (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
+
+        const auto cur_yaw = b->imu_.GetYaw(true);
+        c.init_didimbal = BOOL_L;
+        c.tgt_yaw = nearest_pmn(cur_yaw, cur_yaw + ((digits[0] - 1) / 8.0));
+        c.stride = 30.0 / 360.0;
+        if (abs(c.tgt_yaw - cur_yaw) > 0.25) {
+          c.tgt_yaw = nearest_pmn(cur_yaw, c.tgt_yaw + 0.5);
+          c.stride *= -1.0;
+        }
+        c.bend[IDX_L] = 0.0;
+        c.bend[IDX_L] = 0.0;
+        c.speed = globals::stdval::speed::normal;
+        c.acclim = globals::stdval::acclim::standard;
+        c.min_stepdur = 0;
+        c.max_stepdur = globals::stdval::maxdur::safe;
+        c.interval = 0;
+        c.steps = -1;
 
         return;
       }

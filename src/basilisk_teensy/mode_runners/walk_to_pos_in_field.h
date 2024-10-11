@@ -39,7 +39,7 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
               const auto dist_vec = other_pos - pos;
               const auto dist = dist_vec.mag();
 
-              if (dist > 2.0 * b->boundary_radius_) continue;
+              if (dist > b->boundary_radius_) continue;
 
               // At this point, the boundaries have collided.
 

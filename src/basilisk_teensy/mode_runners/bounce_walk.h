@@ -63,7 +63,7 @@ void ModeRunners::BounceWalk(Basilisk* b) {
 
           const auto dist_vec = other_pos - my_pos;
 
-          if (dist_vec.mag() > 2.0 * b->boundary_radius_) continue;
+          if (dist_vec.mag() > b->boundary_radius_) continue;
 
           // At this point, the boundaries have collided.
 
