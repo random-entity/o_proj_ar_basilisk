@@ -22,35 +22,50 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
 
           const auto pos = b->lps_.GetPos();
           const auto tgt_delta_pos = c.tgt_pos - pos;
+          const auto pure_tgt_yaw = tgt_delta_pos.arg();
           const auto pure_tgt_yaw_vec = tgt_delta_pos.normalize();
           Vec2 force{0.0, 0.0};
 
-          for (uint8_t other_suid = 1; other_suid <= 13; other_suid++) {
-            if (other_suid == b->cfg_.suid) continue;
+          // Emergency exit to Free Mode.
+          if (b->Emergency()) {
+            force = 1e6 * Vec2{pure_tgt_yaw + 0.5};
+          } else {
+            for (uint8_t other_suid = 1; other_suid <= 13; other_suid++) {
+              if (other_suid == b->cfg_.suid) continue;
 
-            const auto& other = roster::db[other_suid - 1];
-            const auto other_pos = Vec2{other.x, other.y};
+              const auto& other = roster::db[other_suid - 1];
+              const auto other_pos = Vec2{other.x, other.y};
 
-            const auto dist_vec = other_pos - pos;
-            const auto dist = dist_vec.mag();
+              const auto dist_vec = other_pos - pos;
+              const auto dist = dist_vec.mag();
 
-            if (dist > b->coll_thr_) continue;
+              if (dist > 2.0 * b->boundary_radius_) continue;
 
-            const auto watch =
-                nearest_pmn(0.0, dist_vec.argsub(pure_tgt_yaw_vec));
+              // At this point, the boundaries have collided.
 
-            const auto at_front = abs(watch) < 0.25;
-            if (!at_front) continue;
+              if (dist_vec.mag() < b->overlap_thr_) {
+                // Might be overlapping physically, and due to LPS error, at
+                // front check is illegible. So just strongly push backwards.
 
-            // At this point, the other is in collision boundary and at
-            // front.
+                force = 1e6 * Vec2{pure_tgt_yaw + 0.5};
+                break;
+              }
 
-            const auto at_right = watch < 0.0;
+              // Not overlapping physically, so detour if the other is at front.
 
-            const double r = max((dist - b->coll_thr_) * 0.1, 0.001);
-            const double mag = 1.0 / sq(r);
-            force = force +
-                    mag * Vec2{dist_vec.arg() + (at_right ? 1.0 : -1.0) * 0.25};
+              const auto watch =
+                  nearest_pmn(0.0, dist_vec.argsub(pure_tgt_yaw_vec));
+
+              const auto at_front = abs(watch) < 0.25;
+              if (!at_front) continue;
+
+              const auto at_right = watch < 0.0;
+
+              const double r = max((dist - b->boundary_radius_) * 0.1, 0.01);
+              const double mag = 1.0 / sq(r);
+              force = force + mag * Vec2{dist_vec.arg() +
+                                         (at_right ? 1.0 : -1.0) * 0.25};
+            }
           }
 
           if (!b->lps_.BoundMinX())
@@ -61,11 +76,6 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
             force = force + Vec2{0.25};
           else if (!b->lps_.BoundMaxY())
             force = force + Vec2{-0.25};
-
-          if (b->l_.GetReply().torque > 20.0 ||
-              b->r_.GetReply().torque > 20.0) {
-            force = force + 10.0 * pure_tgt_yaw_vec;
-          }
 
           const auto cur_yaw = b->imu_.GetYaw(true);
           const auto field_tgt_yaw_vec = pure_tgt_yaw_vec + force;

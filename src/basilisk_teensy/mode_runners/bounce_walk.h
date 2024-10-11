@@ -43,6 +43,13 @@ void ModeRunners::BounceWalk(Basilisk* b) {
       w.exit_condition = [](Basilisk* b) {
         if (bounce_walk::reinit) return true;
 
+        // Emergency exit to Free Mode.
+        if (b->Emergency()) {
+          b->cmd_.pivseq.exit_to_mode = M::Free;
+          bounce_walk::reinit = true;
+          return true;
+        }
+
         const auto my_pos = b->lps_.GetPos();
         const auto my_tgt_yaw = bounce_walk::tgt_yaw;
 
@@ -56,19 +63,26 @@ void ModeRunners::BounceWalk(Basilisk* b) {
 
           const auto dist_vec = other_pos - my_pos;
 
-          if (dist_vec.mag() > b->coll_thr_) continue;
+          if (dist_vec.mag() > 2.0 * b->boundary_radius_) continue;
+
+          // At this point, the boundaries have collided.
+
+          if (dist_vec.mag() < b->overlap_thr_) {
+            // Might be overlapping physically, and due to LPS error, at front
+            // check is illegible. So just immediately reinit to go backwards.
+
+            bounce_walk::tgt_yaw = bounce_walk::tgt_yaw + 0.5;
+            bounce_walk::reinit = true;
+            return true;
+          }
+
+          // Not overlapping physically, so bounce if the other is at front.
 
           const auto at_front =
               abs(nearest_pmn(0.0, dist_vec.arg() - my_tgt_yaw)) < 0.25;
           if (!at_front) continue;
 
-          // At this point, the other is in collision boundary and at front.
           new_tgt_yaw = new_tgt_yaw + Vec2{dist_vec.arg() + 0.5};
-          bounce_walk::reinit = true;
-        }
-
-        if (b->l_.GetReply().torque > 20.0 || b->r_.GetReply().torque > 20.0) {
-          new_tgt_yaw = new_tgt_yaw + Vec2{my_tgt_yaw + 0.5};
           bounce_walk::reinit = true;
         }
 

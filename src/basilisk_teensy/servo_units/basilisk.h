@@ -38,7 +38,9 @@ class Basilisk {
   } cfg_;
 
   const double gr_ = 21.0;  // delta_rotor = delta_output * gear_ratio
-  const double coll_thr_ = 150.0;
+  const double boundary_radius_ = 150.0;
+  const double overlap_thr_ = 50.0;
+  const double emergency_trq_thr_ = 10.0;
   const PmCmd* const pm_cmd_template_;
 
   /////////////////
@@ -466,12 +468,17 @@ class Basilisk {
       const auto& other = roster::db[other_suid - 1];
       const auto other_pos = Vec2{other.x, other.y};
 
-      if ((other_pos - my_pos).mag() < coll_thr_) {
+      if ((other_pos - my_pos).mag() < boundary_radius_) {
         collision |= (1 << (other_suid - 1));
       }
     }
 
     return collision;
+  }
+
+  bool Emergency() {
+    return l_.GetReply().torque > emergency_trq_thr_ ||
+           r_.GetReply().torque > emergency_trq_thr_;
   }
 
   void Print() {
