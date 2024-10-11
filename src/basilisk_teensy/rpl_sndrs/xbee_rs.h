@@ -34,7 +34,7 @@ class XbeeReplySender {
     using namespace timing::xb;
 
     static const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid);
-    const auto phase = globals::poll_clk_us % (span * 100000);
+    const auto phase = globals::poll_clk_us;  // % (span * 100000);
     if (sndtim_us <= phase && phase < sndtim_us + rpl_snd_tmot_us) {
       Send();
     }

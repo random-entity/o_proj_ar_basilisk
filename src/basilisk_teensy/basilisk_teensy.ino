@@ -24,10 +24,10 @@ Basilisk::Configuration cfg{
     .lps{.c = 860.0,
          .x_c = 430.0,
          .y_c = 910.0,
-         .minx = 150.0,
-         .maxx = 710.0,
-         .miny = 150.0,
-         .maxy = 760.0},
+         .minx = 100.0,
+         .maxx = 760.0,
+         .miny = 100.0,
+         .maxy = 810.0},
     .lego{.pin_l = 23, .pin_r = 29, .run_interval = 20},  //
     .mags{.pin_la = 3,
           .pin_lt = 4,
@@ -76,7 +76,11 @@ void setup() {
   Serial.println("setup() done");
   Serial.println("******************************************");
 
-  // while (1);
+  // while (1) {
+  //   if (Serial4.available()) {
+  //     Serial.println(Serial4.read());
+  //   }
+  // }
 }
 
 void loop() {

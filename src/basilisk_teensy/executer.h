@@ -55,6 +55,10 @@ class Executer {
       }
     }
 
+    if (b_->l_.GetReply().torque > 20.0 || b_->r_.GetReply().torque > 20.0) {
+      b_->cmd_.mode = Basilisk::Command::Mode::Idle_Init;
+    }
+
     auto* maybe_mode_runner = SafeAt(ModeRunners::mode_runners, b_->cmd_.mode);
     if (maybe_mode_runner) {
       (*maybe_mode_runner)(b_);

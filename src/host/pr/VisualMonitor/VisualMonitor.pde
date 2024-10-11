@@ -11,7 +11,7 @@ void runXbRR() {
 
 // ALL lengths in cm
 final float stageDimX = 860, stageDimY = 910;
-final float lpsBoundMinX = 150, lpsBoundMaxX = 710, lpsBoundMinY = 150, lpsBoundMaxY = 760;
+final float lpsBoundMinX = 100, lpsBoundMaxX = 760, lpsBoundMinY = 100, lpsBoundMaxY = 810;
 float marginX, marginY;
 
 ArrayList<Basilisk> bs;
@@ -19,7 +19,7 @@ ArrayList<Basilisk> bs;
 void setup() {
   String[] ports = Serial.list();
   printArray(ports);
-  xbPort = new Serial(this, "/dev/ttyUSB0", 115200);
+  xbPort = new Serial(this, "/dev/ttyUSB2", 115200);
   rr = new XbRR(xbPort);
   thread("runXbRR");
 
@@ -47,6 +47,17 @@ void draw() {
   noFill();
   stroke(0);
   rect(0, 0, stageDimX, stageDimY);
+  
+  for (int x = 0; x < stageDimX; x += 50) {
+    for (int y = 0; y < stageDimY; y+= 50) {
+      pushMatrix();
+      translate(x, y);
+      scale(1, -1);
+      textSize(10);
+      text((x / 10) + "," + (y / 10), 0, 0);
+      popMatrix();
+    }
+  }
 
   // Draw LPS boundary
   rect(lpsBoundMinX, lpsBoundMinY, lpsBoundMaxX - lpsBoundMinX, lpsBoundMaxY - lpsBoundMinY);

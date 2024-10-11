@@ -67,7 +67,14 @@ void ModeRunners::BounceWalk(Basilisk* b) {
           bounce_walk::reinit = true;
         }
 
-        if (bounce_walk::reinit) bounce_walk::tgt_yaw = new_tgt_yaw.arg();
+        if (b->l_.GetReply().torque > 20.0 || b->r_.GetReply().torque > 20.0) {
+          new_tgt_yaw = new_tgt_yaw + Vec2{my_tgt_yaw + 0.5};
+          bounce_walk::reinit = true;
+        }
+
+        if (bounce_walk::reinit) {
+          bounce_walk::tgt_yaw = new_tgt_yaw.arg();
+        }
 
         if ((!b->lps_.BoundMinX() &&
              abs(0.5 - nearest_pmn(0.5, bounce_walk::tgt_yaw)) <= 0.25) ||

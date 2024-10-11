@@ -38,7 +38,7 @@ class Basilisk {
   } cfg_;
 
   const double gr_ = 21.0;  // delta_rotor = delta_output * gear_ratio
-  const double coll_thr_ = 100.0;
+  const double coll_thr_ = 150.0;
   const PmCmd* const pm_cmd_template_;
 
   /////////////////

@@ -279,6 +279,31 @@ void ModeRunners::DoPreset(Basilisk* b) {
         return;
       }
 
+      if (80 <= idx && idx <= 89) {
+        uint8_t digits[4];
+        for (uint8_t i = 0; i < 4; i++) {
+          digits[i] = idx % 10;
+          idx /= 10;
+        }
+
+        m = M::WalkToPosInField;
+
+        auto& c = b->cmd_.walk_to_pos_in_field;
+
+        auto center = Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
+                           (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
+
+        if (b->cfg_.suid <= 8) {
+          double arg = (digits[0] + b->cfg_.suid) * 0.125;
+          c.tgt_pos = center + 350.0 * Vec2{arg};
+        } else {
+          double arg = (digits[0] + b->cfg_.suid * 2) * 0.125;
+          c.tgt_pos = center + 175.0 * Vec2{arg};
+        }
+
+        return;
+      }
+
       // TODO: PPP for other Modes.
 
       auto* maybe_preset = SafeAt(Presets::presets, idx);

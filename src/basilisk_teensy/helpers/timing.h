@@ -7,9 +7,9 @@
 namespace timing {
 namespace xb {
 
-const uint32_t tmot_st_to_wa_us = 15000;                   // c_lim
-const uint32_t rpl_snd_itv_us = tmot_st_to_wa_us + 15000;  // r
-const uint32_t rpl_snd_tmot_us = 15000;
+const uint32_t tmot_st_to_wa_us = 10000;                  // c_lim
+const uint32_t rpl_snd_itv_us = tmot_st_to_wa_us + 3000;  // r
+const uint32_t rpl_snd_tmot_us = 9000;
 uint8_t span;
 inline static const std::map<uint8_t, uint32_t> suid_to_sndtim_us = [] {
   const auto& a = tmot_st_to_wa_us;

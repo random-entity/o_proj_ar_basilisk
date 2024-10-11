@@ -62,6 +62,11 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
           else if (!b->lps_.BoundMaxY())
             force = force + Vec2{-0.25};
 
+          if (b->l_.GetReply().torque > 20.0 ||
+              b->r_.GetReply().torque > 20.0) {
+            force = force + 10.0 * pure_tgt_yaw_vec;
+          }
+
           const auto cur_yaw = b->imu_.GetYaw(true);
           const auto field_tgt_yaw_vec = pure_tgt_yaw_vec + force;
           auto field_tgt_yaw = nearest_pmn(cur_yaw, field_tgt_yaw_vec.arg());

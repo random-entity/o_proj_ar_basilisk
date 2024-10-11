@@ -132,7 +132,9 @@ class XbeeCommandReceiver {
       start = 0;
       return;
     } else if (temp_rbuf.decoded.oneshots & (1 << ONESHOT_GlobalPoll)) {
-      globals::poll_clk_us = 0;  // Just synch.
+      // globals::poll_clk_us = 0;  // Just synch.
+
+      globals::poll_clk_us = 0;
 
       receiving_ = false;
       start = 0;
@@ -155,14 +157,14 @@ class XbeeCommandReceiver {
 
       // Assuming Commands come in 100ms interval, synch poll clock using that
       // fact.
-      globals::poll_clk_us = [] {
-        uint32_t result = 0;
-        while (!(globals::poll_clk_us <= result + 50000 &&
-                 result < globals::poll_clk_us + 50000)) {
-          result += 100000;
-        }
-        return result;
-      }();
+      // globals::poll_clk_us = [] {
+      //   uint32_t result = 0;
+      //   while (!(globals::poll_clk_us <= result + 50000 &&
+      //            result < globals::poll_clk_us + 50000)) {
+      //     result += 100000;
+      //   }
+      //   return result;
+      // }();
 
       if (temp_rbuf.decoded.suids & (1 << (b_->cfg_.suid - 1))) {
         // This Command is for me. Copy to memory and set waiting parse flag,
