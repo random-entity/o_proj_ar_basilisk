@@ -8,9 +8,6 @@
 #define XBEE_SERIAL Serial4
 #define XBEE_PACKET_LEN 46  // NOT counting the 4 starting bytes.
 
-// #define TIMEOUT_START_TO_WAITAGAIN_US (5000)
-// #define T_FROM_START_TO_SEND_US (10)
-
 class XbeeCommandReceiver {
   using C = Basilisk::Command;
   using M = C::Mode;
@@ -36,9 +33,9 @@ class XbeeCommandReceiver {
 
   void Run() {
     static uint8_t start = 0;
+    static elapsedMicros time_since_start_us;
     static RecvBuf temp_rbuf;
     static uint8_t buf_idx;
-    static uint32_t start_time_us;
 
     if (!receiving_) {
       while (XBEE_SERIAL.available() > 0 && start < 4) {
@@ -55,30 +52,31 @@ class XbeeCommandReceiver {
       receiving_ = true;
       buf_idx = 0;
       got_full_packet = false;
-      start_time_us = micros();
-      // globals::poll_clk_us = 0;  // Reset at start bytes anyway,
-      // then set/reset waiting send flag later.
+      time_since_start_us = 0;
+      globals::poll_clk_us = 0;  // Reset at start bytes anyway,
+                                 // then set waiting send flag later.
 
-      // Serial.println("*****");
-      // Serial.print("SUID ");
-      // Serial.println(b_->cfg_.suid);
-      // Serial.print("ST ");
-      // Serial.print(start_time_us);
-      // Serial.print(" -> ");
-      // Serial.println(0);
+#if DEBUG_PRINT_XBEE_TIMING
+      Serial.println("*****XbeeCommandReceiver*****");
+      Serial.print("SUID ");
+      Serial.print(b_->cfg_.suid);
+      Serial.print(" Start ");
+      Serial.print(micros());
+      Serial.println(" -> 0");
+#endif
     }
 
     // Cannot pass this point if (waiting mode).
     // From this point, (receiving mode)
 
-    if (micros() > start_time_us + timing::xb::tmot_st_to_wa_us) {
-      // Serial.println();
-      // Serial.print("WA ");
-      // Serial.println(micros() - start_time_us);
+    if (time_since_start_us > timing::xb::receive_timeout_us) {
+#if DEBUG_PRINT_XBEE_TIMING
+      Serial.print("Wait again ");
+      Serial.println(time_since_start_us);
+#endif
 
-      if (!got_full_packet) Serial.println("TIMEOUT!");
+      if (!got_full_packet) Serial.println("XBCR TIMEOUT!");
 
-      while (XBEE_SERIAL.available() > 0) XBEE_SERIAL.read();
       receiving_ = false;
       start = 0;
       return;
@@ -87,22 +85,35 @@ class XbeeCommandReceiver {
     // Cannot pass this point if (receiving mode) && (receive timeout).
     // From this point, (receiving mode) && (before receive timeout).
 
+#if DEBUG_PRINT_XBEE_RECEIVE
+    const auto prev_buf_idx = buf_idx;
+#endif
+
     while (XBEE_SERIAL.available() > 0 && buf_idx < XBEE_PACKET_LEN) {
-      temp_rbuf.raw_bytes[buf_idx] = XBEE_SERIAL.read();
-      buf_idx++;
-      // Serial.print(temp_rbuf.raw_bytes[buf_idx - 1]);
-      // Serial.print(", ");
+      temp_rbuf.raw_bytes[buf_idx++] = XBEE_SERIAL.read();
     }
+
+#if DEBUG_PRINT_XBEE_RECEIVE
+    Serial.print("Received bytes ");
+    for (auto i = prev_buf_idx; i < buf_idx; i++) {
+      Serial.print(temp_rbuf.raw_bytes[i]);
+      Serial.print(", ");
+    }
+    Serial.println();
+#endif
+
     if (buf_idx < XBEE_PACKET_LEN) return;
-    // Serial.println();
 
     // Cannot pass this point if !(got full packet).
     // From this point,
     // (receiving mode) && (before receive timeout) && (got full packet).
 
     got_full_packet = true;
-    // Serial.print("FP ");
-    // Serial.println(micros() - start_time_us);
+
+#if DEBUG_PRINT_XBEE_TIMING
+    Serial.print("Full packet received ");
+    Serial.println(time_since_start_us);
+#endif
 
     if (temp_rbuf.decoded.oneshots & (1 << ONESHOT_SaveOthersReply)) {
       // This is other's Reply. Parse and save to roster,
@@ -119,52 +130,47 @@ class XbeeCommandReceiver {
               temp_rbuf.decoded.u.save_others_reply.yaw;
           roster::updated_time[other_suid - 1] = micros();
 
-          // Serial.print("Received Reply from SUID ");
-          // Serial.println(other_suid);
+#if DEBUG_PRINT_XBEE_RECEIVE
+          Serial.print("Received Reply from SUID ");
+          Serial.println(other_suid);
+#endif
 
           break;  // There should be no Reply with multiple SUIDs.
         }
       }
 
-      // Serial.print("FD ");
-      // Serial.println(micros() - start_time_us);
-      receiving_ = false;
-      start = 0;
-      return;
-    } else if (temp_rbuf.decoded.oneshots & (1 << ONESHOT_GlobalPoll)) {
-      // globals::poll_clk_us = 0;  // Just synch.
-
-      globals::poll_clk_us = 0;
+#if DEBUG_PRINT_XBEE_TIMING
+      Serial.print("Full packet processed ");
+      Serial.println(time_since_start_us);
+#endif
 
       receiving_ = false;
       start = 0;
       return;
+    }
 
-      // This is a global Poll. SUIDs field does not matter. Reserve Reply send
-      // as soon as 0 <= (poll clock) - (c_lim + (suid - 1) * r) < 100us holds.
-      // Since poll clock is already reset to 0us at start bytes reception,
-      // just set the waiting send flag now.
+    else if (temp_rbuf.decoded.oneshots & (1 << ONESHOT_GlobalPoll)) {
+      // This is a global Poll. SUIDs field does not matter.
+      // Since poll clock is already reset to 0us at start bytes reception, just
+      // set the waiting send flag now.
 
-      // XbeeReplySender::waiting_send_ = true;
-      // XbeeReplySender::turn += 1;
-      // if (XbeeReplySender::turn >= 13) XbeeReplySender::turn = 0;
+      XbeeReplySender::waiting_send_ = true;
 
-      // Serial.println("Poll received, send flag set");
-      // Serial.print("FD ");
-      // Serial.println(micros() - start_time_us);
-    } else {
+#if DEBUG_PRINT_XBEE_RECEIVE
+      Serial.println("Poll received, send flag set");
+#endif
+#if DEBUG_PRINT_XBEE_TIMING
+      Serial.print("Full packet processed ");
+      Serial.println(time_since_start_us);
+#endif
+
+      receiving_ = false;
+      start = 0;
+      return;
+    }
+
+    else {
       // This is neither a Reply nor a Poll, so it must be a normal Command.
-
-      // Assuming Commands come in 100ms interval, synch poll clock using that
-      // fact.
-      // globals::poll_clk_us = [] {
-      //   uint32_t result = 0;
-      //   while (!(globals::poll_clk_us <= result + 50000 &&
-      //            result < globals::poll_clk_us + 50000)) {
-      //     result += 100000;
-      //   }
-      //   return result;
-      // }();
 
       if (temp_rbuf.decoded.suids & (1 << (b_->cfg_.suid - 1))) {
         // This Command is for me. Copy to memory and set waiting parse flag,
@@ -173,16 +179,28 @@ class XbeeCommandReceiver {
         memcpy(xb_cmd_.raw_bytes, temp_rbuf.raw_bytes, XBEE_PACKET_LEN);
         waiting_parse_ = true;
 
-        // Serial.println("Command for me received, copied to memory");
-        // Serial.print("FD ");
-        // Serial.println(micros() - start_time_us);
+#if DEBUG_PRINT_XBEE_RECEIVE
+        Serial.println("Command for me received, copied to memory");
+#endif
+#if DEBUG_PRINT_XBEE_TIMING
+        Serial.print("Full packet processed ");
+        Serial.println(time_since_start_us);
+#endif
+
         receiving_ = false;
         start = 0;
         return;
-      } else {
-        // Serial.println("This Command is NOT for me");
-        // Serial.print("FPD ");
-        // Serial.println(micros() - start_time_us);
+      }
+
+      else {
+#if DEBUG_PRINT_XBEE_RECEIVE
+        Serial.println("This Command is NOT for me");
+#endif
+#if DEBUG_PRINT_XBEE_TIMING
+        Serial.print("Full packet processed ");
+        Serial.println(time_since_start_us);
+#endif
+
         receiving_ = false;
         start = 0;
         return;

@@ -67,7 +67,7 @@ void setup() {
 
   Serial.print("XbRS timing -> ");
   for (uint8_t suid = 1; suid <= 13; suid++) {
-    Serial.print(timing::xb::suid_to_sndtim_us.at(suid));
+    Serial.print(timing::xb::suid_to_send_time_us.at(suid));
     Serial.print(", ");
   }
   Serial.print("span -> ");

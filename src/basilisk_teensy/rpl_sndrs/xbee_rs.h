@@ -11,10 +11,7 @@
 class XbeeReplySender {
  public:
   inline static Basilisk* b_;
-  // inline static bool waiting_send_ = false;
-  // inline static uint32_t TEMP_start_bytes_us;
-  // inline static uint32_t send_at_us;
-  // inline static uint8_t turn;
+  inline static bool waiting_send_ = false;
 
   // Should be called before use.
   inline static bool Setup(Basilisk* b) {
@@ -23,8 +20,7 @@ class XbeeReplySender {
       return false;
     }
     b_ = b;
-    // turn = b_->cfg_.suid - 1;
-    xbee_rpl_.decoded.suids = 1 << (b->cfg_.suid - 1);
+    xb_rpl_.decoded.suids = 1 << (b->cfg_.suid - 1);
     Serial.println("XbeeReplySender: Setup complete");
     return true;
   }
@@ -32,40 +28,42 @@ class XbeeReplySender {
   // Should be run continuously
   inline static void Run() {
     using namespace timing::xb;
+    static const auto sndtim_us = suid_to_send_time_us.at(b_->cfg_.suid);
 
-    static const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid);
-    const auto phase = globals::poll_clk_us;  // % (span * 100000);
-    if (sndtim_us <= phase && phase < sndtim_us + rpl_snd_tmot_us) {
-      Send();
+    if (!waiting_send_) return;
+    if (globals::poll_clk_us < sndtim_us) return;
+    waiting_send_ = false;
+    if (globals::poll_clk_us >= sndtim_us + send_timeout_us) {
+#if DEBUG_PRINT_XBEE_SEND
+      Serial.println("XbRS timeout");
+#endif
+      return;
     }
 
-    // static const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid);
-    // if (!waiting_send_) return;
-    // if (globals::poll_clk_us < sndtim_us) return;
-    // waiting_send_ = false;
-    // if (globals::poll_clk_us >= sndtim_us + rpl_snd_tmot_us) {
-    //   Serial.println("RS timeout");
-    //   return;
-    // }
-    // Serial.println("********");
-    // Serial.println("My Reply");
-    // Serial.print("RB ");
-    // Serial.println(globals::poll_clk_us);
-    // Send();
-    // Serial.print("RD ");
-    // Serial.println(globals::poll_clk_us);
+#if DEBUG_PRINT_XBEE_TIMING
+    Serial.println("********");
+    Serial.println("My Reply");
+    Serial.print("Begin ");
+    Serial.println(globals::poll_clk_us);
+#endif
+
+    Send();
+
+#if DEBUG_PRINT_XBEE_TIMING
+    Serial.print("Done ");
+    Serial.println(globals::poll_clk_us);
+#endif
   }
 
   inline static void Send() {
-    xbee_rpl_.decoded.mode = static_cast<uint8_t>(*b_->rpl_.mode);
-    xbee_rpl_.decoded.lpsx = static_cast<float>(*b_->rpl_.lpsx);
-    xbee_rpl_.decoded.lpsy = static_cast<float>(*b_->rpl_.lpsy);
-    xbee_rpl_.decoded.yaw = static_cast<float>(b_->rpl_.yaw());
-    xbee_rpl_.decoded.phi_l = static_cast<float>(b_->rpl_.phi_l());
-    xbee_rpl_.decoded.phi_r = static_cast<float>(b_->rpl_.phi_r());
+    xb_rpl_.decoded.mode = static_cast<uint8_t>(*b_->rpl_.mode);
+    xb_rpl_.decoded.lpsx = static_cast<float>(*b_->rpl_.lpsx);
+    xb_rpl_.decoded.lpsy = static_cast<float>(*b_->rpl_.lpsy);
+    xb_rpl_.decoded.yaw = static_cast<float>(b_->rpl_.yaw());
+    xb_rpl_.decoded.phi_l = static_cast<float>(b_->rpl_.phi_l());
+    xb_rpl_.decoded.phi_r = static_cast<float>(b_->rpl_.phi_r());
 
-    XBEE_SERIAL.write(xbee_rpl_.raw_bytes,
-                      XBEE_PACKET_LEN_INCLUDING_START_BYTES);
+    XBEE_SERIAL.write(xb_rpl_.raw_bytes, XBEE_PACKET_LEN_INCLUDING_START_BYTES);
   }
 
   inline static union SendBuf {
@@ -85,5 +83,5 @@ class XbeeReplySender {
     SendBuf()
         : decoded{.start_bytes{static_cast<uint32_t>(-1)},
                   .oneshots{1 << ONESHOT_SaveOthersReply}} {}
-  } xbee_rpl_;
+  } xb_rpl_;
 };
