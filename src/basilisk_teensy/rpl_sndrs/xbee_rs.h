@@ -33,7 +33,7 @@ class XbeeReplySender {
   inline static void Run() {
     using namespace timing::xb;
 
-    const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid - 1);
+    const auto sndtim_us = suid_to_sndtim_us.at(b_->cfg_.suid);
 
     if (!waiting_send_) return;
     if (globals::poll_clk_us < sndtim_us) return;
