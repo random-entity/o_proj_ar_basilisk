@@ -63,6 +63,7 @@ void setup() {
   xb_cr.Setup(&b);
   nk_cr.Setup(&b);
   xb_rs.Setup(&b);
+  led_rs::suid = b.cfg_.suid;
   delay(250);
 
   Serial.print("XbRS timing -> ");

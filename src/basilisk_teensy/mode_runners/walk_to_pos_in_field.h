@@ -66,16 +66,16 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
               force = force + mag * Vec2{dist_vec.arg() +
                                          (at_right ? 1.0 : -1.0) * 0.25};
             }
-          }
 
-          if (!b->lps_.BoundMinX())
-            force = force + Vec2{0.0};
-          else if (!b->lps_.BoundMaxX())
-            force = force + Vec2{0.5};
-          if (!b->lps_.BoundMinY())
-            force = force + Vec2{0.25};
-          else if (!b->lps_.BoundMaxY())
-            force = force + Vec2{-0.25};
+            if (!b->lps_.BoundMinX())
+              force = force + Vec2{0.0};
+            else if (!b->lps_.BoundMaxX())
+              force = force + Vec2{0.5};
+            if (!b->lps_.BoundMinY())
+              force = force + Vec2{0.25};
+            else if (!b->lps_.BoundMaxY())
+              force = force + Vec2{-0.25};
+          }
 
           const auto cur_yaw = b->imu_.GetYaw(true);
           const auto field_tgt_yaw_vec = pure_tgt_yaw_vec + force;

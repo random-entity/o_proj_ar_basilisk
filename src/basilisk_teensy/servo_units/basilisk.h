@@ -40,7 +40,7 @@ class Basilisk {
   const double gr_ = 21.0;  // delta_rotor = delta_output * gear_ratio
   const double boundary_radius_ = 150.0;
   const double overlap_thr_ = 50.0;
-  const double emergency_trq_thr_ = 10.0;
+  const double emergency_trq_thr_ = 0.2;
   const PmCmd* const pm_cmd_template_;
 
   /////////////////

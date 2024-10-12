@@ -6,6 +6,7 @@ namespace bounce_walk {
 double tgt_yaw;
 bool moonwalk;
 bool reinit;
+bool trying_overlap_exit = false;
 }  // namespace bounce_walk
 
 void ModeRunners::BounceWalk(Basilisk* b) {
@@ -45,8 +46,9 @@ void ModeRunners::BounceWalk(Basilisk* b) {
 
         // Emergency exit to Free Mode.
         if (b->Emergency()) {
-          b->cmd_.pivseq.exit_to_mode = M::Free;
+          b->cmd_.pivseq.exit_to_mode = M::Idle_Init;
           bounce_walk::reinit = true;
+          bounce_walk::trying_overlap_exit = false;
           return true;
         }
 
@@ -71,9 +73,14 @@ void ModeRunners::BounceWalk(Basilisk* b) {
             // Might be overlapping physically, and due to LPS error, at front
             // check is illegible. So just immediately reinit to go backwards.
 
-            bounce_walk::tgt_yaw = bounce_walk::tgt_yaw + 0.5;
-            bounce_walk::reinit = true;
-            return true;
+            if (!bounce_walk::trying_overlap_exit) {
+              bounce_walk::tgt_yaw = bounce_walk::tgt_yaw + 0.5;
+              bounce_walk::reinit = true;
+              bounce_walk::trying_overlap_exit = true;
+              return true;
+            } else {
+              return false;
+            }
           }
 
           // Not overlapping physically, so bounce if the other is at front.
@@ -85,6 +92,8 @@ void ModeRunners::BounceWalk(Basilisk* b) {
           new_tgt_yaw = new_tgt_yaw + Vec2{dist_vec.arg() + 0.5};
           bounce_walk::reinit = true;
         }
+
+        bounce_walk::trying_overlap_exit = false;
 
         if (bounce_walk::reinit) {
           bounce_walk::tgt_yaw = new_tgt_yaw.arg();

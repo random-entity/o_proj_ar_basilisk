@@ -6,6 +6,7 @@ XbRR rr;
 void runXbRR() {
   while (true) {
     rr.Run();
+    delay(1);
   }
 }
 
@@ -19,7 +20,7 @@ ArrayList<Basilisk> bs;
 void setup() {
   String[] ports = Serial.list();
   printArray(ports);
-  xbPort = new Serial(this, "/dev/ttyUSB2", 115200);
+  xbPort = new Serial(this, "/dev/ttyUSB1", 115200);
   rr = new XbRR(xbPort);
   thread("runXbRR");
 
@@ -47,7 +48,7 @@ void draw() {
   noFill();
   stroke(0);
   rect(0, 0, stageDimX, stageDimY);
-  
+
   for (int x = 0; x < stageDimX; x += 50) {
     for (int y = 0; y < stageDimY; y+= 50) {
       pushMatrix();

@@ -30,7 +30,7 @@ public class XbRR {
       start_time_ms = millis();
     }
 
-    if (millis() > start_time_ms + 50) {
+    if (millis() > start_time_ms + 10) {
       receiving = false;
       start = 0;
       return;

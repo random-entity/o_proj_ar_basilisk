@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../presets/matome.h"
+#include "../rpl_sndrs/led_rs.h"
 #include "meta.h"
 
 // * Meta
@@ -19,10 +20,14 @@
 // 99 BounceWalk(tgt_yaw = random)
 
 // * PPP
-// 80 WalkToPosInField to grid arrangment
+// 70 WalkToPosInField to grid arrangment
+// 71 WalkToPosInField to pyramid arrangment
+// 72 WalkToPosInField to solo-chorus arrangment
+// 73 Sufi to look at solo
 // 81 ~ 88 WalkToPosInField to circular arrangment
 // 91 ~ 98 Sufi to target yaw relative to center
 // 101 ~ 108 WalkToDir relative to current yaw
+// 201 ~ 213 Find SUID
 // 1000 ~ 2999 Pivot
 // 3100 ~ 3299 PivSpin
 // 3300 ~ 3399 Sufi
@@ -283,15 +288,16 @@ void ModeRunners::DoPreset(Basilisk* b) {
         return;
       }
 
-      if (idx == 80) {  // 9   10   11   12   13
+      if (idx == 70) {  // 9   10   11   12   13
                         // 5      6     7      8
                         // 1      2     3      4
         static const auto& suid = b->cfg_.suid;
-        static const uint8_t row = suid <= 4 ? 0 : suid <= 8 ? 1 : 2;
-        static const uint8_t col = suid <= 12 ? (suid - 1) % 4 : 4;
 
         m = M::WalkToPosInField;
         auto& c = b->cmd_.walk_to_pos_in_field;
+
+        static const uint8_t row = suid <= 4 ? 0 : suid <= 8 ? 1 : 2;
+        static const uint8_t col = suid <= 12 ? (suid - 1) % 4 : 4;
         static double x =
             row < 2
                 ? (b->cfg_.lps.minx * (3 - col) + b->cfg_.lps.maxx * col) / 3.0
@@ -299,6 +305,83 @@ void ModeRunners::DoPreset(Basilisk* b) {
         static double y =
             (b->cfg_.lps.miny * (2 - row) + b->cfg_.lps.maxy * row) / 2.0;
         c.tgt_pos = Vec2{x, y};
+
+        return;
+      }
+
+      if (idx == 71) {  // 7    6   13    4    3
+                        //    12  11   9   10
+                        //      8    5    2
+                        //           1
+        static const auto& suid = b->cfg_.suid;
+
+        m = M::WalkToPosInField;
+        auto& c = b->cmd_.walk_to_pos_in_field;
+
+        c.tgt_pos = suid == 1    ? Vec2{400, 150}
+                    : suid == 8  ? Vec2{250, 300}
+                    : suid == 5  ? Vec2{400, 300}
+                    : suid == 2  ? Vec2{550, 300}
+                    : suid == 12 ? Vec2{200, 500}
+                    : suid == 11 ? Vec2{350, 500}
+                    : suid == 9  ? Vec2{500, 500}
+                    : suid == 10 ? Vec2{650, 500}
+                    : suid == 7  ? Vec2{100, 750}
+                    : suid == 6  ? Vec2{250, 750}
+                    : suid == 13 ? Vec2{400, 750}
+                    : suid == 4  ? Vec2{550, 750}
+                    : suid == 3  ? Vec2{700, 750}
+                                 : Vec2{425, 425};
+
+        return;
+      }
+
+      if (idx == 72) {  // 7 8  9 10 12
+                        // 3 4      5 6
+                        // 1    11    2
+        static const auto& suid = b->cfg_.suid;
+        m = M::WalkToPosInField;
+        auto& c = b->cmd_.walk_to_pos_in_field;
+        c.tgt_pos = suid == 1    ? Vec2{150, 250}
+                    : suid == 2  ? Vec2{750, 250}
+                    : suid == 3  ? Vec2{150, 500}
+                    : suid == 4  ? Vec2{300, 500}
+                    : suid == 5  ? Vec2{550, 500}
+                    : suid == 6  ? Vec2{750, 500}
+                    : suid == 7  ? Vec2{150, 750}
+                    : suid == 8  ? Vec2{300, 750}
+                    : suid == 9  ? Vec2{450, 750}
+                    : suid == 10 ? Vec2{600, 750}
+                    : suid == 12 ? Vec2{750, 750}
+                    : suid == 11 ? Vec2{425, 125}
+                                 : Vec2{425, 425};
+
+        return;
+      }
+
+      if (idx == 73) {
+        m = M::Sufi;
+        auto& c = b->cmd_.sufi;
+
+        static const auto solo = Vec2{420, 125};
+
+        c.init_didimbal = BOOL_L;
+        c.dest_yaw =
+            nearest_pmn(b->imu_.GetYaw(true), (solo - b->lps_.GetPos()).arg());
+        c.exit_thr = 0.01;
+        c.stride = 30.0 / 360.0;
+        bool dest_is_greater = c.dest_yaw > b->imu_.GetYaw(true);
+        if (!dest_is_greater) {
+          c.stride *= -1.0;
+        }
+        c.bend[IDX_L] = 0.0;
+        c.bend[IDX_L] = 0.0;
+        c.speed = globals::stdval::speed::normal;
+        c.acclim = globals::stdval::acclim::standard;
+        c.min_stepdur = 0;
+        c.max_stepdur = globals::stdval::maxdur::safe;
+        c.interval = 100;
+        c.steps = -1;
 
         return;
       }
@@ -319,10 +402,10 @@ void ModeRunners::DoPreset(Basilisk* b) {
 
         if (b->cfg_.suid <= 8) {
           double arg = (digits[0] + b->cfg_.suid - 4) * 0.125;
-          c.tgt_pos = center + 330.0 * Vec2{arg};
+          c.tgt_pos = center + 320.0 * Vec2{arg};
         } else if (b->cfg_.suid <= 12) {
           double arg = (digits[0] + b->cfg_.suid * 2 - 21) * 0.125;
-          c.tgt_pos = center + 165.0 * Vec2{arg};
+          c.tgt_pos = center + 160.0 * Vec2{arg};
         } else {
           c.tgt_pos = center;
         }
@@ -350,14 +433,18 @@ void ModeRunners::DoPreset(Basilisk* b) {
             (center - b->lps_.GetPos()).arg() + ((digits[0] - 1) / 8.0));
         c.exit_thr = 0.01;
         c.stride = 30.0 / 360.0;
+        bool dest_is_greater = c.dest_yaw > b->imu_.GetYaw(true);
+        if (!dest_is_greater) {
+          c.stride *= -1.0;
+        }
         c.bend[IDX_L] = 0.0;
         c.bend[IDX_L] = 0.0;
         c.speed = globals::stdval::speed::normal;
         c.acclim = globals::stdval::acclim::standard;
         c.min_stepdur = 0;
         c.max_stepdur = globals::stdval::maxdur::safe;
-        c.interval = 0;
-        c.steps = 2;
+        c.interval = 100;
+        c.steps = -1;
 
         return;
       }
@@ -392,6 +479,18 @@ void ModeRunners::DoPreset(Basilisk* b) {
         c.max_stepdur = globals::stdval::maxdur::safe;
         c.interval = 0;
         c.steps = -1;
+
+        return;
+      }
+
+      if (201 <= idx && idx <= 213) {
+        const auto finding_suid = idx - 200;
+        if (b->cfg_.suid == finding_suid) {
+          led_rs::finding_me = true;
+        }
+
+        m = b->cmd_.do_preset.prev_mode;
+        b->cmd_.do_preset.idx = 0;
 
         return;
       }
