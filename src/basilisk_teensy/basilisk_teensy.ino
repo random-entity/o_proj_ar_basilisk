@@ -99,6 +99,6 @@ void loop() {
   static Beat led_rs_beat{1};
   if (led_rs_beat.Hit()) LedReplySender(nk);
 
-  static Beat serial_rs_beat{2000};
+  static Beat serial_rs_beat{500};
   if (serial_rs_beat.Hit()) SerialReplySender(b);
 }

@@ -279,7 +279,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
           idx /= 10;
         }
 
-        m = M::WalkToPosInField;
+        m = M::WalkToPosInField_Init;
         auto& c = b->cmd_.walk_to_pos_in_field;
         double x = (10 * digits[3] + digits[2]) * 10.0;
         double y = (10 * digits[1] + digits[0]) * 10.0;
@@ -293,7 +293,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
                         // 1      2     3      4
         static const auto& suid = b->cfg_.suid;
 
-        m = M::WalkToPosInField;
+        m = M::WalkToPosInField_Init;
         auto& c = b->cmd_.walk_to_pos_in_field;
 
         static const uint8_t row = suid <= 4 ? 0 : suid <= 8 ? 1 : 2;
@@ -315,7 +315,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
                         //           1
         static const auto& suid = b->cfg_.suid;
 
-        m = M::WalkToPosInField;
+        m = M::WalkToPosInField_Init;
         auto& c = b->cmd_.walk_to_pos_in_field;
 
         c.tgt_pos = suid == 1    ? Vec2{400, 150}
@@ -340,7 +340,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
                         // 3 4      5 6
                         // 1    11    2
         static const auto& suid = b->cfg_.suid;
-        m = M::WalkToPosInField;
+        m = M::WalkToPosInField_Init;
         auto& c = b->cmd_.walk_to_pos_in_field;
         c.tgt_pos = suid == 1    ? Vec2{150, 250}
                     : suid == 2  ? Vec2{750, 250}
@@ -393,7 +393,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
           idx /= 10;
         }
 
-        m = M::WalkToPosInField;
+        m = M::WalkToPosInField_Init;
         auto& c = b->cmd_.walk_to_pos_in_field;
 
         static const auto center =

@@ -52,7 +52,8 @@ struct ModeRunners {
       {M::Diamond, &Diamond},
       {M::BounceWalk_Init, &BounceWalk},
       {M::BounceWalk_Reinit, &BounceWalk},
-      {M::WalkToPosInField, &WalkToPosInField},
+      {M::WalkToPosInField_Init, &WalkToPosInField},
+      {M::WalkToPosInField_Reinit, &WalkToPosInField},
       {M::Shear_Init, &Shear},
       {M::Shear_Move, &Shear},
   };

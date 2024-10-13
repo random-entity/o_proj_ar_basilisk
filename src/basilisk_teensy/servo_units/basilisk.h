@@ -40,7 +40,7 @@ class Basilisk {
   const double gr_ = 21.0;  // delta_rotor = delta_output * gear_ratio
   const double boundary_radius_ = 150.0;
   const double overlap_thr_ = 50.0;
-  const double emergency_trq_thr_ = 0.2;
+  const double emergency_trq_thr_;
   const PmCmd* const pm_cmd_template_;
 
   /////////////////
@@ -68,7 +68,8 @@ class Basilisk {
         lego_{cfg.lego.pin_l, cfg.lego.pin_r},
         mags_{&lego_,                            //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
-              cfg.mags.pin_ra, cfg.mags.pin_rt} {
+              cfg.mags.pin_ra, cfg.mags.pin_rt},
+        emergency_trq_thr_{0.5} {
     rpl_.b = this;
     rpl_.suid = &cfg_.suid;
     rpl_.mode = &cmd_.mode;
@@ -235,7 +236,8 @@ class Basilisk {
       RandomWalk = 26,
       BounceWalk_Init = 27,
       BounceWalk_Reinit = 28,
-      WalkToPosInField = 29,
+      WalkToPosInField_Init = 29,
+      WalkToPosInField_Reinit = 30,  // Necessary for immediate re-Pivot.
 
       /* Gee: */
       Shear_Init = 250,
@@ -477,8 +479,8 @@ class Basilisk {
   }
 
   bool Emergency() {
-    return l_.GetReply().torque > emergency_trq_thr_ ||
-           r_.GetReply().torque > emergency_trq_thr_;
+    return abs(l_.GetReply().torque) > emergency_trq_thr_ ||
+           abs(r_.GetReply().torque) > emergency_trq_thr_;
   }
 
   void Print() {

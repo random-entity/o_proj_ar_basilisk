@@ -126,7 +126,7 @@ void WalkToPosInField(Basilisk* b) {
   auto& m = b->cmd_.mode;
   auto& c = b->cmd_.walk_to_pos_in_field;
 
-  m = M::WalkToPosInField;
+  m = M::WalkToPosInField_Init;
   c.tgt_pos = Vec2{500.0, 500.0};
 }
 

@@ -4,6 +4,9 @@ Serial xbPort;
 XbRR rr;
 
 void runXbRR() {
+  while (xbPort.available() > 0) {
+    xbPort.read();
+  }
   while (true) {
     rr.Run();
     delay(1);
