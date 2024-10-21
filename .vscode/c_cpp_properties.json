@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "~/Arduino/libraries/**",
+                "~/.arduino15/packages/teensy/hardware/avr/1.59.0/cores/teensy4/**",
+                "~/.arduino15/packages/teensy/hardware/avr/1.59.0/libraries/**",
+                "~/apps/pd-0.55/include/**"
+            ],
+            "cppStandard": "c++17",
+            "cStandard": "c17",
+            "compilerPath": "~/.arduino15/packages/teensy/tools/teensy-compile/11.3.1/arm/bin/arm-none-eabi-g++",
+            "intelliSenseMode": "linux-gcc-arm",
+            "defines": [
+                "__arm__",
+                "__IMXRT1062__",
+                "TEENSYDUINO",
+                "USB_SERIAL"
+            ]
+        }
+    ],
+    "version": 4
+}

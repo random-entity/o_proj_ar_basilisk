@@ -22,19 +22,19 @@ void setup() {
   Serial.begin(9600);
 
   float nanf = NaN;
-  Serial.print("float NaN: ");
+  P("float NaN: ");
   print_bin(&nanf);
 
   double nand = NaN;
-  Serial.print("double NaN: ");
+  P("double NaN: ");
   print_bin(&nand);
 
   float nand2f = static_cast<float>(nand);
-  Serial.print("static_cast<float>(double) NaN: ");
+  P("static_cast<float>(double) NaN: ");
   print_bin(&nand2f);
 
   double nanf2d = static_cast<double>(nanf);
-  Serial.print("static_cast<double>(float) NaN: ");
+  P("static_cast<double>(float) NaN: ");
   print_bin(&nanf2d);
 }
 

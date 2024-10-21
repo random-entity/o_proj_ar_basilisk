@@ -1,6 +1,10 @@
 #pragma once
 
-#include "../helpers/imports.h"
+#include <Arduino.h>
+
+#include "../helpers/do_you_want_debug.h"
+#include "../helpers/serial_print.h"
+#include "../helpers/using_moteus.h"
 
 // The following pins are selected for the SeoulOpenMedia T4_CanFD board v1.5.
 // Only Buses 1 and 2 work for now.
@@ -23,12 +27,13 @@ void (*canfd_isrs[4])() = {
     [] { canfd_drivers[0].isr(); }, [] { canfd_drivers[1].isr(); },
     [] { canfd_drivers[2].isr(); }, [] { canfd_drivers[3].isr(); }};
 
-class CanFdDriverInitializer {
- public:
-  static bool Setup(const uint8_t& bus) {
+struct CanFdDriverInitializer {
+  inline static bool Setup(const int& bus) {
     if (bus < 1 || bus > 4) {
-      Serial.print("CanFdDriverInitializer: Unknown bus: ");
+#if DEBUG_PRINT_INITIALIZATION
+      P("CanFdDriverInitializer: Unknown bus: ");
       Serial.println(bus);
+#endif
       return false;
     } else if (bus <= 2) {
       SPI.begin();
@@ -49,16 +54,20 @@ class CanFdDriverInitializer {
         canfd_isrs[bus - 1]);
 
     if (err_code) {
-      Serial.print("CanFdDriverInitializer: CAN FD driver on bus ");
+#if DEBUG_PRINT_INITIALIZATION
+      P("CanFdDriverInitializer: CAN FD driver on bus ");
       Serial.print(bus);
-      Serial.print(" begin failed, error code 0x");
+      P(" begin failed, error code 0x");
       Serial.println(err_code, HEX);
+#endif
       return false;
     }
 
-    Serial.print("CanFdDriverInitializer: CAN FD driver on bus ");
+#if DEBUG_PRINT_INITIALIZATION
+    P("CanFdDriverInitializer: CAN FD driver on bus ");
     Serial.print(bus);
-    Serial.println(F(" started"));
+    Pln(" started");
+#endif
     return true;
   }
 };

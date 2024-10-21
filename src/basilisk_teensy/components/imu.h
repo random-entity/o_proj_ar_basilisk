@@ -1,27 +1,36 @@
 #pragma once
 
-#include "../helpers/imports.h"
+#include <Arduino.h>
+
+#include "../helpers/do_you_want_debug.h"
+#include "../helpers/serial_print.h"
 
 #define IMU_SERIAL (Serial2)
 
-/* Angle unit of incoming data from the EBIMU board is 'degrees' between
- * -180.0 and 180.0, but the rest of the program assumes 'revolutions'
- * as angle unit for compatibility with moteus servomotor controllers.
- * The field `double euler_[2]` saves angles in revolutions,
+/* Angle unit of incoming data from the EBIMU board are in 'degrees', and
+ * between -180.0 and 180.0, but the rest of the program assumes 'revolutions'
+ * as angle unit for compatibility with mjbots moteus API.
+ * The field `double euler_[2]` stores angles in revolutions,
  * between -0.5 and 0.5, and the field `yaw_revs_` tracks full revolutions
- * in yaw axis so we can compute 'uncoiled' value for yaw.
- * All yaw values and returns are uncoiled except `euler_[2]`. */
+ * in yaw so we can compute its 'uncoiled' value.
+ * All yaw values including returns are uncoiled except `euler_[2]`. */
 class Imu {
  public:
   // Must be called before use.
   bool Setup() {
     IMU_SERIAL.begin(57600);
+    delay(100);
     if (!IMU_SERIAL) {
-      Serial.println("IMU: IMU_SERIAL(Serial2) begin failed");
+#if DEBUG_PRINT_INITIALIZATION
+      Pln("IMU: IMU_SERIAL(Serial2) begin failed");
+#endif
+
       return false;
     }
 
-    Serial.println("IMU: Setup complete");
+#if DEBUG_PRINT_INITIALIZATION
+    Pln("IMU: Setup complete");
+#endif
     return true;
   }
 
@@ -54,7 +63,7 @@ class Imu {
           for (int i = 0; i < 3; i++) {
             euler_[i] = atof(temp[i]) / 360.0;
           }
-          euler_[2] *= -1.0;  // Translate to vertical up = +z
+          euler_[2] *= -1.0;  // Translate to ((vertical up) = +z)
                               // right hand system.
           const auto delta_yaw_coiled = euler_[2] - prev_yaw_coiled;
           if (delta_yaw_coiled > 0.5) {
@@ -70,7 +79,7 @@ class Imu {
     }
   }
 
-  double GetYaw(bool rel) {  // false: Absolute, true: RelToBase
+  double GetYaw(const bool rel) {  // false: Absolute, true: Relative to Base
     if (rel) {
       return euler_[2] + yaw_revs_ - base_yaw_;
     } else {

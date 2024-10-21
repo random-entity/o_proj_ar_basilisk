@@ -47,7 +47,7 @@ void ModeRunners::BounceWalk(Basilisk* b) {
 
         // Emergency reinit backward.
         if (b->Emergency()) {
-          Serial.println("Emergency");
+          Pln("Emergency");
 
           const auto cur_didimbal = b->cmd_.pivot.didimbal;
           if (cur_didimbal == BOOL_L) {
@@ -88,14 +88,14 @@ void ModeRunners::BounceWalk(Basilisk* b) {
           if (dist_vec.mag() > b->boundary_radius_) continue;
 
           // At this point, the boundaries have collided.
-          Serial.print("Collision with ");
+          P("Collision with ");
           Serial.println(other_suid);
 
           if (dist_vec.mag() < b->overlap_thr_) {
             // Might be overlapping physically, and due to LPS error,
             // at-front check is illegible.
 
-            Serial.println("Overlap");
+            Pln("Overlap");
 
             if (!bounce_walk::trying_overlap_exit[other_suid - 1]) {
               new_tgt_yaw = new_tgt_yaw + 1e6 * Vec2{my_tgt_yaw + 0.5};
@@ -114,7 +114,7 @@ void ModeRunners::BounceWalk(Basilisk* b) {
               abs(nearest_pmn(0.0, dist_vec.arg() - my_tgt_yaw)) < 0.25;
           if (!at_front) continue;
 
-          Serial.println("At front");
+          Pln("At front");
 
           new_tgt_yaw = new_tgt_yaw + Vec2{dist_vec.arg() + 0.5};
         }

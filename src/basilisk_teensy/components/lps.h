@@ -1,6 +1,13 @@
 #pragma once
 
-#include "../helpers/imports.h"
+#include <Arduino.h>
+#include <Smoothed.h>
+
+#include "../helpers/do_you_want_debug.h"
+#include "../helpers/serial_print.h"
+#include "../helpers/vec2.h"
+
+#define LPS_SERIAL (Serial6)
 
 /* Length unit of incoming bytes from the LPS board is '10cm', so the field
  * `uin8_t dists_raw_[3]` which saves the raw values follows this unit, but the
@@ -23,9 +30,6 @@
  * From (3): y = y_c +- sqrt(c^2 - (x - x_c)^2)
  *           is computable since we already have computed x at (4),
  *           and we take minus since we assumed y < y_c. */
-
-#define LPS_SERIAL (Serial6)
-
 class Lps {
  public:
   Lps(const double& c, const double& x_c, const double& y_c,  //
@@ -42,39 +46,54 @@ class Lps {
   // Must be called before use.
   bool Setup() {
     LPS_SERIAL.begin(9600);
+    delay(100);
     if (!LPS_SERIAL) {
-      Serial.println("LPS: LPS_SERIAL(Serial6) begin failed");
+#if DEBUG_PRINT_INITIALIZATION
+      Pln("LPS: LPS_SERIAL(Serial6) begin failed");
+#endif
       return false;
     }
 
     for (auto& dist_sm : dists_sm_) dist_sm.begin(SMOOTHED_AVERAGE, 10);
 
-    Serial.println("LPS: Setup complete");
+#if DEBUG_PRINT_INITIALIZATION
+    Pln("LPS: Setup complete");
+#endif
     return true;
   }
 
   // Should be called continuously to immediately receive to
   // incoming sensor data and prevent Serial buffer overflow.
   void Run() {
-    if (LPS_SERIAL.available() >= 6) {
-      if (LPS_SERIAL.read() == 255 && LPS_SERIAL.read() == 2) {
-        error_.matome = 0;
-        for (auto i = 0; i < 3; i++) {
-          const auto raw = LPS_SERIAL.read();
-          if (raw < 250) {
-            dists_raw_[i] = raw;
-            dists_sm_[i].add(10.0 * raw);
-          } else {
-            error_.bytes[i] = raw;
-          }
-        }
-        latency_ = LPS_SERIAL.read();
-        if (!error_.matome) SetXY();
-        last_raw_update_ = millis();
+    static bool start = false;
+
+    if (LPS_SERIAL.available() >= 60) {
+      for (int i = 0; i < 60; i++) LPS_SERIAL.read();
+    }
+
+    if (!start) {
+      if (!(LPS_SERIAL.available() && LPS_SERIAL.read() == 255)) return;
+      if (!(LPS_SERIAL.available() && LPS_SERIAL.read() == 2)) return;
+      start = true;
+    }
+
+    if (LPS_SERIAL.available() < 4) return;
+
+    error_.matome = 0;
+    for (int i = 0; i < 3; i++) {
+      const auto raw = LPS_SERIAL.read();
+      if (raw < 250) {
+        dists_raw_[i] = raw;
+        dists_sm_[i].add(10.0 * raw);
       } else {
-        for (int i = 0; i < 4; i++) LPS_SERIAL.read();
+        error_.bytes[i] = raw;
       }
     }
+    latency_ = LPS_SERIAL.read();
+    if (!error_.matome) SetXY();
+    last_raw_update_ = millis();
+
+    start = false;
   }
 
  private:
@@ -104,35 +123,6 @@ class Lps {
   bool BoundMaxY() { return y_ < cfg_.maxy; }
   bool Bound() {
     return BoundMinX() && BoundMaxX() && BoundMinY() && BoundMaxY();
-  }
-
-  bool TrespassedMinX() {
-    static bool prev = false;
-    const auto now = BoundMinX();
-    const auto result = !prev && now;
-    prev = now;
-    return result;
-  }
-  bool TrespassedMaxX() {
-    static bool prev = false;
-    const auto now = BoundMaxX();
-    const auto result = !prev && now;
-    prev = now;
-    return result;
-  }
-  bool TrespassedMinY() {
-    static bool prev = false;
-    const auto now = BoundMinY();
-    const auto result = !prev && now;
-    prev = now;
-    return result;
-  }
-  bool TrespassedMaxY() {
-    static bool prev = false;
-    const auto now = BoundMaxY();
-    const auto result = !prev && now;
-    prev = now;
-    return result;
   }
 
   uint8_t dists_raw_[3] = {0, 0, 0};

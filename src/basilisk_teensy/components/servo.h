@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../helpers/imports.h"
+#include "../globals/moteus_fmt.h"
+#include "../helpers/clamped.h"
 #include "canfd_drivers.h"
 
 class Servo : public Moteus {
@@ -22,9 +23,27 @@ class Servo : public Moteus {
         pm_fmt_{pm_fmt},
         q_fmt_{q_fmt} {}
 
-  bool SetQuery() { return static_cast<Moteus*>(this)->SetQuery(q_fmt_); }
+  bool SetQuery() {
+    const auto prev_rpl = last_result().values;
 
-  // aux2 position uncoiled.
+    const auto got_rpl = static_cast<Moteus*>(this)->SetQuery(q_fmt_);
+
+    if (!got_rpl) return false;
+
+    const auto rpl = GetReply();
+
+    failure_.encoder_invalid =
+        (static_cast<uint8_t>(rpl.extra[1].value) != 0xF);
+    failure_.aux2pos_range_invalid =
+        (rpl.abs_position != Phi{rpl.abs_position});
+    failure_.aux2pos_frozen = (prev_rpl.abs_position == rpl.abs_position);
+    failure_.torque_too_high =
+        (abs(rpl.torque) >
+         0.9 * moteus_fmt::pm_cmd_template.maximum_torque);
+    return failure_.Exists();
+  }
+
+  // Aux2 position uncoiled.
   QRpl GetReply() {
     auto rpl = last_result().values;
     // Convert aux2 encoder reading in [0, 1] to phi in [-0.5, 0.5]
@@ -35,6 +54,20 @@ class Servo : public Moteus {
   void SetPosition(const PmCmd& cmd) {
     static_cast<Moteus*>(this)->SetPosition(cmd, pm_fmt_);
   }
+
+  struct {
+    bool encoder_invalid = false;
+    bool aux2pos_range_invalid = false;
+    bool aux2pos_frozen = false;
+    bool torque_too_high = false;
+
+    bool Exists() const {
+      return encoder_invalid ||        //
+             aux2pos_range_invalid ||  //
+             aux2pos_frozen ||         //
+             torque_too_high;
+    }
+  } failure_;
 
  private:
   const int id_;

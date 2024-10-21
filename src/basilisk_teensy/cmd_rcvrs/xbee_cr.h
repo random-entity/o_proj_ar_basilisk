@@ -15,19 +15,19 @@ class XbeeCommandReceiver {
  public:
   bool Setup(Basilisk* b) {
     if (!b) {
-      Serial.println("XbeeCommandReceiver: Null pointer to Basilisk");
+      Pln("XbeeCommandReceiver: Null pointer to Basilisk");
       return false;
     }
     b_ = b;
-    Serial.println("XbeeCommandReceiver: Registered reference to Basilisk");
+    Pln("XbeeCommandReceiver: Registered reference to Basilisk");
 
     XBEE_SERIAL.begin(115200);
     if (!XBEE_SERIAL) {
-      Serial.println("XbeeCommandReceiver: XBEE_SERIAL(Serial4) begin failed");
+      Pln("XbeeCommandReceiver: XBEE_SERIAL(Serial4) begin failed");
       return false;
     }
 
-    Serial.println("XbeeCommandReceiver: Setup complete");
+    Pln("XbeeCommandReceiver: Setup complete");
     return true;
   }
 
@@ -57,12 +57,12 @@ class XbeeCommandReceiver {
                                  // then set waiting send flag later.
 
 #if DEBUG_PRINT_XBEE_TIMING
-      Serial.println("*****XbeeCommandReceiver*****");
-      Serial.print("SUID ");
+      Pln("*****XbeeCommandReceiver*****");
+      P("SUID ");
       Serial.print(b_->cfg_.suid);
-      Serial.print(" Start ");
+      P(" Start ");
       Serial.print(micros());
-      Serial.println(" -> 0");
+      Pln(" -> 0");
 #endif
     }
 
@@ -71,11 +71,11 @@ class XbeeCommandReceiver {
 
     if (time_since_start_us > timing::xb::receive_timeout_us) {
 #if DEBUG_PRINT_XBEE_TIMING
-      Serial.print("Wait again ");
+      P("Wait again ");
       Serial.println(time_since_start_us);
 #endif
 
-      if (!got_full_packet) Serial.println("XBCR TIMEOUT!");
+      if (!got_full_packet) Pln("XBCR TIMEOUT!");
 
       receiving_ = false;
       start = 0;
@@ -94,10 +94,10 @@ class XbeeCommandReceiver {
     }
 
 #if DEBUG_PRINT_XBEE_RECEIVE
-    Serial.print("Received bytes ");
+    P("Received bytes ");
     for (auto i = prev_buf_idx; i < buf_idx; i++) {
       Serial.print(temp_rbuf.raw_bytes[i]);
-      Serial.print(", ");
+      P(", ");
     }
     Serial.println();
 #endif
@@ -111,7 +111,7 @@ class XbeeCommandReceiver {
     got_full_packet = true;
 
 #if DEBUG_PRINT_XBEE_TIMING
-    Serial.print("Full packet received ");
+    P("Full packet received ");
     Serial.println(time_since_start_us);
 #endif
 
@@ -131,7 +131,7 @@ class XbeeCommandReceiver {
           roster::updated_time[other_suid - 1] = micros();
 
 #if DEBUG_PRINT_XBEE_RECEIVE
-          Serial.print("Received Reply from SUID ");
+          P("Received Reply from SUID ");
           Serial.println(other_suid);
 #endif
 
@@ -140,7 +140,7 @@ class XbeeCommandReceiver {
       }
 
 #if DEBUG_PRINT_XBEE_TIMING
-      Serial.print("Full packet processed ");
+      P("Full packet processed ");
       Serial.println(time_since_start_us);
 #endif
 
@@ -157,10 +157,10 @@ class XbeeCommandReceiver {
       XbeeReplySender::waiting_send_ = true;
 
 #if DEBUG_PRINT_XBEE_RECEIVE
-      Serial.println("Poll received, send flag set");
+      Pln("Poll received, send flag set");
 #endif
 #if DEBUG_PRINT_XBEE_TIMING
-      Serial.print("Full packet processed ");
+      P("Full packet processed ");
       Serial.println(time_since_start_us);
 #endif
 
@@ -180,10 +180,10 @@ class XbeeCommandReceiver {
         waiting_parse_ = true;
 
 #if DEBUG_PRINT_XBEE_RECEIVE
-        Serial.println("Command for me received, copied to memory");
+        Pln("Command for me received, copied to memory");
 #endif
 #if DEBUG_PRINT_XBEE_TIMING
-        Serial.print("Full packet processed ");
+        P("Full packet processed ");
         Serial.println(time_since_start_us);
 #endif
 
@@ -194,10 +194,10 @@ class XbeeCommandReceiver {
 
       else {
 #if DEBUG_PRINT_XBEE_RECEIVE
-        Serial.println("This Command is NOT for me");
+        Pln("This Command is NOT for me");
 #endif
 #if DEBUG_PRINT_XBEE_TIMING
-        Serial.print("Full packet processed ");
+        P("Full packet processed ");
         Serial.println(time_since_start_us);
 #endif
 
@@ -209,7 +209,7 @@ class XbeeCommandReceiver {
   }
 
   inline static void Parse() {
-    Serial.println("Parse begin");
+    Pln("Parse begin");
 
     static auto& x = xb_cmd_.decoded;
     static auto& c = b_->cmd_;
@@ -242,7 +242,7 @@ class XbeeCommandReceiver {
       case M::DoPreset: {
         c.do_preset.idx = x.u.do_preset.idx[b_->cfg_.suid - 1];
 
-        // Serial.print("Copied to memory, Preset index ");
+        // P("Copied to memory, Preset index ");
         // Serial.print(c.do_preset.idx);
         // Serial.println();
       } break;
@@ -262,9 +262,9 @@ class XbeeCommandReceiver {
         c.pivot.exit_to_mode = M::Idle_Init;
       } break;
       default: {
-        // Serial.print("XbeeCommandReceiver: Mode ");
+        // P("XbeeCommandReceiver: Mode ");
         // Serial.print(x.mode);
-        // Serial.print(" is NOT registered");
+        // P(" is NOT registered");
         // Serial.println();
       } break;
     }

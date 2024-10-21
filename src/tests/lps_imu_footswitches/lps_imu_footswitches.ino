@@ -72,9 +72,9 @@ void loop() {
 
     if (EBimuAsciiParser(euler, 3)) {
       Serial.print(euler[0]);
-      Serial.print(" ");
+      P(" ");
       Serial.print(euler[1]);
-      Serial.print(" ");
+      P(" ");
       Serial.print(euler[2]);
       Serial.println();
     }
@@ -83,7 +83,7 @@ void loop() {
   {
     Serial.print(F("Foot switches: "));
     Serial.print(digitalRead(foot_switch_l));
-    Serial.print(", ");
+    P(", ");
     Serial.println(digitalRead(foot_switch_r));
   }
 }

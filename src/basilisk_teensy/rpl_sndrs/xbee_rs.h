@@ -16,12 +16,12 @@ class XbeeReplySender {
   // Should be called before use.
   inline static bool Setup(Basilisk* b) {
     if (!b) {
-      Serial.println("XbeeReplySender: Null reference to Basilisk");
+      Pln("XbeeReplySender: Null reference to Basilisk");
       return false;
     }
     b_ = b;
     xb_rpl_.decoded.suids = 1 << (b->cfg_.suid - 1);
-    Serial.println("XbeeReplySender: Setup complete");
+    Pln("XbeeReplySender: Setup complete");
     return true;
   }
 
@@ -35,22 +35,22 @@ class XbeeReplySender {
     waiting_send_ = false;
     if (globals::poll_clk_us >= sndtim_us + send_timeout_us) {
 #if DEBUG_PRINT_XBEE_SEND
-      Serial.println("XbRS timeout");
+      Pln("XbRS timeout");
 #endif
       return;
     }
 
 #if DEBUG_PRINT_XBEE_TIMING
-    Serial.println("********");
-    Serial.println("My Reply");
-    Serial.print("Begin ");
+    Pln("********");
+    Pln("My Reply");
+    P("Begin ");
     Serial.println(globals::poll_clk_us);
 #endif
 
     Send();
 
 #if DEBUG_PRINT_XBEE_TIMING
-    Serial.print("Done ");
+    P("Done ");
     Serial.println(globals::poll_clk_us);
 #endif
   }

@@ -1,6 +1,9 @@
 #pragma once
 
-#include "helpers/imports.h"
+#include <Arduino.h>
+
+#include "helpers/clamped.h"
+#include "helpers/using_moteus.h"
 
 namespace globals {
 
@@ -18,6 +21,9 @@ const PhiSpeed slow = 0.075;
 const PhiSpeed normal = 0.1;
 const PhiSpeed fast = 0.2;
 const PhiSpeed faster = 0.3;
+const PhiSpeed fastest = 0.5;
+const PhiSpeed impossible = 0.75;
+const PhiSpeed yunakim = 1.0;
 }  // namespace speed
 
 namespace acclim {
@@ -26,53 +32,9 @@ PhiAccLim stiff = 4.0;
 }  // namespace acclim
 
 namespace maxdur {
-uint32_t safe = 3000;
+uint32_t safe = 5000;
 }
 
 }  // namespace stdval
-
-const PmFmt pm_fmt{.position = kFloat,
-                   .velocity = kFloat,
-                   .feedforward_torque = kIgnore,
-                   .kp_scale = kIgnore,
-                   .kd_scale = kIgnore,
-                   .maximum_torque = kFloat,
-                   .stop_position = kIgnore,  // Do NOT use!
-                   .watchdog_timeout = kFloat,
-                   .velocity_limit = kFloat,
-                   .accel_limit = kFloat,
-                   .fixed_voltage_override = kIgnore};
-
-const PmCmd pm_cmd_template{.position = NaN,
-                            .velocity = 0.0,
-                            .feedforward_torque = 0.0,
-                            .kp_scale = 1.0,
-                            .kd_scale = 1.0,
-                            .maximum_torque = 32.0,
-                            .stop_position = NaN,  // Do NOT use!
-                            .watchdog_timeout = NaN,
-                            .velocity_limit = 32.0,
-                            .accel_limit = 32.0,
-                            .fixed_voltage_override = NaN};
-
-const QFmt q_fmt{[] {
-  QFmt fmt;
-  fmt.mode = kInt8;
-  fmt.position = kFloat;
-  fmt.velocity = kFloat;
-  fmt.torque = kFloat;
-  fmt.q_current = kFloat;
-  fmt.d_current = kFloat;
-  fmt.abs_position = kFloat;
-  fmt.motor_temperature = kFloat;
-  fmt.trajectory_complete = kInt8;
-  fmt.home_state = kIgnore;
-  fmt.voltage = kFloat;
-  fmt.temperature = kFloat;
-  fmt.fault = kInt8;
-  fmt.extra[0] = {.register_number = kEncoder1Velocity, .resolution = kFloat};
-  fmt.extra[1] = {.register_number = kEncoderValidity, .resolution = kInt8};
-  return fmt;
-}()};
 
 }  // namespace globals

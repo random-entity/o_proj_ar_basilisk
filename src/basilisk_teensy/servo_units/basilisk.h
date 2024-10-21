@@ -7,6 +7,8 @@
 #include "../components/magnets.h"
 #include "../components/servo.h"
 #include "../globals.h"
+#include "../globals/moteus_fmt.h"
+#include "../helpers/beat.h"
 #include "../helpers/utils.h"
 #include "../roster/db.h"
 
@@ -58,15 +60,17 @@ class Basilisk {
 
   Basilisk(const Configuration& cfg)
       : cfg_{cfg},
-        pm_cmd_template_{&globals::pm_cmd_template},
-        l_{cfg.servo.id_l, cfg.servo.bus, &globals::pm_fmt, &globals::q_fmt},
-        r_{cfg.servo.id_r, cfg.servo.bus, &globals::pm_fmt, &globals::q_fmt},
+        pm_cmd_template_{&moteus_fmt::pm_cmd_template},
+        l_{cfg.servo.id_l, cfg.servo.bus,  //
+           &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt},
+        r_{cfg.servo.id_r, cfg.servo.bus,  //
+           &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt},
         s_{&l_, &r_},
         lps_{cfg.lps.c,    cfg.lps.x_c,  cfg.lps.y_c,  //
              cfg.lps.minx, cfg.lps.maxx, cfg.lps.miny, cfg.lps.maxy},
         imu_{},
         lego_{cfg.lego.pin_l, cfg.lego.pin_r},
-        mags_{&lego_,                            //
+        mags_{lego_,                             //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
               cfg.mags.pin_ra, cfg.mags.pin_rt},
         emergency_trq_thr_{0.5} {
@@ -82,7 +86,7 @@ class Basilisk {
 
   bool Setup() {
     if (!CanFdDriverInitializer::Setup(cfg_.servo.bus)) {
-      Serial.println("Basilisk: CanFdDriver setup failed");
+      Pln("Basilisk: CanFdDriver setup failed");
       return false;
     }
     CommandBoth([](Servo* s) {
@@ -90,29 +94,29 @@ class Basilisk {
       s->SetQuery();
       s->Print();
     });
-    Serial.println("Basilisk: Both Servos Stopped, Queried and Printed");
+    Pln("Basilisk: Both Servos Stopped, Queried and Printed");
 
     if (!lps_.Setup()) {
-      Serial.println("Basilisk: LPS setup failed");
+      Pln("Basilisk: LPS setup failed");
       return false;
     }
 
     if (!imu_.Setup()) {
-      Serial.println("Basilisk: IMU setup failed");
+      Pln("Basilisk: IMU setup failed");
       return false;
     }
 
     if (!lego_.Setup()) {
-      Serial.println("Basilisk: LegoBlocks setup failed");
+      Pln("Basilisk: LegoBlocks setup failed");
       return false;
     }
 
     if (!mags_.Setup()) {
-      Serial.println("Basilisk: Magnets setup failed");
+      Pln("Basilisk: Magnets setup failed");
       return false;
     }
 
-    Serial.println("Basilisk: All components setup succeeded");
+    Pln("Basilisk: All components setup succeeded");
     return true;
   }
 

@@ -47,7 +47,7 @@ class Executer {
 
     for (uint8_t id = 0; id < 4; id++) {
       if (b_->mags_.heavenfall_warning_[id]) {
-        Serial.print("Heavenfall ");
+        P("Heavenfall ");
         Serial.println(id);
 
         b_->cmd_.mode = Basilisk::Command::Mode::Idle_Init;
@@ -63,7 +63,7 @@ class Executer {
     if (maybe_mode_runner) {
       (*maybe_mode_runner)(b_);
     } else {
-      // Serial.println("Mode NOT registered to ModeRunners::mode_runners");
+      // Pln("Mode NOT registered to ModeRunners::mode_runners");
     }
   }
 

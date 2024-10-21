@@ -135,7 +135,7 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
             // Might be overlapping physically, and due to LPS error, at
             // front check is illegible. So just strongly push backwards.
 
-            Serial.println("Overlap");
+            Pln("Overlap");
 
             if (!walk_to_pos_in_field::trying_overlap_exit[other_suid - 1]) {
               walk_to_pos_in_field::force[other_suid - 1] =

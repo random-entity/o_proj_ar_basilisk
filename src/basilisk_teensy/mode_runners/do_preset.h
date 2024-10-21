@@ -52,7 +52,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
   auto& m = b->cmd_.mode;
   auto idx = b->cmd_.do_preset.idx;  // Copy, not reference.
 
-  Serial.print("Entered DoPreset Mode, Preset idx ");
+  P("Entered DoPreset Mode, Preset idx ");
   Serial.println(idx);
 
   switch (m) {
@@ -501,7 +501,7 @@ void ModeRunners::DoPreset(Basilisk* b) {
       if (maybe_preset) {
         (*maybe_preset)(b);
       } else if (idx != 0) {
-        Serial.println("Unregistered Preset index");
+        Pln("Unregistered Preset index");
         // m = M::SetMags_Init;
         // for (uint8_t i = 0; i < 4; i++) {
         //   b->cmd_.set_mags.strengths[i] = MagStren::Min;

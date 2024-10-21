@@ -1,0 +1,20 @@
+{
+  "files.associations": {
+    "*.pde": "java",
+    "map": "cpp",
+    "cmath": "cpp",
+    "array": "cpp",
+    "deque": "cpp",
+    "string": "cpp",
+    "unordered_map": "cpp",
+    "vector": "cpp",
+    "string_view": "cpp",
+    "initializer_list": "cpp",
+    "span": "cpp",
+    "atomic": "cpp",
+    "*.tcc": "cpp",
+    "cstdint": "cpp",
+    "random": "cpp",
+    "limits": "cpp"
+  }
+}

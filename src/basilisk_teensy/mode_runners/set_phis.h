@@ -62,13 +62,13 @@ void ModeRunners::SetPhis(Basilisk* b) {
               }
 #if I_WANT_DEBUG
               Serial.print(f == IDX_L ? "l_" : "r_");
-              Serial.print("c.tgt_phi[f] ");
+              P("c.tgt_phi[f] ");
               Serial.print(c.tgt_phi[f]);
-              Serial.print(" cur_outpos ");
+              P(" cur_outpos ");
               Serial.print(s->GetReply().abs_position);
-              Serial.print(" tgt_rtrvel ");
+              P(" tgt_rtrvel ");
               Serial.print(tgt_rtrvel);
-              Serial.print(" tgt_rtracclim ");
+              P(" tgt_rtracclim ");
               Serial.print(tgt_rtracclim);
               Serial.println();
 #endif

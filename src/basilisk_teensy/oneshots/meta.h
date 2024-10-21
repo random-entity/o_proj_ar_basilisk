@@ -2,6 +2,12 @@
 
 #include "../servo_units/basilisk.h"
 
+#define ONESHOT_CRMuxXbee (0)
+#define ONESHOT_SetBaseYaw (1)
+#define ONESHOT_Inspire (2)
+#define ONESHOT_GlobalPoll (3)
+#define ONESHOT_SaveOthersReply (4)
+
 struct BasiliskOneshots {
   static void CRMuxXbee(Basilisk*);
   static void SetBaseYaw(Basilisk*);
