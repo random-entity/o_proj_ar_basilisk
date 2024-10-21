@@ -27,4 +27,4 @@ const uint32_t safe = 3000;
 const uint32_t yoyuu = 5000;
 }  // namespace maxdur
 
-}  // namespace  consts
+}  // namespace consts
