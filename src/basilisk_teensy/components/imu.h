@@ -2,10 +2,9 @@
 
 #include <Arduino.h>
 
+#include "../globals/serials.h"
 #include "../helpers/do_you_want_debug.h"
 #include "../helpers/serial_print.h"
-
-#define IMU_SERIAL (Serial2)
 
 /* Angle unit of incoming data from the EBIMU board are in 'degrees', and
  * between -180.0 and 180.0, but the rest of the program assumes 'revolutions'
@@ -18,7 +17,7 @@ class Imu {
  public:
   // Must be called before use.
   bool Setup() {
-    IMU_SERIAL.begin(57600);
+    IMU_SERIAL.begin(IMU_SERIAL_BAUDRATE);
     delay(100);
     if (!IMU_SERIAL) {
 #if DEBUG_PRINT_INITIALIZATION

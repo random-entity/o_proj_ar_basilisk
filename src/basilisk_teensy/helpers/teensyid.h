@@ -4,6 +4,7 @@
 
 #include <map>
 
+#include "../globals/serials.h"
 #include "do_you_want_debug.h"
 
 #define TEENSYID_REGISTER_0 (0x401F4410)
@@ -19,6 +20,7 @@ uint64_t GetTeensyId() {
   teensyid.chunk[1] = *(volatile uint32_t*)TEENSYID_REGISTER_1;
 
 #if DEBUG_PRINT_TEENSYID
+  InitSerial();
   Serial.printf("TeensyID is 0x%08X", teensyid.chunk[1]);
   Serial.printf("%08X\n", teensyid.chunk[0]);
 #endif

@@ -1,5 +1,7 @@
 #pragma once
 
+#define ENABLE_SERIAL (1)  // Must be LOGICAL OR of all of below.
+
 #define DEBUG_PRINT_INITIALIZATION (1)
 #define DEBUG_PRINT_TEENSYID (1)
 #define DEBUG_PRINT_XBEE_TIMING (0)

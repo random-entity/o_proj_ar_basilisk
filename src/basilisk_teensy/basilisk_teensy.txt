@@ -54,8 +54,6 @@ void setup() {
   delay(250);
 
   Pln("******************************************");
-  P("Basilisk SUID set to ");
-  Serial.println(b.cfg_.suid);
   delay(250);
 
   if (!b.Setup()) {

@@ -3,11 +3,10 @@
 #include <Arduino.h>
 #include <Smoothed.h>
 
+#include "../globals/serials.h"
 #include "../helpers/do_you_want_debug.h"
 #include "../helpers/serial_print.h"
 #include "../helpers/vec2.h"
-
-#define LPS_SERIAL (Serial6)
 
 /* Length unit of incoming bytes from the LPS board is '10cm', so the field
  * `uin8_t dists_raw_[3]` which saves the raw values follows this unit, but the

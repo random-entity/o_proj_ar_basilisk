@@ -1,16 +1,25 @@
 #include "cmd_rcvrs/neokey_cr.h"
 #include "components/neokey.h"
 #include "components/specifics/neokey1x4_i2c0.h"
+#include "globals/serials.h"
+#include "helpers/do_you_want_debug.h"
+#include "helpers/teensyid.h"
 
 // Basilisk configuration.
 Basilisk::Configuration cfg{
     .suid =
         [] {
-          uint8_t suid = 0;
-          // const auto teensyid = GetTeensyId();
-          // if (teensyid_to_suid.find(teensyid) != teensyid_to_suid.end()) {
-          //   suid = teensyid_to_suid.at(teensyid);
-          // }
+          uint8_t suid = 14;
+          const auto teensyid = GetTeensyId();
+          const auto maybe_suid = teensyid_to_suid.find(teensyid);
+          if (maybe_suid != teensyid_to_suid.end()) {
+            suid = maybe_suid->second;
+          }
+#if DEBUG_PRINT_TEENSYID
+          // InitSerial(); is already done in GetTeensyId();.
+          P("Basilisk SUID set to ");
+          Serial.println(suid);
+#endif
           return suid;
         }(),  //
     .servo{.id_l = 1, .id_r = 2, .bus = 1},
@@ -33,8 +42,9 @@ Neokey& nk = specifics::neokey1x4_i2c0;
 NeokeyCommandReceiver nkcr{nk, b};
 
 void setup() {
-  Serial.begin(9600);
-  delay(250);
+#if ENABLE_SERIAL
+  InitSerial();
+#endif
 
   nkcr.Setup();
 }
