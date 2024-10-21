@@ -24,7 +24,6 @@ class Imu {
 #if DEBUG_PRINT_INITIALIZATION
       Pln("IMU: IMU_SERIAL(Serial2) begin failed");
 #endif
-
       return false;
     }
 
@@ -79,7 +78,8 @@ class Imu {
     }
   }
 
-  double GetYaw(const bool rel) {  // false: Absolute, true: Relative to Base
+  // rel == false: Absolute, true: Relative to Base
+  double GetYaw(const bool rel = true) {
     if (rel) {
       return euler_[2] + yaw_revs_ - base_yaw_;
     } else {

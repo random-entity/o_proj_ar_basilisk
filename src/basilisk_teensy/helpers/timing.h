@@ -4,8 +4,7 @@
 
 #include <map>
 
-namespace timing {
-namespace xb {
+namespace timing::xb {
 
 // Non-Poll Commands: (100ms)M  (M = ?)
 // Polls            : p = (100ms)N + c  (N = 0, s, 2s, ...)
@@ -48,5 +47,4 @@ const std::map<uint8_t, uint32_t> suid_to_send_time_us = [] {
   return result;
 }();
 
-}  // namespace xb
-}  // namespace timing
+}  // namespace timing::xb

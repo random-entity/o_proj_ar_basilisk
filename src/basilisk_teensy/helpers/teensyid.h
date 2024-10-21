@@ -4,10 +4,12 @@
 
 #include <map>
 
+#include "do_you_want_debug.h"
+
 #define TEENSYID_REGISTER_0 (0x401F4410)
 #define TEENSYID_REGISTER_1 (0x401F4420)
 
-uint64_t GetTeensyId(const bool print) {
+uint64_t GetTeensyId() {
   union {
     uint64_t matome;
     uint32_t chunk[2];
@@ -16,10 +18,10 @@ uint64_t GetTeensyId(const bool print) {
   teensyid.chunk[0] = *(volatile uint32_t*)TEENSYID_REGISTER_0;
   teensyid.chunk[1] = *(volatile uint32_t*)TEENSYID_REGISTER_1;
 
-  if (print) {
-    Serial.printf("TeensyID is 0x%08X", teensyid.chunk[1]);
-    Serial.printf("%08X\n", teensyid.chunk[0]);
-  }
+#if DEBUG_PRINT_TEENSYID
+  Serial.printf("TeensyID is 0x%08X", teensyid.chunk[1]);
+  Serial.printf("%08X\n", teensyid.chunk[0]);
+#endif
 
   return teensyid.matome;
 }
