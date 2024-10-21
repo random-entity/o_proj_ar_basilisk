@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../presets/matome.h"
+#include "../presets/_matome.h"
 #include "../rpl_sndrs/led_rs.h"
-#include "meta.h"
+#include "_meta.h"
 
 // * Meta
 // 50000 Idle
@@ -20,14 +20,15 @@
 // 99 BounceWalk(tgt_yaw = random)
 
 // * PPP
-// 70 WalkToPosInField to grid arrangment
-// 71 WalkToPosInField to pyramid arrangment
-// 72 WalkToPosInField to solo-chorus arrangment
+// 70 WalkToPosInField to grid arrangement
+// 71 WalkToPosInField to pyramid arrangement
+// 72 WalkToPosInField to solo-chorus arrangement
 // 73 Sufi to look at solo
-// 81 ~ 88 WalkToPosInField to circular arrangment
+// 81 ~ 88 WalkToPosInField to '1-4-8' circular arrangement
 // 91 ~ 98 Sufi to target yaw relative to center
 // 101 ~ 108 WalkToDir relative to current yaw
 // 201 ~ 213 Find SUID
+// 701 ~ 713 WalkToPosInField to '0-13' circular arrangement
 // 1000 ~ 2999 Pivot
 // 3100 ~ 3299 PivSpin
 // 3300 ~ 3399 Sufi

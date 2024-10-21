@@ -1,12 +1,16 @@
 #pragma once
 
+#include <elapsedMillis.h>
+
 #include "../globals/moteus_fmt.h"
 #include "../helpers/clamped.h"
+#include "../helpers/rpl_extra.h"
+#include "../helpers/serial_print.h"
 #include "canfd_drivers.h"
 
 class Servo : public Moteus {
  public:
-  Servo(const int& id, uint8_t bus,  //
+  Servo(const int& id, const int& bus,  //
         const PmFmt* const pm_fmt, const QFmt* const q_fmt)
       : Moteus{canfd_drivers[bus - 1],
                [&]() {
@@ -33,13 +37,15 @@ class Servo : public Moteus {
     const auto rpl = GetReply();
 
     failure_.encoder_invalid =
-        (static_cast<uint8_t>(rpl.extra[1].value) != 0xF);
-    failure_.aux2pos_range_invalid =
+        (static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)) != 0xF);
+    failure_.aux2pos_invalid_range =
         (rpl.abs_position != Phi{rpl.abs_position});
     failure_.aux2pos_frozen = (prev_rpl.abs_position == rpl.abs_position);
-    failure_.torque_too_high =
-        (abs(rpl.torque) >
-         0.9 * moteus_fmt::pm_cmd_template.maximum_torque);
+    failure_.stuck = (abs(GetExtraValue(rpl, kControlVelocity)) > 1e-2) &&
+                     (abs(GetExtraValue(rpl, kControlVelocityError)) > 1e-1);
+    failure_.overtorque =
+        (abs(rpl.torque) > 0.9 * GetExtraValue(rpl, kCommandPositionMaxTorque));
+
     return failure_.Exists();
   }
 
@@ -55,17 +61,45 @@ class Servo : public Moteus {
     static_cast<Moteus*>(this)->SetPosition(cmd, pm_fmt_);
   }
 
-  struct {
-    bool encoder_invalid = false;
-    bool aux2pos_range_invalid = false;
-    bool aux2pos_frozen = false;
-    bool torque_too_high = false;
+  struct Failure {
+    inline static const int num_items = 5;
+
+    struct Item {
+      bool present = false;
+      elapsedMillis elapsed = 0;
+      const uint32_t persist_thr;
+
+      Item(const uint32_t& _persist_thr) : persist_thr{_persist_thr} {}
+
+      Item& operator=(const bool& val) {
+        present = val;
+        if (!present) elapsed = 0;
+        return *this;
+      }
+
+      operator bool() const { return present && elapsed >= persist_thr; }
+    } items[num_items] = {{0}, {0}, {100}, {250}, {250}};
+
+    Item& encoder_invalid = items[0];
+    Item& aux2pos_invalid_range = items[1];
+    Item& aux2pos_frozen = items[2];
+    Item& stuck = items[3];
+    Item& overtorque = items[4];
 
     bool Exists() const {
-      return encoder_invalid ||        //
-             aux2pos_range_invalid ||  //
-             aux2pos_frozen ||         //
-             torque_too_high;
+      for (int i = 0; i < num_items; i++) {
+        if (items[i]) return true;
+      }
+      return false;
+    }
+
+    uint8_t Export() const {
+      static uint8_t result = 0;
+      for (int i = 0; i < num_items; i++) {
+        if (items[i]) result |= (1 << i);
+      }
+
+      return result;
     }
   } failure_;
 
@@ -78,38 +112,41 @@ class Servo : public Moteus {
   void Print() {
     const auto rpl = GetReply();
     Serial.print(id_);
-    Serial.print(F(" -> t "));
+    P(" -> t ");
     Serial.print(millis());
-    Serial.print(F(" / mod "));
+    P(" / mod ");
     Serial.print(static_cast<int>(rpl.mode));
-    Serial.print(F(" / pos "));
-    Serial.print(rpl.position, 3);
-    Serial.print(F(" / vel "));
-    Serial.print(rpl.velocity, 3);
-    Serial.print(F(" / trq "));
-    Serial.print(rpl.torque, 3);
-    Serial.print(F(" / qcr "));
+    P(" / pos ");
+    Serial.print(rpl.position, 4);
+    P(" / vel ");
+    Serial.print(rpl.velocity, 4);
+    P(" / trq ");
+    Serial.print(rpl.torque, 4);
+    P(" / qcr ");
     Serial.print(rpl.q_current);
-    Serial.print(F(" / dcr "));
+    P(" / dcr ");
     Serial.print(rpl.d_current);
-    Serial.print(F(" / a2p "));
-    Serial.print(rpl.abs_position, 3);
-    Serial.print(F(" / mtp "));
+    P(" / a2p ");
+    Serial.print(rpl.abs_position, 4);
+    P(" / mtp ");
     Serial.print(rpl.motor_temperature);
-    Serial.print(F(" / tjc "));
+    P(" / tjc ");
     Serial.print(rpl.trajectory_complete);
-    Serial.print(F(" / hom "));
+    P(" / hom ");
     Serial.print(static_cast<int>(rpl.home_state));
-    Serial.print(F(" / vlt "));
+    P(" / vlt ");
     Serial.print(rpl.voltage);
-    Serial.print(F(" / tmp "));
+    P(" / tmp ");
     Serial.print(rpl.temperature);
-    Serial.print(F(" / flt "));
+    P(" / flt ");
     Serial.print(rpl.fault);
-    Serial.print(F(" / a2v "));
-    Serial.print(rpl.extra[0].value, 3);
-    Serial.print(F(" / evl "));
-    Serial.print(static_cast<uint8_t>(rpl.extra[1].value), BIN);
+    P(" / ver ");
+    Serial.print(GetExtraValue(rpl, kControlVelocityError), 4);
+    P(" / a2v ");
+    Serial.print(GetExtraValue(rpl, kEncoder1Velocity), 4);
+    P(" / evl ");
+    Serial.print(static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)),
+                 BIN);
     Serial.println();
   }
 };

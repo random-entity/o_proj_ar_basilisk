@@ -1,6 +1,6 @@
 #pragma once
 
-#include "meta.h"
+#include "_meta.h"
 
 void ModeRunners::Idle(Basilisk* b) {
   auto& m = b->cmd_.mode;

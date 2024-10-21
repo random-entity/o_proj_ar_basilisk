@@ -2,18 +2,9 @@
 
 #include <Arduino.h>
 
-#include "helpers/clamped.h"
-#include "helpers/using_moteus.h"
+#include "../helpers/clamped.h"
 
-namespace globals {
-
-elapsedMicros poll_clk_us;
-
-namespace var {
-PhiSpeed speed = 0.1;
-}
-
-namespace stdval {
+namespace consts {
 
 namespace speed {
 const PhiSpeed slower = 0.05;
@@ -27,14 +18,13 @@ const PhiSpeed yunakim = 1.0;
 }  // namespace speed
 
 namespace acclim {
-PhiAccLim standard = 2.0;
-PhiAccLim stiff = 4.0;
+const PhiAccLim standard = 2.0;
+const PhiAccLim stiff = 4.0;
 }  // namespace acclim
 
 namespace maxdur {
-uint32_t safe = 5000;
-}
+const uint32_t safe = 3000;
+const uint32_t yoyuu = 5000;
+}  // namespace maxdur
 
-}  // namespace stdval
-
-}  // namespace globals
+}  // namespace  consts

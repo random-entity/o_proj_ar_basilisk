@@ -21,11 +21,11 @@ const PmCmd pm_cmd_template{.position = NaN,
                             .feedforward_torque = 0.0,
                             .kp_scale = 1.0,
                             .kd_scale = 1.0,
-                            .maximum_torque = 0.75,
+                            .maximum_torque = 0.5,
                             .stop_position = NaN,  // Do NOT use!
                             .watchdog_timeout = 0.1,
-                            .velocity_limit = 16.0,
-                            .accel_limit = 128.0,
+                            .velocity_limit = 21.0,
+                            .accel_limit = 210.0,
                             .fixed_voltage_override = NaN};
 
 const QFmt q_fmt{[] {
@@ -43,10 +43,28 @@ const QFmt q_fmt{[] {
   fmt.voltage = kFloat;
   fmt.temperature = kFloat;
   fmt.fault = kInt8;
-  fmt.extra[0] = {.register_number = kControlVelocityError,
-                  .resolution = kFloat};
-  fmt.extra[1] = {.register_number = kEncoder1Velocity, .resolution = kFloat};
-  fmt.extra[2] = {.register_number = kEncoderValidity, .resolution = kInt8};
+
+  fmt.extra[0] = {
+      .register_number = kCommandPositionMaxTorque,
+      .resolution = kFloat,
+  };
+  fmt.extra[1] = {
+      .register_number = kControlVelocity,
+      .resolution = kFloat,
+  };
+  fmt.extra[2] = {
+      .register_number = kControlVelocityError,
+      .resolution = kFloat,
+  };
+  fmt.extra[3] = {
+      .register_number = kEncoder1Velocity,
+      .resolution = kFloat,
+  };
+  fmt.extra[4] = {
+      .register_number = kEncoderValidity,
+      .resolution = kInt8,
+  };
+
   return fmt;
 }()};
 

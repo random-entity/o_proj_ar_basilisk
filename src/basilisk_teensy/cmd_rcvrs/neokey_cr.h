@@ -52,16 +52,13 @@ class NeokeyCommandReceiver {
       } break;
       case 1: {
         m = M::Idle_Init;
-        Serial.println("1");
       } break;
       case 2: {
         m = M::Free;
-        Serial.println("2");
       } break;
       case 3: {  // SetBaseYaw(0.0)
         c.oneshots |= (1 << 1);
         c.set_base_yaw.offset = 0.0;
-        Serial.println("3");
       } break;
       case 4: {
         // b_.crmux_ = Basilisk::CRMux::Xbee;

@@ -17,6 +17,7 @@
                 "__arm__",
                 "__IMXRT1062__",
                 "TEENSYDUINO",
+                "ARDUINO",
                 "USB_SERIAL"
             ]
         }

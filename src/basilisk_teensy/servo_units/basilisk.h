@@ -6,7 +6,6 @@
 #include "../components/lps.h"
 #include "../components/magnets.h"
 #include "../components/servo.h"
-#include "../globals.h"
 #include "../globals/moteus_fmt.h"
 #include "../helpers/beat.h"
 #include "../helpers/utils.h"
@@ -23,7 +22,7 @@ class Basilisk {
     uint8_t suid;  // 1 <= ID of this Basilisk <= 13
     struct {
       int id_l = 1, id_r = 2;
-      uint8_t bus = 1;
+      int bus = 1;
     } servo;
     struct {
       double c, x_c, y_c;
@@ -34,15 +33,14 @@ class Basilisk {
       uint32_t run_interval = 10;
     } lego;
     struct {
-      uint8_t pin_la = 3, pin_lt = 4, pin_ra = 5, pin_rt = 6;
+      int pin_la = 3, pin_lt = 4, pin_ra = 5, pin_rt = 6;
       uint32_t run_interval = 100;
     } mags;
   } cfg_;
 
   const double gr_ = 21.0;  // delta_rotor = delta_output * gear_ratio
-  const double boundary_radius_ = 150.0;
+  const double boundary_radius_ = 100.0;
   const double overlap_thr_ = 50.0;
-  const double emergency_trq_thr_;
   const PmCmd* const pm_cmd_template_;
 
   /////////////////
@@ -54,6 +52,7 @@ class Basilisk {
   Imu imu_;          // Run every loop().
   LegoBlocks lego_;  // Run in regular interval.
   Magnets mags_;     // Run in regular interval.
+  elapsedMicros poll_clk_us;
 
   //////////////////
   // Constructor: //
@@ -72,8 +71,7 @@ class Basilisk {
         lego_{cfg.lego.pin_l, cfg.lego.pin_r},
         mags_{lego_,                             //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
-              cfg.mags.pin_ra, cfg.mags.pin_rt},
-        emergency_trq_thr_{0.5} {
+              cfg.mags.pin_ra, cfg.mags.pin_rt} {
     rpl_.b = this;
     rpl_.suid = &cfg_.suid;
     rpl_.mode = &cmd_.mode;
@@ -185,8 +183,8 @@ class Basilisk {
       SetMags_Wait = 6,  // -> Exit
 
       /* RandomMags: Randomly tap-dance. */
-      RandomMags_Init = 19,
-      RandomMags_Do = 18,
+      RandomMags_Init = 18,
+      RandomMags_Do = 19,
 
       /* SetPhis: Control Servos to achieve target phis.
        *          Future-chain-able.
@@ -480,11 +478,6 @@ class Basilisk {
     }
 
     return collision;
-  }
-
-  bool Emergency() {
-    return abs(l_.GetReply().torque) > emergency_trq_thr_ ||
-           abs(r_.GetReply().torque) > emergency_trq_thr_;
   }
 
   void Print() {
