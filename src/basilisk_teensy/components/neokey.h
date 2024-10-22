@@ -55,7 +55,7 @@ class Neokey : public Adafruit_MultiNeoKey1x4 {
 
   // Should be called in regular interval short enough to ensure that
   // no physical press of a button is missed.
-  void Run() {
+  void Read() {
     for (uint8_t row = 0; row < _rows; row++) {
       for (uint8_t col = 0; col < _cols; col++) {
         const uint8_t nk_idx = row * _cols + col;

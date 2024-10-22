@@ -28,8 +28,11 @@ class Magnets {
  public:
   Magnets(LegoBlocks& lego,                              //
           const int& pin_la = 3, const int& pin_lt = 4,  //
-          const int& pin_ra = 5, const int& pin_rt = 6)
-      : pins_{pin_la, pin_lt, pin_ra, pin_rt}, lego_{lego} {}
+          const int& pin_ra = 5, const int& pin_rt = 6,
+          const uint32_t& run_interval = 100)
+      : pins_{pin_la, pin_lt, pin_ra, pin_rt},
+        lego_{lego},
+        beat_{run_interval} {}
 
   // Must be called before use.
   bool Setup() {
@@ -41,9 +44,11 @@ class Magnets {
     return true;
   }
 
-  // Should be called in regular interval to track if any of the
-  // electromagnets are being passed current for over 3 seconds.
   void Run() {
+    if (!beat_.Hit()) return;
+
+    // Call continuously to track if any of the electromagnets are
+    // being passed current for too long.
     for (int id = 0; id < 4; id++) {
       if (attaching_[id]) {
         since_attach_[id] = 0;
@@ -77,5 +82,8 @@ class Magnets {
   elapsedMillis since_attach_[4] = {0};
   elapsedMillis since_release_[4] = {0};
   bool heavenfall_[4] = {false};
+
+ private:
   LegoBlocks& lego_;
+  Beat beat_;
 };

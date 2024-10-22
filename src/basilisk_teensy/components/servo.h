@@ -30,27 +30,26 @@ class Servo : public Moteus {
         q_fmt_{q_fmt} {}
 
   bool SetQuery() {
-    return static_cast<Moteus*>(this)->SetQuery(q_fmt_);
-    // const auto prev_rpl = last_result().values;
+    const auto prev_rpl = last_result().values;
 
-    // failure_.query_failed = !(static_cast<Moteus*>(this)->SetQuery(q_fmt_));
+    failure_.query_failed = !(static_cast<Moteus*>(this)->SetQuery(q_fmt_));
 
-    // if (failure_.query_failed) return false;
+    if (failure_.query_failed) return false;
 
-    // const auto rpl = GetReply();
+    const auto rpl = GetReply();
 
-    // failure_.encoder_invalid =
-    //     (static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)) != 0xF);
-    // failure_.aux2pos_invalid_range =
-    //     (rpl.abs_position != Phi{rpl.abs_position});
-    // failure_.aux2pos_frozen =
-    //     (abs(prev_rpl.abs_position - rpl.abs_position) < 1e-4);
-    // failure_.stuck = (abs(GetExtraValue(rpl, kControlVelocity)) > 1e-2) &&
-    //                  (abs(GetExtraValue(rpl, kControlVelocityError)) > 1e-1);
-    // failure_.overtorque =
-    //     (abs(rpl.torque) > 0.9 * GetExtraValue(rpl, kCommandPositionMaxTorque));
+    failure_.encoder_invalid =
+        (static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)) != 0xF);
+    failure_.aux2pos_invalid_range =
+        (rpl.abs_position != Phi{rpl.abs_position});
+    failure_.aux2pos_frozen =
+        (abs(prev_rpl.abs_position - rpl.abs_position) < 1e-4);
+    failure_.stuck = (abs(GetExtraValue(rpl, kControlVelocity)) > 1e-2) &&
+                     (abs(GetExtraValue(rpl, kControlVelocityError)) > 1e-1);
+    failure_.overtorque =
+        (abs(rpl.torque) > 0.9 * GetExtraValue(rpl, kCommandPositionMaxTorque));
 
-    // return failure_.Exists();
+    return failure_.Exists();
   }
 
   // Aux2 position uncoiled.
@@ -66,7 +65,7 @@ class Servo : public Moteus {
   }
 
   struct Failure {
-    inline static const int num_items = 6;
+    inline static constexpr int num_items = 6;
 
     struct Item {
       bool present = false;
@@ -108,7 +107,7 @@ class Servo : public Moteus {
     }
   } failure_;
 
-//  private:
+  //  private:
   const int id_;
   const PmFmt* const pm_fmt_;
   const QFmt* const q_fmt_;

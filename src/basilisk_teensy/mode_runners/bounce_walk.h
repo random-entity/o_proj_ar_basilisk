@@ -57,7 +57,7 @@ void ModeRunners::BounceWalk(Basilisk* b) {
             b->mags_.SetStrength(0, MagStren::Min);
             b->mags_.SetStrength(1, MagStren::Min);
           }
-          b->CommandBoth([](Servo* s) { s->SetStop(); });
+          b->CommandBoth([](Servo& s) { s->SetStop(); });
 
           bounce_walk::tgt_yaw = bounce_walk::tgt_yaw + 0.5;
           bounce_walk::reinit = true;

@@ -6,8 +6,8 @@ namespace tests {
 using M = Basilisk::Command::Mode;
 
 void SetPhis(Basilisk& b) {
-  b.CommandBoth([](Servo* s) {
-    s->SetPosition([] {
+  b.CommandBoth([](Servo& s) {
+    s.SetPosition([] {
       PmCmd cmd = moteus_fmt::pm_cmd_template;
       cmd.position = 0.0;
       cmd.velocity = NaN;

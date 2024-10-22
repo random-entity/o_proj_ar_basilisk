@@ -27,47 +27,45 @@ void (*canfd_isrs[4])() = {
     [] { canfd_drivers[0].isr(); }, [] { canfd_drivers[1].isr(); },
     [] { canfd_drivers[2].isr(); }, [] { canfd_drivers[3].isr(); }};
 
-struct CanFdDriverInitializer {
-  inline static bool Setup(const int& bus) {
-    if (bus < 1 || bus > 4) {
+bool InitializeCanFdDriver(const int& bus) {
+  if (bus < 1 || bus > 4) {
 #if DEBUG_SETUP
-      P("CanFdDriverInitializer: Unknown bus: ");
-      Serial.println(bus);
+    P("CanFdDriverInitializer: Unknown bus: ");
+    Serial.println(bus);
 #endif
-      return false;
-    } else if (bus <= 2) {
-      SPI.begin();
-    } else {
-      SPI1.begin();
-    }
+    return false;
+  } else if (bus <= 2) {
+    SPI.begin();
+  } else {
+    SPI1.begin();
+  }
 
-    const auto err_code = canfd_drivers[bus - 1].begin(
-        [] {
-          ACAN2517FDSettings settings{ACAN2517FDSettings::OSC_40MHz,
-                                      1000ll * 1000ll, DataBitRateFactor::x1};
-          settings.mArbitrationSJW = 2;
-          settings.mDriverTransmitFIFOSize = 1;
-          settings.mDriverReceiveFIFOSize = 2;
+  const auto err_code = canfd_drivers[bus - 1].begin(
+      [] {
+        ACAN2517FDSettings settings{ACAN2517FDSettings::OSC_40MHz,
+                                    1000ll * 1000ll, DataBitRateFactor::x1};
+        settings.mArbitrationSJW = 2;
+        settings.mDriverTransmitFIFOSize = 1;
+        settings.mDriverReceiveFIFOSize = 2;
 
-          return settings;
-        }(),
-        canfd_isrs[bus - 1]);
+        return settings;
+      }(),
+      canfd_isrs[bus - 1]);
 
-    if (err_code) {
-#if DEBUG_SETUP
-      P("CanFdDriverInitializer: CAN FD driver on bus ");
-      Serial.print(bus);
-      P(" begin failed, error code 0x");
-      Serial.println(err_code, HEX);
-#endif
-      return false;
-    }
-
+  if (err_code) {
 #if DEBUG_SETUP
     P("CanFdDriverInitializer: CAN FD driver on bus ");
     Serial.print(bus);
-    Pln(" started");
+    P(" begin failed, error code 0x");
+    Serial.println(err_code, HEX);
 #endif
-    return true;
+    return false;
   }
-};
+
+#if DEBUG_SETUP
+  P("CanFdDriverInitializer: CAN FD driver on bus ");
+  Serial.print(bus);
+  Pln(" started");
+#endif
+  return true;
+}

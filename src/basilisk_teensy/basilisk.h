@@ -40,7 +40,7 @@ class Basilisk {
 #endif
             return suid;
           }();
-    int suidm1() {  // 0 <= (SUID - 1) < 13
+    int suidm1() const {  // 0 <= (SUID - 1) < 13
       static const auto suidm1 = suid - 1;
       return suidm1;
     }
@@ -54,15 +54,15 @@ class Basilisk {
     } lps;
     struct {
       int pin_l = 23, pin_r = 29;
-      uint32_t run_interval;
+      uint32_t run_interval = 20;
     } lego;
     struct {
       int pin_la = 3, pin_lt = 4, pin_ra = 5, pin_rt = 6;
-      uint32_t run_interval;
+      uint32_t run_interval = 100;
     } mags;
     double gr = 21.0;  // delta_rotor = delta_output * gear_ratio
-    double collision_thr;
-    double overlap_thr;
+    double collision_thr = 100.0;
+    double overlap_thr = 50.0;
   } cfg_;
 
   const PmCmd* const pm_cmd_template_;
@@ -70,8 +70,9 @@ class Basilisk {
   /////////////////
   // Components: //
 
-  Servo l_, r_;
-  Servo* s_[2] = {0};
+  Servo s_[2];
+  Servo& l_;
+  Servo& r_;
   Lps lps_;          // Run every loop().
   Imu imu_;          // Run every loop().
   LegoBlocks lego_;  // Run in regular interval.
@@ -84,28 +85,24 @@ class Basilisk {
   Basilisk(const Configuration& cfg)
       : cfg_{cfg},
         pm_cmd_template_{&moteus_fmt::pm_cmd_template},
-        l_{cfg.servo.id_l, cfg.servo.bus,  //
-           &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt},
-        r_{cfg.servo.id_r, cfg.servo.bus,  //
-           &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt},
-        s_{&l_, &r_},
+        s_{{cfg.servo.id_l, cfg.servo.bus,  //
+            &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt},
+           {cfg.servo.id_r, cfg.servo.bus,  //
+            &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt}},
+        l_{s_[0]},
+        r_{s_[1]},
         lps_{cfg.lps.c,    cfg.lps.x_c,  cfg.lps.y_c,  //
              cfg.lps.minx, cfg.lps.maxx, cfg.lps.miny, cfg.lps.maxy},
         imu_{},
-        lego_{cfg.lego.pin_l, cfg.lego.pin_r},
+        lego_{cfg.lego.pin_l, cfg.lego.pin_r, cfg.lego.run_interval},
         mags_{lego_,                             //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
-              cfg.mags.pin_ra, cfg.mags.pin_rt},
+              cfg.mags.pin_ra, cfg.mags.pin_rt, cfg.mags.run_interval},
         rpl_{.b = this,
              .suid = static_cast<uint8_t>(cfg.suid),
              .mode = &cmd_.mode,
              .lpsx = &lps_.x_,
-             .lpsy = &lps_.y_} {
-    Serial.println(l_.id_);
-    Serial.println(r_.id_);
-    Serial.println(cfg_.servo.bus);
-    Serial.println(l_.q_fmt_->position);
-  }
+             .lpsy = &lps_.y_} {}
 
   ////////////////////////////////////////////////////////////
   // Setup method (should be called in setup() before use): //
@@ -118,7 +115,7 @@ class Basilisk {
       return false;
     }
 
-    if (!CanFdDriverInitializer::Setup(cfg_.servo.bus)) {
+    if (!InitializeCanFdDriver(cfg_.servo.bus)) {
 #if DEBUG_SETUP
       Pln("Basilisk: CanFdDriver setup failed");
 #endif
@@ -128,13 +125,10 @@ class Basilisk {
     Pln("Basilisk: CanFdDriver setup done");
 #endif
 
-    CommandBoth([](Servo* s) {
-      s->SetStop();
-      delay(10);
-      s->SetQuery();
-      delay(10);
-      s->Print();
-      delay(10);
+    CommandBoth([](Servo& s) {
+      s.SetStop();
+      s.SetQuery();
+      s.Print();
     });
 #if DEBUG_SETUP
     Pln("Basilisk: Both Servos Stopped, Queried and Printed");
@@ -180,10 +174,8 @@ class Basilisk {
   void Run() {
     lps_.Run();
     imu_.Run();
-    static Beat lego_beat_{cfg_.lego.run_interval};
-    if (lego_beat_.Hit()) lego_.Run();
-    static Beat mags_beat_{cfg_.mags.run_interval};
-    if (mags_beat_.Hit()) mags_.Run();
+    lego_.Run();
+    mags_.Run();
   }
 
   //////////////////////////////
@@ -514,7 +506,7 @@ class Basilisk {
 
   template <typename ServoCommand>
   void CommandBoth(ServoCommand c) {
-    for (auto* s : s_) c(s);
+    for (auto& s : s_) c(s);
   }
 
   uint16_t BoundaryCollision() {
@@ -537,9 +529,9 @@ class Basilisk {
   }
 
   void Print() {
-    CommandBoth([](Servo* s) {
-      s->SetQuery();
-      s->Print();
+    CommandBoth([](Servo& s) {
+      s.SetQuery();
+      s.Print();
     });
   }
 };

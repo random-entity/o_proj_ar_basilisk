@@ -4,15 +4,14 @@
 #include "cmd_rcvrs/neokey_cr.h"
 #include "components/neokey.h"
 #include "components/specifics/neokey1x4_i2c0.h"
-#include "globals/serials.h"
-// #include "globals/timing.h"
-// #include "helpers/beat.h"
 #include "executer.h"
+#include "globals/serials.h"
 #include "helpers/serial_print.h"
 #include "rpl_sndrs/led_rs.h"
 #include "rpl_sndrs/serial_rs.h"
+// #include "globals/timing.h"
 
-// Basilisk configuration.
+// Basilisk configuration overrides.
 Basilisk::Configuration cfg{
     .lps{.c = 300.0,
          .x_c = 150.0,
@@ -21,15 +20,22 @@ Basilisk::Configuration cfg{
          .maxx = 250.0,
          .miny = 50.0,
          .maxy = 250.0},
-    .lego{.run_interval = 20},
-    .mags{.run_interval = 100},
-    .collision_thr{100.0},
-    .overlap_thr{50.0},
 };
 
+// The Basilisk instance.
 Basilisk b{cfg};
+
+// CommandReceivers.
 Neokey& nk = specifics::neokey1x4_i2c0;
 NeokeyCommandReceiver nkcr{nk, b};
+
+// ReplySenders.
+#if DEBUG_SERIAL_RS
+SerialReplySender serrs{b};
+#endif
+LedReplySender ledrs{b, nk};
+
+// The Executer.
 Executer exec{b, nkcr};
 
 void setup() {
@@ -47,16 +53,22 @@ void setup() {
   //   Serial.println(timing::xb::span);
   // #endif
 
-  if (!b.Setup()) {
-    for (int i = 0; i < 4; i++) nk.setPixelColor(i, 0xF00000);
+  if (!nkcr.Setup()) {
 #if DEBUG_SETUP
-    Pln("Basilisk initialization failed");
-    Pln("*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x");
+    Pln("Neokey initialization failed");
+    Pln("x_x_x_x_x_x_x_x_x_x_x_x_x_x_");
 #endif
     while (1);
   }
 
-  nkcr.Setup();
+  if (!b.Setup()) {
+    for (int i = 0; i < 4; i++) nk.setPixelColor(i, 0xF00000);
+#if DEBUG_SETUP
+    Pln("Basilisk initialization failed");
+    Pln("x_x_x_x_x_x_x_x_x_x_x_x_x_x_x_");
+#endif
+    while (1);
+  }
 
 #if DEBUG_SETUP
   Pln("setup() done!");
@@ -66,18 +78,10 @@ void setup() {
 
 void loop() {
   b.Run();
-
-  static Beat exec_beat{10};
-  if (exec_beat.Hit()) exec.Run();
-
-  static Beat nkcr_beat{NeokeyCommandReceiver::run_interval_ms_};
-  if (nkcr_beat.Hit()) nkcr.Run();
-
-  static Beat led_rs_beat{1};
-  if (led_rs_beat.Hit()) LedReplySender(nk);
-
+  exec.Run();
+  nkcr.Run();
+  ledrs.Run();
 #if DEBUG_SERIAL_RS
-  static Beat serial_rs_beat{1000};
-  if (serial_rs_beat.Hit()) SerialReplySender(b);
+  serrs.Run();
 #endif
 }

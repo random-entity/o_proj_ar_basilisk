@@ -11,6 +11,8 @@ class Executer {
   Executer(Basilisk& b, NeokeyCommandReceiver& nkcr) : b_{b}, nkcr_{nkcr} {}
 
   void Run() {
+    if (!beat_.Hit()) return;
+
     // if (XbeeCommandReceiver::waiting_parse_) {
     //   if (XbeeCommandReceiver::xb_cmd_.decoded.oneshots &
     //       (1 << ONESHOT_CRMuxXbee)) {
@@ -27,11 +29,12 @@ class Executer {
 
     // BasiliskOneshots::Shoot(b_);
 
-    b_.CommandBoth([](Servo* s) {
-      const auto got_rpl = s->SetQuery();
-      // Pln((got_rpl ? "G" : "n"));
-      // Pln((s->failure_.Exists() ? "F" : "nn"));
-      // Serial.println(s->failure_.Export(), BIN);
+    b_.CommandBoth([](Servo& s) {
+      s.SetQuery();
+
+      if (s.failure_.Exists()) {
+        /* Handle Servo failure */
+      }
     });
 
     switch (b_.crmux_) {
@@ -76,4 +79,5 @@ class Executer {
  private:
   Basilisk& b_;
   NeokeyCommandReceiver& nkcr_;
+  Beat beat_{10};
 };

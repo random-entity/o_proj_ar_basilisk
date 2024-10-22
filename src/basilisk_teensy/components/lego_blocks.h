@@ -4,6 +4,7 @@
 #include <elapsedMillis.h>
 
 #include "../globals/serials.h"
+#include "../helpers/beat.h"
 #include "../helpers/clamped.h"
 #include "../helpers/serial_print.h"
 #include "../helpers/typedefs.h"
@@ -16,8 +17,9 @@
  * Why named LegoBlocks? Cuz you scream when you step on them. */
 class LegoBlocks {
  public:
-  LegoBlocks(const int& pin_l = 23, const int& pin_r = 29)
-      : pins_{pin_l, pin_r} {}
+  LegoBlocks(const int& pin_l = 23, const int& pin_r = 29,
+             const uint32_t& run_interval = 20)
+      : pins_{pin_l, pin_r}, beat_{run_interval} {}
 
   // Must be called before use.
   bool Setup() {
@@ -28,8 +30,10 @@ class LegoBlocks {
     return true;
   }
 
-  // Should be called in regular interval to track history of contact.
+  // Call continuously to track history of contact.
   void Run() {
+    if (!beat_.Hit()) return;
+
     for (const int f : IDX_LR) {
       state_[f].contact >>= 1;
       if (digitalRead(pins_[f])) {
@@ -61,5 +65,6 @@ class LegoBlocks {
   } state_[2];
 
  private:
+  Beat beat_;
   inline static constexpr uint64_t new_contact = one_uint64 << 63;
 };

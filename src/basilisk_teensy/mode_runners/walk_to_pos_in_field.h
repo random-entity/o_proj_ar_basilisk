@@ -106,7 +106,7 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
             b->mags_.SetStrength(0, MagStren::Min);
             b->mags_.SetStrength(1, MagStren::Min);
           }
-          b->CommandBoth([](Servo* s) { s->SetStop(); });
+          b->CommandBoth([](Servo& s) { s->SetStop(); });
 
           walk_to_pos_in_field::emergency_force =
               1e6 * Vec2{walk_to_pos_in_field::cur_tgt_yaw + 0.5};

@@ -7,7 +7,7 @@ void ModeRunners::Free(Basilisk* b) {
 
   switch (m) {
     case M::Free: {
-      b->CommandBoth([](Servo* s) { s->SetStop(); });
+      b->CommandBoth([](Servo& s) { s.SetStop(); });
       b->mags_.ReleaseAll();
       m = M::Wait;
       b->cmd_.wait.init_time = millis();

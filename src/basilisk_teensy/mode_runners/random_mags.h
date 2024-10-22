@@ -12,7 +12,7 @@ void ModeRunners::RandomMags(Basilisk* b) {
   switch (m) {
     case M::RandomMags_Init: {
       init_time = millis();
-      b->CommandBoth([](Servo* s) { s->SetStop(); });
+      b->CommandBoth([](Servo& s) { s->SetStop(); });
       m = M::RandomMags_Do;
     } break;
     case M::RandomMags_Do: {

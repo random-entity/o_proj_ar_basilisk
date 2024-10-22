@@ -5,6 +5,7 @@
 #include "../basilisk.h"
 #include "../components/neokey.h"
 #include "../globals/serials.h"
+#include "../helpers/beat.h"
 #include "../helpers/serial_print.h"
 #include "../tests/modes.h"
 
@@ -39,9 +40,10 @@ class NeokeyCommandReceiver {
     return true;
   }
 
-  // Should be called in regular interval short enough to ensure that
-  // no physical press of a button is missed between.
-  void Run() { nk_.Run(); }
+  void Run() {
+    if (!beat_.Hit()) return;
+    nk_.Read();
+  }
 
   void Parse() {
     using M = Basilisk::Command::Mode;
@@ -62,8 +64,8 @@ class NeokeyCommandReceiver {
         c.set_base_yaw.offset = 0.0;
       } break;
       case 4: {
-        // b_.crmux_ = Basilisk::CRMux::Xbee;
         tests::SetPhis(b_);
+        // b_.crmux_ = Basilisk::CRMux::Xbee;
         // tests::BounceWalk(b_);
         // tests::Pivot(b_);
         // tests::Diamond(b_);
@@ -76,9 +78,9 @@ class NeokeyCommandReceiver {
   }
 
   uint16_t nk_cmd_ = 0;
-  inline static constexpr uint32_t run_interval_ms_ = 10;
 
  private:
   Neokey& nk_;
   Basilisk& b_;
+  Beat beat_{10};
 };
