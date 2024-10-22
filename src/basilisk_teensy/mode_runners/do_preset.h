@@ -12,7 +12,8 @@
 // 50004 SetBaseYaw(-0.25)
 
 // * Specific
-// 1 ~ 4 Tibu
+// 1 ~ 4 Tibu foot
+// 5 ~ 12 Tibu individual magnet
 // 5 ~ 16 Pivot nogadas (deprecated)
 // 23 ~ 24 RandomTibutibu
 // 30 ~ 34 Change global SetPhis speed

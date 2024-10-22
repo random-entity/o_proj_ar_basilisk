@@ -46,7 +46,7 @@ class Executer {
     }
 
     for (uint8_t id = 0; id < 4; id++) {
-      if (b_->mags_.heavenfall_warning_[id]) {
+      if (b_->mags_.heavenfall_[id]) {
         P("Heavenfall ");
         Serial.println(id);
 

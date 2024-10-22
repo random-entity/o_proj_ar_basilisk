@@ -17,8 +17,8 @@
                 "__cplusplus=201703L",
                 "__arm__",
                 "__IMXRT1062__",
-                "TEENSYDUINO",
-                "ARDUINO=20302",
+                "TEENSYDUINO=159",
+                "ARDUINO=10607",
                 "USB_SERIAL"
             ]
         }

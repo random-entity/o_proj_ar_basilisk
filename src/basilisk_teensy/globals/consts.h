@@ -23,8 +23,9 @@ const PhiAccLim stiff = 4.0;
 }  // namespace acclim
 
 namespace maxdur {
-const uint32_t safe = 3000;
-const uint32_t yoyuu = 5000;
+constexpr uint32_t safe = 3000;
+constexpr uint32_t yoyuu = 5000;
+constexpr uint32_t beche = 8000;
 }  // namespace maxdur
 
 }  // namespace consts

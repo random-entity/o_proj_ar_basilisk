@@ -2,10 +2,10 @@
 
 #include <Arduino.h>
 
-#include "../components/neokey.h"
-#include "../helpers/do_you_want_debug.h"
-#include "../helpers/serial_print.h"
 #include "../basilisk.h"
+#include "../components/neokey.h"
+#include "../globals/serials.h"
+#include "../helpers/serial_print.h"
 
 class NeokeyCommandReceiver {
  public:

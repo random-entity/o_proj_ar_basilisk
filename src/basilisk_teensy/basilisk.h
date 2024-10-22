@@ -10,7 +10,6 @@
 #include "components/servo.h"
 #include "globals/moteus_fmt.h"
 #include "helpers/beat.h"
-#include "helpers/do_you_want_debug.h"
 #include "helpers/serial_print.h"
 #include "helpers/utils.h"
 #include "roster.h"

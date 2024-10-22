@@ -4,7 +4,6 @@
 #include <elapsedMillis.h>
 
 #include "../globals/serials.h"
-#include "../helpers/do_you_want_debug.h"
 #include "../helpers/serial_print.h"
 
 /* Angle unit of incoming data from the EBIMU board are in 'degrees', and

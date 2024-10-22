@@ -5,7 +5,6 @@
 #include <map>
 
 #include "../globals/serials.h"
-#include "do_you_want_debug.h"
 
 #define TEENSYID_REGISTER_0 (0x401F4410)
 #define TEENSYID_REGISTER_1 (0x401F4420)

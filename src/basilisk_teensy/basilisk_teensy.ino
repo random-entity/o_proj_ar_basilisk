@@ -5,7 +5,6 @@
 #include "globals/serials.h"
 #include "globals/timing.h"
 #include "helpers/beat.h"
-#include "helpers/do_you_want_debug.h"
 #include "helpers/teensyid.h"
 #include "rpl_sndrs/serial_rs.h"
 
@@ -62,7 +61,7 @@ void setup() {
     nk.setPixelColor(0, 0xF00000);
 #if DEBUG_INITIALIZATION
     Pln("Basilisk initialization failed");
-    Pln("******************************");
+    Pln("*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x");
 #endif
     while (1);
   }
@@ -71,7 +70,7 @@ void setup() {
 
 #if DEBUG_INITIALIZATION
   Pln("setup() done");
-  Pln("------------");
+  Pln("^-^-^-^-^-^-");
 #endif
 }
 

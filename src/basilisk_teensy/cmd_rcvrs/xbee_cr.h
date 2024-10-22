@@ -1,11 +1,11 @@
 #pragma once
 
 #include "../globals/timing.h"
-#include "../roster/db.h"
+#include "../globals/serials.h"
+#include "../roster.h"
 #include "../rpl_sndrs/xbee_rs.h"
-#include "../servo_units/basilisk.h"
+#include "../basilisk.h"
 
-#define XBEE_SERIAL Serial4
 #define XBEE_PACKET_LEN 46  // NOT counting the 4 starting bytes.
 
 class XbeeCommandReceiver {
@@ -21,7 +21,8 @@ class XbeeCommandReceiver {
     b_ = b;
     Pln("XbeeCommandReceiver: Registered reference to Basilisk");
 
-    XBEE_SERIAL.begin(115200);
+    XBEE_SERIAL.begin(XBEE_SERIAL_BAUDRATE);
+    delay(SERIAL_BEGIN_WAIT_TIME_MS);
     if (!XBEE_SERIAL) {
       Pln("XbeeCommandReceiver: XBEE_SERIAL(Serial4) begin failed");
       return false;

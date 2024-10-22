@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../globals/timing.h"
-#include "../servo_units/basilisk.h"
+#include "../basilisk.h"
 
 #ifndef XBEE_SERIAL
 #define XBEE_SERIAL Serial4

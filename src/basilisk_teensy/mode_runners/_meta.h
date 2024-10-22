@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "../servo_units/basilisk.h"
+#include "../basilisk.h"
 
 struct ModeRunners {
   using M = Basilisk::Command::Mode;

@@ -5,7 +5,7 @@
 
 #include <functional>
 
-#include "../helpers/do_you_want_debug.h"
+#include "../globals/serials.h"
 #include "../helpers/serial_print.h"
 
 /* Definition of row, col, x, y in a matrix of NeoKey1x4s:

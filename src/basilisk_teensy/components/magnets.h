@@ -2,7 +2,8 @@
 
 #include <elapsedMillis.h>
 
-#include "../helpers/do_you_want_debug.h"
+#include "../globals/consts.h"
+#include "../globals/serials.h"
 #include "../helpers/serial_print.h"
 #include "lego_blocks.h"
 
@@ -48,7 +49,7 @@ class Magnets {
       } else {
         since_release_[id] = 0;
       }
-      heavenfall_warning_[id] = (since_attach_[id] > heavenfall_thr_);
+      heavenfall_[id] = (since_attach_[id] > consts::maxdur::yoyuu);
     }
   }
 
@@ -74,7 +75,6 @@ class Magnets {
   bool attaching_[4] = {false};
   elapsedMillis since_attach_[4] = {0};
   elapsedMillis since_release_[4] = {0};
-  bool heavenfall_warning_[4] = {false};
-  inline static constexpr uint32_t heavenfall_thr_ = 5000;
+  bool heavenfall_[4] = {false};
   LegoBlocks& lego_;
 };

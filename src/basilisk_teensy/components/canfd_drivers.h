@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#include "../helpers/do_you_want_debug.h"
+#include "../globals/serials.h"
 #include "../helpers/serial_print.h"
 #include "../helpers/using_moteus.h"
 
