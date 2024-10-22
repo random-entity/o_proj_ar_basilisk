@@ -46,34 +46,44 @@ void setup() {
   //   Serial.println(timing::xb::span);
   // #endif
 
-  if (!b.Setup()) {
-    nk.setPixelColor(0, 0xF00000);
-#if DEBUG_SETUP
-    Pln("Basilisk initialization failed");
-    Pln("*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x");
-#endif
-    while (1);
-  }
+  CanFdDriverInitializer::Setup(1);
+  delay(100);
+  Servo l{1, 1, &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt};
+  delay(100);
+  l.SetStop();
+  delay(100);
+  l.SetQuery();
+  delay(100);
+  l.Print();
+
+  //   if (!b.Setup()) {
+  //     nk.setPixelColor(0, 0xF00000);
+  // #if DEBUG_SETUP
+  //     Pln("Basilisk initialization failed");
+  //     Pln("*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x");
+  // #endif
+  //     while (1);
+  //   }
 
   // nkcr.Setup();
 
-  // #if DEBUG_SETUP
-  //   Pln("setup() done!");
-  //   Pln("=^-^=^-^=^-^=");
-  // #endif
+#if DEBUG_SETUP
+  Pln("setup() done!");
+  Pln("=^-^=^-^=^-^=");
+#endif
 }
 
 void loop() {
-  b.Run();
+  // b.Run();
 
-  static Beat exec_beat{10};
-  if (exec_beat.Hit()) exec.Run();
+  // static Beat exec_beat{10};
+  // if (exec_beat.Hit()) exec.Run();
 
-    // static Beat nkcr_beat{NeokeyCommandReceiver::run_interval_ms_};
-    // if (nkcr_beat.Hit()) nkcr.Run();
+  // static Beat nkcr_beat{NeokeyCommandReceiver::run_interval_ms_};
+  // if (nkcr_beat.Hit()) nkcr.Run();
 
-#if DEBUG_SERIAL_RS
-  static Beat serial_rs_beat{1000};
-  if (serial_rs_beat.Hit()) SerialReplySender(b);
-#endif
+  // #if DEBUG_SERIAL_RS
+  // static Beat serial_rs_beat{1000};
+  // if (serial_rs_beat.Hit()) SerialReplySender(b);
+  // #endif
 }

@@ -35,7 +35,7 @@ class Basilisk {
             }
 #if DEBUG_TEENSYID
             InitSerial();
-            P("Basilisk SUID set to ");
+            P("SUID -> ");
             Serial.println(suid);
 #endif
             return suid;
@@ -100,7 +100,12 @@ class Basilisk {
              .suid = static_cast<uint8_t>(cfg.suid),
              .mode = &cmd_.mode,
              .lpsx = &lps_.x_,
-             .lpsy = &lps_.y_} {}
+             .lpsy = &lps_.y_} {
+    Serial.println(l_.id_);
+    Serial.println(r_.id_);
+    Serial.println(cfg_.servo.bus);
+    Serial.println(l_.q_fmt_->position);
+  }
 
   ////////////////////////////////////////////////////////////
   // Setup method (should be called in setup() before use): //
@@ -119,11 +124,17 @@ class Basilisk {
 #endif
       return false;
     }
+#if DEBUG_SETUP
+    Pln("Basilisk: CanFdDriver setup done");
+#endif
 
     CommandBoth([](Servo* s) {
       s->SetStop();
+      delay(10);
       s->SetQuery();
+      delay(10);
       s->Print();
+      delay(10);
     });
 #if DEBUG_SETUP
     Pln("Basilisk: Both Servos Stopped, Queried and Printed");

@@ -29,9 +29,9 @@ class Executer {
 
     b_->CommandBoth([](Servo* s) {
       const auto got_rpl = s->SetQuery();
-      Pln((got_rpl ? "G" : "n"));
+      // Pln((got_rpl ? "G" : "n"));
       // Pln((s->failure_.Exists() ? "F" : "nn"));
-      Serial.println(s->failure_.Export(), BIN);
+      // Serial.println(s->failure_.Export(), BIN);
     });
 
     // switch (b_->crmux_) {

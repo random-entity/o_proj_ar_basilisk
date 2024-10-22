@@ -7,7 +7,7 @@
 #define DEBUG_SETUP (1)
 #define DEBUG_TEENSYID (1)
 #define DEBUG_FAILURE (1)
-#define DEBUG_SERIAL_RS (1)
+#define DEBUG_SERIAL_RS (0)
 #define DEBUG_XBEE_TIMING (1)
 #define DEBUG_XBEE_RECEIVE (1)
 #define DEBUG_XBEE_SEND (1)
