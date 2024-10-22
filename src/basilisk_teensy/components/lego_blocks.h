@@ -22,7 +22,7 @@ class LegoBlocks {
   // Must be called before use.
   bool Setup() {
     for (const auto& pin : pins_) pinMode(pin, INPUT);
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("LegoBlocks: Setup complete");
 #endif
     return true;

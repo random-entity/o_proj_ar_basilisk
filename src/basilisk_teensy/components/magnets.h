@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Arduino.h>
 #include <elapsedMillis.h>
 
 #include "../globals/consts.h"
@@ -34,7 +35,7 @@ class Magnets {
   bool Setup() {
     for (const auto& pin : pins_) pinMode(pin, OUTPUT);
     AttachAll();
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("Magnets: Setup complete");
 #endif
     return true;

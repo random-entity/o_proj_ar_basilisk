@@ -30,22 +30,22 @@ class Neokey : public Adafruit_MultiNeoKey1x4 {
   bool Setup(const std::function<void(uint16_t)>& rise_callback) {
     Wire.begin();
     delay(100);
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("Neokey: Wire began");
 #endif
 
     if (!begin()) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("Neokey: Neokey begin failed");
 #endif
       return false;
     }
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("Neokey: Neokey began");
 #endif
 
     rise_callback_ = rise_callback;
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("Neokey: Registered rise callback");
 
     Pln("Neokey: Setup complete");

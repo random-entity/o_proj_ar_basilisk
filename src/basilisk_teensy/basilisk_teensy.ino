@@ -59,7 +59,7 @@ void setup() {
 
   if (!b.Setup()) {
     nk.setPixelColor(0, 0xF00000);
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("Basilisk initialization failed");
     Pln("*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x");
 #endif
@@ -68,7 +68,7 @@ void setup() {
 
   nkcr.Setup();
 
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
   Pln("setup() done");
   Pln("^-^-^-^-^-^-");
 #endif

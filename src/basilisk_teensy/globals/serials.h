@@ -4,7 +4,7 @@
 
 #include "../helpers/serial_print.h"
 
-#define DEBUG_INITIALIZATION (1)
+#define DEBUG_SETUP (1)
 #define DEBUG_TEENSYID (1)
 #define DEBUG_FAILURE (1)
 #define DEBUG_SERIAL_RS (1)
@@ -14,7 +14,7 @@
 #define DEBUG_NEOKEYCR (1)
 // Add to the OR chain of ENABLE_SERIAL whenever adding a new flag.
 #define ENABLE_SERIAL                                            \
-  (DEBUG_INITIALIZATION || DEBUG_TEENSYID || DEBUG_FAILURE ||    \
+  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_FAILURE ||    \
    DEBUG_SERIAL_RS || DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE || \
    DEBUG_XBEE_SEND || DEBUG_NEOKEYCR)
 
@@ -38,9 +38,10 @@ void InitSerial() {
   if (!imiham) {
     Serial.begin(SERIAL_BAUDRATE);
     delay(SERIAL_BEGIN_WAIT_TIME_MS);
-    Pln("********************************************************");
-    Pln("*******************GOOD MORNING FOLKS*******************");
-    Pln("******************BASILISK HAS ARRIVED******************");
+    Pln("*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.");
+    Pln(".*.*.*.*.*.*.*.*.*GOOD MORNING FOLKS.*.*.*.*.*.*.*.*.*.*");
+    Pln("*.*.*.*.*.*.*.*.*BASILISK HAS ARRIVED.*.*.*.*.*.*.*.*.*.");
+    Pln(".*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*");
     imiham = true;
   }
 }

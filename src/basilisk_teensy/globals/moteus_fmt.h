@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Arduino.h>
+
 #include "../helpers/using_moteus.h"
 
 namespace moteus_fmt {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Arduino.h>
 #include <elapsedMillis.h>
 
 #include "components/canfd_drivers.h"
@@ -9,8 +10,8 @@
 #include "components/magnets.h"
 #include "components/servo.h"
 #include "globals/moteus_fmt.h"
+#include "globals/serials.h"
 #include "helpers/beat.h"
-#include "helpers/serial_print.h"
 #include "helpers/utils.h"
 #include "roster.h"
 
@@ -54,7 +55,7 @@ class Basilisk {
   // Components: //
 
   Servo l_, r_;
-  Servo* s_[2] = {nullptr, nullptr};
+  Servo* s_[2] = {0};
   Lps lps_;          // Run every loop().
   Imu imu_;          // Run every loop().
   LegoBlocks lego_;  // Run in regular interval.
@@ -90,14 +91,14 @@ class Basilisk {
 
   bool Setup() {
     if (!(1 <= cfg_.suid && cfg_.suid <= 13)) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("Basilisk: Bad SUID");
 #endif
       return false;
     }
 
     if (!CanFdDriverInitializer::Setup(cfg_.servo.bus)) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("Basilisk: CanFdDriver setup failed");
 #endif
       return false;
@@ -108,39 +109,39 @@ class Basilisk {
       s->SetQuery();
       s->Print();
     });
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("Basilisk: Both Servos Stopped, Queried and Printed");
 #endif
 
     if (!lps_.Setup()) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("Basilisk: LPS setup failed");
 #endif
       return false;
     }
 
     if (!imu_.Setup()) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("Basilisk: IMU setup failed");
 #endif
       return false;
     }
 
     if (!lego_.Setup()) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("Basilisk: LegoBlocks setup failed");
 #endif
       return false;
     }
 
     if (!mags_.Setup()) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("Basilisk: Magnets setup failed");
 #endif
       return false;
     }
 
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("Basilisk: All components setup succeeded");
 #endif
     return true;

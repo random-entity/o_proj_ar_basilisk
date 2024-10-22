@@ -1,11 +1,13 @@
 #pragma once
 
+#include <Arduino.h>
 #include <elapsedMillis.h>
 
 #include "../globals/moteus_fmt.h"
 #include "../helpers/clamped.h"
 #include "../helpers/rpl_extra.h"
 #include "../helpers/serial_print.h"
+#include "../helpers/using_moteus.h"
 #include "canfd_drivers.h"
 
 class Servo : public Moteus {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Arduino.h>
+
 #include "using_moteus.h"
 
 double GetExtraValue(const QRpl& rpl, const uint16_t reg) {

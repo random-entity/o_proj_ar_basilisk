@@ -26,13 +26,13 @@ class NeokeyCommandReceiver {
   // Should be called before use.
   bool Setup() {
     if (!nk_.Setup([this](uint16_t key) { Receive(key); })) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("NeokeyCommandReceiver: Neokey setup failed");
 #endif
       return false;
     };
 
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("NeokeyCommandReceiver: Setup complete");
 #endif
     return true;

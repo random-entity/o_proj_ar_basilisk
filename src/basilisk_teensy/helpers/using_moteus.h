@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ACAN2517FD.h>
+#include <Arduino.h>
 #include <Moteus.h>
 
 using namespace mjbots::moteus;

@@ -20,13 +20,13 @@ class Imu {
     IMU_SERIAL.begin(IMU_SERIAL_BAUDRATE);
     delay(SERIAL_BEGIN_WAIT_TIME_MS);
     if (!IMU_SERIAL) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("IMU: IMU_SERIAL(Serial2) begin failed");
 #endif
       return false;
     }
 
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("IMU: Setup complete");
 #endif
     return true;

@@ -47,7 +47,7 @@ class Lps {
     LPS_SERIAL.begin(LPS_SERIAL_BAUDRATE);
     delay(SERIAL_BEGIN_WAIT_TIME_MS);
     if (!LPS_SERIAL) {
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
       Pln("LPS: LPS_SERIAL(Serial6) begin failed");
 #endif
       return false;
@@ -55,7 +55,7 @@ class Lps {
 
     for (auto& dist_sm : dists_sm_) dist_sm.begin(SMOOTHED_AVERAGE, 5);
 
-#if DEBUG_INITIALIZATION
+#if DEBUG_SETUP
     Pln("LPS: Setup complete");
 #endif
     return true;

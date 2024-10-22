@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../cmd_rcvrs/xbee_cr.h"
-#include "../servo_units/basilisk.h"
+#include "../basilisk.h"
 
 namespace presets::globalvar {
 PhiSpeed speed;
@@ -95,19 +95,5 @@ struct Presets {
       {50, [](Basilisk* b) { Diamond(b, BOOL_L); }},
       {51, [](Basilisk* b) { Diamond(b, BOOL_R); }},
       {99, &RandomBounceWalk},
-
-      // PresetPivot nogadas are deprecated.
-      {5, &PivRFr45},
-      {6, &PivLFr45},
-      {7, &PivRBk45},
-      {8, &PivLBk45},
-      {9, &PivRFr90},
-      {10, &PivLFr90},
-      {11, &PivRBk90},
-      {12, &PivLBk90},
-      {13, &BendRIn45},
-      {14, &BendROut45},
-      {15, &BendLIn45},
-      {16, &BendLOut45},
   };
 };
