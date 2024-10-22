@@ -18,20 +18,18 @@ template <typename T>
 class clamped {
  public:
   clamped() : val_{T{0}} {}
-
   clamped(const clamped& other) { val_ = other.val_; }
+  clamped(const clamped&& other) { val_ = other.val_; }
 
   clamped& operator=(const T& new_val) {
     val_ = clamp(new_val, lb(), ub());
     return *this;
   }
-
   clamped& operator=(const clamped& other) {
     val_ = clamp(other.val_, lb(), ub());
     return *this;
   }
-
-  clamped& operator=(clamped&& other) {
+  clamped& operator=(const clamped&& other) {
     val_ = clamp(other.val_, lb(), ub());
     return *this;
   }

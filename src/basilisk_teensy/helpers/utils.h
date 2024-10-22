@@ -8,9 +8,9 @@
 #define NaN (0.0 / 0.0)
 #endif
 
-const uint64_t one_uint64 = static_cast<uint64_t>(1);
+constexpr uint64_t one_uint64 = static_cast<uint64_t>(1);
 
-void pp(uint8_t& n) {
+void incu8(uint8_t& n) {
   if (n != 0xFF) n++;
 }
 

@@ -33,7 +33,7 @@ void ModeRunners::SetPhis(Basilisk* b) {
                 // for Basilisk.
                 tgt_rtrvel = 0.0;
                 tgt_rtracclim = 32.0;
-                pp(fixing_cycles[f]);
+                incu8(fixing_cycles[f]);
               } else {
                 const auto cur_outpos = s->GetReply().abs_position;
                 const auto tgt_delta_outpos = c.tgt_phi[f] - cur_outpos;
@@ -41,7 +41,7 @@ void ModeRunners::SetPhis(Basilisk* b) {
                   // Target phi is reached.
                   tgt_rtrvel = 0.0;
                   tgt_rtracclim = 32.0;
-                  pp(fixing_cycles[f]);
+                  incu8(fixing_cycles[f]);
                 } else {
                   tgt_rtrvel =
                       b->gr_ * c.tgt_phispeed[f](b) *

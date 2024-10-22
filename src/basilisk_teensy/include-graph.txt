@@ -1,4 +1,2 @@
-                           ↗ presets ↘
-component.h's → basilisk.h → mode_runners.h → executer.h → basilisk.ino
-                           ↘ cmd_rcvrs.h ↗               ↗
-                           ↘ rpl_sndrs.h →→→→→→→→→→→→→→→↗
+helpers → globals → components → servo_units → cmd_rcvrs → executer → main
+                                             ↘ rpl_sndrs ↗

@@ -1,17 +1,14 @@
 #pragma once
 
 #include <Arduino.h>
+#include <elapsedMillis.h>
 
 #ifndef NaN
 #define NaN (0.0 / 0.0)
 #endif
 
-struct PosYaw {
+struct {
   double x = NaN, y = NaN;
   double yaw = NaN;
-  uint32_t updated_time;
-};
-
-namespace roster {
-PosYaw db[13];
-}  // namespace roster
+  elapsedMicros time_since_update_us = 0;
+} roster[13];

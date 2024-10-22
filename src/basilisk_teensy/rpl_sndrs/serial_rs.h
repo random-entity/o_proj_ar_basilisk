@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../roster/db.h"
-#include "../servo_units/basilisk.h"
+#include "../roster.h"
+#include "../basilisk.h"
 
 void SerialReplySender(Basilisk& b) {
   Pln("******************");
@@ -52,37 +52,37 @@ void SerialReplySender(Basilisk& b) {
   Serial.println();
 
   // IMU orientation
-  // P("roll:");
-  // Serial.print(b.imu_.euler_[0], 3);
-  // P(",");
-  // P("pitch:");
-  // Serial.print(b.imu_.euler_[1], 3);
-  // P(",");
+  P("roll:");
+  Serial.print(b.imu_.euler_[0], 3);
+  P(",");
+  P("pitch:");
+  Serial.print(b.imu_.euler_[1], 3);
+  P(",");
   P("yaw:");
   Serial.print(b.imu_.GetYaw(true), 4);
   Serial.println();
 
   // Lego
-  // P("contact_l=");
-  // Serial.print(b.lego_.state_[0].contact, BIN);
-  // P("/");
-  // P("contact_r=");
-  // Serial.print(b.lego_.state_[1].contact, BIN);
-  // Serial.println();
+  P("contact_l=");
+  Serial.print(b.lego_.state_[0].contact, BIN);
+  P("/");
+  P("contact_r=");
+  Serial.print(b.lego_.state_[1].contact, BIN);
+  Serial.println();
 
   // Magnets
-  // P("time_since_last_attach[0]=");
-  // Serial.print(b.mags_.time_since_last_attach_[0]);
-  // P("/");
-  // P("time_since_last_attach[1]=");
-  // Serial.print(b.mags_.time_since_last_attach_[1]);
-  // P("/");
-  // P("time_since_last_attach[2]=");
-  // Serial.print(b.mags_.time_since_last_attach_[2]);
-  // P("/");
-  // P("time_since_last_attach[3]=");
-  // Serial.print(b.mags_.time_since_last_attach_[3]);
-  // Serial.println();
+  P("time_since_last_attach[0]=");
+  Serial.print(b.mags_.since_attach_[0]);
+  P("/");
+  P("time_since_last_attach[1]=");
+  Serial.print(b.mags_.since_attach_[1]);
+  P("/");
+  P("time_since_last_attach[2]=");
+  Serial.print(b.mags_.since_attach_[2]);
+  P("/");
+  P("time_since_last_attach[3]=");
+  Serial.print(b.mags_.since_attach_[3]);
+  Serial.println();
 
   // Roster
   Pln("Roster");
@@ -92,13 +92,13 @@ void SerialReplySender(Basilisk& b) {
     if (suid == b.cfg_.suid) {
       P("self");
     } else {
-      Serial.print(roster::db[suid - 1].x);
+      Serial.print(roster[suid - 1].x);
       P(", ");
-      Serial.print(roster::db[suid - 1].y);
+      Serial.print(roster[suid - 1].y);
       P(", ");
-      Serial.print(roster::db[suid - 1].yaw);
+      Serial.print(roster[suid - 1].yaw);
       P(", ");
-      Serial.print((micros() - roster::updated_time[suid - 1]) * 1e-6, 6);
+      Serial.print(roster[suid - 1].time_since_update_us * 1e-6, 6);
     }
     P(";  ");
     if (suid == 7) Serial.println();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../helpers/timing.h"
+#include "../globals/timing.h"
 #include "../servo_units/basilisk.h"
 
 #ifndef XBEE_SERIAL
@@ -20,7 +20,7 @@ class XbeeReplySender {
       return false;
     }
     b_ = b;
-    xb_rpl_.decoded.suids = 1 << (b->cfg_.suid - 1);
+    xb_rpl_.decoded.suids = 1 << b->cfg_.suidm1();
     Pln("XbeeReplySender: Setup complete");
     return true;
   }
@@ -28,19 +28,19 @@ class XbeeReplySender {
   // Should be run continuously
   inline static void Run() {
     using namespace timing::xb;
-    static const auto sndtim_us = suid_to_send_time_us.at(b_->cfg_.suid);
+    static const auto sndtim_us = send_times_us.at(b_->cfg_.suid);
 
     if (!waiting_send_) return;
     if (globals::poll_clk_us < sndtim_us) return;
     waiting_send_ = false;
     if (globals::poll_clk_us >= sndtim_us + send_timeout_us) {
-#if DEBUG_PRINT_XBEE_SEND
+#if DEBUG_XBEE_SEND
       Pln("XbRS timeout");
 #endif
       return;
     }
 
-#if DEBUG_PRINT_XBEE_TIMING
+#if DEBUG_XBEE_TIMING
     Pln("********");
     Pln("My Reply");
     P("Begin ");
@@ -49,7 +49,7 @@ class XbeeReplySender {
 
     Send();
 
-#if DEBUG_PRINT_XBEE_TIMING
+#if DEBUG_XBEE_TIMING
     P("Done ");
     Serial.println(globals::poll_clk_us);
 #endif

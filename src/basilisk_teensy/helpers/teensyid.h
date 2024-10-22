@@ -19,7 +19,7 @@ uint64_t GetTeensyId() {
   teensyid.chunk[0] = *(volatile uint32_t*)TEENSYID_REGISTER_0;
   teensyid.chunk[1] = *(volatile uint32_t*)TEENSYID_REGISTER_1;
 
-#if DEBUG_PRINT_TEENSYID
+#if DEBUG_TEENSYID
   InitSerial();
   Serial.printf("TeensyID is 0x%08X", teensyid.chunk[1]);
   Serial.printf("%08X\n", teensyid.chunk[0]);
@@ -28,7 +28,7 @@ uint64_t GetTeensyId() {
   return teensyid.matome;
 }
 
-const std::map<uint64_t, uint8_t> teensyid_to_suid = {
+const std::map<uint64_t, int> teensyid_to_suid = {
     {0x322F51D7653F900A, 1},   //
     {0x3C18A1D265F8296A, 2},   //
     {0x134231D2677F0531, 3},   //

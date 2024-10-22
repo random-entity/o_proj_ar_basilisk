@@ -1,10 +1,12 @@
 #pragma once
 
-#define ENABLE_SERIAL (1)  // Must be LOGICAL OR of all of below.
+#define DEBUG_INITIALIZATION (1)
+#define DEBUG_TEENSYID (1)
+#define DEBUG_SERIAL_RS (1)
+#define DEBUG_XBEE_TIMING (1)
+#define DEBUG_XBEE_RECEIVE (1)
+#define DEBUG_XBEE_SEND (1)
+#define DEBUG_NEOKEYCR (1)
 
-#define DEBUG_PRINT_INITIALIZATION (1)
-#define DEBUG_PRINT_TEENSYID (1)
-#define DEBUG_PRINT_XBEE_TIMING (0)
-#define DEBUG_PRINT_XBEE_RECEIVE (0)
-#define DEBUG_PRINT_XBEE_SEND (0)
-#define DEBUG_PRINT_NEOKEYCR (0)
+// Add to the OR chain of ENABLE_SERIAL in globals/serials.h
+// whenever adding a new flag.

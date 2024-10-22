@@ -1,6 +1,5 @@
 {
   "files.associations": {
-    "*.pde": "java",
     "map": "cpp",
     "cmath": "cpp",
     "array": "cpp",
@@ -16,5 +15,6 @@
     "cstdint": "cpp",
     "random": "cpp",
     "limits": "cpp"
-  }
+  },
+  "C_Cpp.default.compilerPath": "/home/tek/.arduino15/packages/teensy/tools/teensy-compile/11.3.1/arm/bin/arm-none-eabi-g++"
 }

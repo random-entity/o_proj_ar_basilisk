@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <Smoothed.h>
+#include <elapsedMillis.h>
 
 #include "../globals/serials.h"
 #include "../helpers/do_you_want_debug.h"
@@ -44,18 +45,18 @@ class Lps {
 
   // Must be called before use.
   bool Setup() {
-    LPS_SERIAL.begin(9600);
-    delay(100);
+    LPS_SERIAL.begin(LPS_SERIAL_BAUDRATE);
+    delay(SERIAL_BEGIN_WAIT_TIME_MS);
     if (!LPS_SERIAL) {
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
       Pln("LPS: LPS_SERIAL(Serial6) begin failed");
 #endif
       return false;
     }
 
-    for (auto& dist_sm : dists_sm_) dist_sm.begin(SMOOTHED_AVERAGE, 10);
+    for (auto& dist_sm : dists_sm_) dist_sm.begin(SMOOTHED_AVERAGE, 5);
 
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
     Pln("LPS: Setup complete");
 #endif
     return true;
@@ -90,7 +91,7 @@ class Lps {
     }
     latency_ = LPS_SERIAL.read();
     if (!error_.matome) SetXY();
-    last_raw_update_ = millis();
+    since_raw_update_ = 0;
 
     start = false;
   }
@@ -110,7 +111,7 @@ class Lps {
       y_ = cfg_.y_c;
     }
 
-    last_xy_update_ = millis();
+    since_xy_update_ = 0;
   }
 
  public:
@@ -130,10 +131,10 @@ class Lps {
     uint32_t matome = 0;
   } error_;
   uint8_t latency_ = 0;
-  uint32_t last_raw_update_ = 0;
+  elapsedMillis since_raw_update_ = 0;
   Smoothed<double> dists_sm_[3];
   double x_ = 0.0, y_ = 0.0;
-  uint32_t last_xy_update_ = 0;
+  elapsedMillis since_xy_update_ = 0;
   const struct {
     double c, x_c, y_c;
     double minx, maxx, miny, maxy;

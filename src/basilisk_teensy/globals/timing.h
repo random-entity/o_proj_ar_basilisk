@@ -6,22 +6,24 @@
 
 namespace timing::xb {
 
-// Non-Poll Commands: (100ms)M  (M = ?)
-// Polls            : p = (100ms)N + c  (N = 0, s, 2s, ...)
-// Replies          : p + e + (suid - 1) * r, skipping around (100ms)M
+/* (all time in milliseconds for this section of comment)
+ * Non-Poll Commands: 100M          (M = ?)
+ * Polls            : p = 100N + c  (N = 0, 1, 2, ...)
+ * Replies          : p + e + ((suid + pollid) % 13) * r,
+                      skipping around 100K */
 
-const uint32_t receive_timeout_us = 10 * 1000;  // c
+constexpr uint32_t recv_timeout_us = 10 * 1000;  // c
 #define R_MINUS_C_US (5 * 1000)
-const uint32_t send_interval_us = receive_timeout_us + R_MINUS_C_US;  // r
-const uint32_t send_timeout_us = R_MINUS_C_US;
-const uint32_t send_init_offset = 5 * 1000;  // e
+constexpr uint32_t send_interval_us = recv_timeout_us + R_MINUS_C_US;  // r
+constexpr uint32_t send_timeout_us = R_MINUS_C_US;
+constexpr uint32_t send_init_offset = 5 * 1000;  // e
 uint8_t span;
-const std::map<uint8_t, uint32_t> suid_to_send_time_us = [] {
-  const auto& c = receive_timeout_us;
+const std::map<int, uint32_t> send_times_us = [] {
+  const auto& c = recv_timeout_us;
   const auto& r = send_interval_us;
   const auto& e = send_init_offset;
 
-  std::map<uint8_t, uint32_t> result;
+  std::map<int, uint32_t> result;
 
   uint8_t i_within_command_interval = 0;
   uint8_t command_interval_idx = 0;
@@ -33,7 +35,7 @@ const std::map<uint8_t, uint32_t> suid_to_send_time_us = [] {
     uint32_t maybe_send_time = base + i_within_command_interval * r;
 
     if (maybe_send_time <= limit) {
-      result[i + 1] = maybe_send_time;
+      result[i + 1] = maybe_send_time;  // TODO: Change to [0, 12] -> time
       i++;
       i_within_command_interval++;
     } else {

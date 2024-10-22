@@ -30,7 +30,7 @@ void (*canfd_isrs[4])() = {
 struct CanFdDriverInitializer {
   inline static bool Setup(const int& bus) {
     if (bus < 1 || bus > 4) {
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
       P("CanFdDriverInitializer: Unknown bus: ");
       Serial.println(bus);
 #endif
@@ -54,7 +54,7 @@ struct CanFdDriverInitializer {
         canfd_isrs[bus - 1]);
 
     if (err_code) {
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
       P("CanFdDriverInitializer: CAN FD driver on bus ");
       Serial.print(bus);
       P(" begin failed, error code 0x");
@@ -63,7 +63,7 @@ struct CanFdDriverInitializer {
       return false;
     }
 
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
     P("CanFdDriverInitializer: CAN FD driver on bus ");
     Serial.print(bus);
     Pln(" started");

@@ -1,25 +1,33 @@
 #pragma once
 
-#include "../components/canfd_drivers.h"
-#include "../components/imu.h"
-#include "../components/lego_blocks.h"
-#include "../components/lps.h"
-#include "../components/magnets.h"
-#include "../components/servo.h"
-#include "../globals/moteus_fmt.h"
-#include "../helpers/beat.h"
-#include "../helpers/utils.h"
-#include "../roster/db.h"
+#include <elapsedMillis.h>
+
+#include "components/canfd_drivers.h"
+#include "components/imu.h"
+#include "components/lego_blocks.h"
+#include "components/lps.h"
+#include "components/magnets.h"
+#include "components/servo.h"
+#include "globals/moteus_fmt.h"
+#include "helpers/beat.h"
+#include "helpers/do_you_want_debug.h"
+#include "helpers/serial_print.h"
+#include "helpers/utils.h"
+#include "roster.h"
 
 struct ModeRunners;
 
 class Basilisk {
  public:
-  //////////////////////
-  // Configurations : //
+  /////////////////////
+  // Configurations: //
 
-  struct Configuration {
-    uint8_t suid;  // 1 <= ID of this Basilisk <= 13
+  const struct Configuration {
+    int suid;       // 1 <= ID of this Basilisk <= 13
+    int suidm1() {  // 0 <= (SUID - 1) < 13
+      static const auto suidm1 = suid - 1;
+      return suidm1;
+    }
     struct {
       int id_l = 1, id_r = 2;
       int bus = 1;
@@ -30,17 +38,17 @@ class Basilisk {
     } lps;
     struct {
       int pin_l = 23, pin_r = 29;
-      uint32_t run_interval = 10;
+      uint32_t run_interval;
     } lego;
     struct {
       int pin_la = 3, pin_lt = 4, pin_ra = 5, pin_rt = 6;
-      uint32_t run_interval = 100;
+      uint32_t run_interval;
     } mags;
+    double gr = 21.0;  // delta_rotor = delta_output * gear_ratio
+    double collision_thr;
+    double overlap_thr;
   } cfg_;
 
-  const double gr_ = 21.0;  // delta_rotor = delta_output * gear_ratio
-  const double boundary_radius_ = 100.0;
-  const double overlap_thr_ = 50.0;
   const PmCmd* const pm_cmd_template_;
 
   /////////////////
@@ -52,7 +60,7 @@ class Basilisk {
   Imu imu_;          // Run every loop().
   LegoBlocks lego_;  // Run in regular interval.
   Magnets mags_;     // Run in regular interval.
-  elapsedMicros poll_clk_us;
+  elapsedMicros poll_clk_us_ = 1000000000;
 
   //////////////////
   // Constructor: //
@@ -71,50 +79,71 @@ class Basilisk {
         lego_{cfg.lego.pin_l, cfg.lego.pin_r},
         mags_{lego_,                             //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
-              cfg.mags.pin_ra, cfg.mags.pin_rt} {
-    rpl_.b = this;
-    rpl_.suid = &cfg_.suid;
-    rpl_.mode = &cmd_.mode;
-    rpl_.lpsx = &lps_.x_;
-    rpl_.lpsy = &lps_.y_;
-  }
+              cfg.mags.pin_ra, cfg.mags.pin_rt},
+        rpl_{.b = this,
+             .suid = static_cast<uint8_t>(cfg.suid),
+             .mode = &cmd_.mode,
+             .lpsx = &lps_.x_,
+             .lpsy = &lps_.y_} {}
 
   ////////////////////////////////////////////////////////////
   // Setup method (should be called in setup() before use): //
 
   bool Setup() {
-    if (!CanFdDriverInitializer::Setup(cfg_.servo.bus)) {
-      Pln("Basilisk: CanFdDriver setup failed");
+    if (!(1 <= cfg_.suid && cfg_.suid <= 13)) {
+#if DEBUG_INITIALIZATION
+      Pln("Basilisk: Bad SUID");
+#endif
       return false;
     }
+
+    if (!CanFdDriverInitializer::Setup(cfg_.servo.bus)) {
+#if DEBUG_INITIALIZATION
+      Pln("Basilisk: CanFdDriver setup failed");
+#endif
+      return false;
+    }
+
     CommandBoth([](Servo* s) {
       s->SetStop();
       s->SetQuery();
       s->Print();
     });
+#if DEBUG_INITIALIZATION
     Pln("Basilisk: Both Servos Stopped, Queried and Printed");
+#endif
 
     if (!lps_.Setup()) {
+#if DEBUG_INITIALIZATION
       Pln("Basilisk: LPS setup failed");
+#endif
       return false;
     }
 
     if (!imu_.Setup()) {
+#if DEBUG_INITIALIZATION
       Pln("Basilisk: IMU setup failed");
+#endif
       return false;
     }
 
     if (!lego_.Setup()) {
+#if DEBUG_INITIALIZATION
       Pln("Basilisk: LegoBlocks setup failed");
+#endif
       return false;
     }
 
     if (!mags_.Setup()) {
+#if DEBUG_INITIALIZATION
       Pln("Basilisk: Magnets setup failed");
+#endif
       return false;
     }
 
+#if DEBUG_INITIALIZATION
     Pln("Basilisk: All components setup succeeded");
+#endif
     return true;
   }
 
@@ -442,7 +471,7 @@ class Basilisk {
 
   struct Reply {
     Basilisk* b;
-    uint8_t* suid;
+    const uint8_t suid;
     Command::Mode* mode;
     double* lpsx;
     double* lpsy;
@@ -469,10 +498,10 @@ class Basilisk {
     for (uint8_t other_suid = 1; other_suid <= 13; other_suid++) {
       if (other_suid == cfg_.suid) continue;
 
-      const auto& other = roster::db[other_suid - 1];
+      const auto& other = roster[other_suid - 1];
       const auto other_pos = Vec2{other.x, other.y};
 
-      if ((other_pos - my_pos).mag() < boundary_radius_) {
+      if ((other_pos - my_pos).mag() < cfg_.collision_thr) {
         collision |= (1 << (other_suid - 1));
       }
     }

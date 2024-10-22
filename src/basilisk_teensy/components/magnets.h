@@ -1,5 +1,7 @@
 #pragma once
 
+#include <elapsedMillis.h>
+
 #include "../helpers/do_you_want_debug.h"
 #include "../helpers/serial_print.h"
 #include "lego_blocks.h"
@@ -31,7 +33,7 @@ class Magnets {
   bool Setup() {
     for (const auto& pin : pins_) pinMode(pin, OUTPUT);
     AttachAll();
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
     Pln("Magnets: Setup complete");
 #endif
     return true;
@@ -42,12 +44,11 @@ class Magnets {
   void Run() {
     for (int id = 0; id < 4; id++) {
       if (attaching_[id]) {
-        last_attach_time_[id] = millis();
+        since_attach_[id] = 0;
       } else {
-        last_release_time_[id] = millis();
+        since_release_[id] = 0;
       }
-      time_since_last_attach_[id] = millis() - last_attach_time_[id];
-      heavenfall_warning_[id] = (time_since_last_attach_[id] > heavenfall_thr_);
+      heavenfall_warning_[id] = (since_attach_[id] > heavenfall_thr_);
     }
   }
 
@@ -71,10 +72,9 @@ class Magnets {
 
   const int pins_[4];
   bool attaching_[4] = {false};
-  uint32_t last_attach_time_[4] = {0};
-  uint32_t last_release_time_[4] = {0};
-  uint32_t time_since_last_attach_[4] = {0};
+  elapsedMillis since_attach_[4] = {0};
+  elapsedMillis since_release_[4] = {0};
   bool heavenfall_warning_[4] = {false};
-  inline static const uint32_t heavenfall_thr_ = 5000;
+  inline static constexpr uint32_t heavenfall_thr_ = 5000;
   LegoBlocks& lego_;
 };

@@ -5,7 +5,7 @@
 #include "../components/neokey.h"
 #include "../helpers/do_you_want_debug.h"
 #include "../helpers/serial_print.h"
-#include "../servo_units/basilisk.h"
+#include "../basilisk.h"
 
 class NeokeyCommandReceiver {
  public:
@@ -15,7 +15,7 @@ class NeokeyCommandReceiver {
     nk_cmd_ = key + 1;
     b_.crmux_ = Basilisk::CRMux::Neokey;
 
-#if DEBUG_PRINT_NEOKEYCR
+#if DEBUG_NEOKEYCR
     P("NeokeyCommandReceiver: Key rose: ");
     Serial.print(key);
     P(", nk_cmd_: ");
@@ -26,13 +26,13 @@ class NeokeyCommandReceiver {
   // Should be called before use.
   bool Setup() {
     if (!nk_.Setup([this](uint16_t key) { Receive(key); })) {
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
       Pln("NeokeyCommandReceiver: Neokey setup failed");
 #endif
       return false;
     };
 
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
     Pln("NeokeyCommandReceiver: Setup complete");
 #endif
     return true;
@@ -74,6 +74,7 @@ class NeokeyCommandReceiver {
   }
 
   uint16_t nk_cmd_ = 0;
+  inline static constexpr uint32_t run_interval_ms_ = 10;
 
  private:
   Neokey& nk_;

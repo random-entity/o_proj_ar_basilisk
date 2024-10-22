@@ -26,10 +26,10 @@ void ModeRunners::RandomMags(Basilisk* b) {
           randomSeed(b->cfg_.suid * 100 + id * millis());
           dur[id] = random(c.min_phase_dur, c.max_phase_dur);
         } else {
-          const uint32_t last_switch_time =
-              b->mags_.attaching_[id] ? b->mags_.last_release_time_[id]
-                                      : b->mags_.last_attach_time_[id];
-          if (millis() - last_switch_time >= dur[id]) {
+          const uint32_t time_since_last_switch =
+              b->mags_.attaching_[id] ? b->mags_.since_release_[id]
+                                      : b->mags_.since_attach_[id];
+          if (time_since_last_switch >= dur[id]) {
             b->mags_.SetStrength(id, Bool2MS(!b->mags_.attaching_[id]));
             dur[id] = 0;
           }

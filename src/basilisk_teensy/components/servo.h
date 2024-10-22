@@ -66,18 +66,18 @@ class Servo : public Moteus {
 
     struct Item {
       bool present = false;
-      elapsedMillis elapsed = 0;
+      elapsedMillis since = 0;
       const uint32_t persist_thr;
 
       Item(const uint32_t& _persist_thr) : persist_thr{_persist_thr} {}
 
       Item& operator=(const bool& val) {
         present = val;
-        if (!present) elapsed = 0;
+        if (!present) since = 0;
         return *this;
       }
 
-      operator bool() const { return present && elapsed >= persist_thr; }
+      operator bool() const { return present && since >= persist_thr; }
     } items[num_items] = {{0}, {0}, {100}, {250}, {250}};
 
     Item& encoder_invalid = items[0];

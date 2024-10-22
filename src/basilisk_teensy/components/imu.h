@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <elapsedMillis.h>
 
 #include "../globals/serials.h"
 #include "../helpers/do_you_want_debug.h"
@@ -18,15 +19,15 @@ class Imu {
   // Must be called before use.
   bool Setup() {
     IMU_SERIAL.begin(IMU_SERIAL_BAUDRATE);
-    delay(100);
+    delay(SERIAL_BEGIN_WAIT_TIME_MS);
     if (!IMU_SERIAL) {
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
       Pln("IMU: IMU_SERIAL(Serial2) begin failed");
 #endif
       return false;
     }
 
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
     Pln("IMU: Setup complete");
 #endif
     return true;
@@ -69,7 +70,7 @@ class Imu {
           } else if (delta_yaw_coiled < -0.5) {
             yaw_revs_++;
           }
-          last_updated_time_ = millis();
+          since_update_ = 0;
         }
       } else if (buf[buf_idx] == '*') {
         buf_idx = -1;
@@ -93,5 +94,5 @@ class Imu {
   double euler_[3];  // [0]: roll, [1]: pitch, [2]: yaw
   int yaw_revs_ = 0;
   double base_yaw_ = 0.0;
-  uint32_t last_updated_time_;
+  elapsedMillis since_update_;
 };

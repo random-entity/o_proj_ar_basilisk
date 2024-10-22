@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <elapsedMillis.h>
 
 #include "../helpers/clamped.h"
 #include "../helpers/do_you_want_debug.h"
@@ -21,7 +22,7 @@ class LegoBlocks {
   // Must be called before use.
   bool Setup() {
     for (const auto& pin : pins_) pinMode(pin, INPUT);
-#if DEBUG_PRINT_INITIALIZATION
+#if DEBUG_INITIALIZATION
     Pln("LegoBlocks: Setup complete");
 #endif
     return true;
@@ -33,11 +34,9 @@ class LegoBlocks {
       state_[f].contact >>= 1;
       if (digitalRead(pins_[f])) {
         state_[f].contact |= new_contact;
-        state_[f].last_contact_time = millis();
+        state_[f].since_contact = 0;
       }
     }
-
-    last_run_time = millis();
   }
 
   void Reset() {
@@ -47,7 +46,7 @@ class LegoBlocks {
   const int pins_[2];
   struct {
     uint64_t contact = 0;
-    uint32_t last_contact_time = 0;
+    elapsedMillis since_contact = 0;
     bool ConsecutiveContact(const N64& n) { return !(~contact >> (64 - n)); }
     bool ConsecutiveDetachment(const N64& n) { return !(contact >> (64 - n)); }
     int CountContact() {
@@ -60,8 +59,7 @@ class LegoBlocks {
     bool ProbableContact(const N64& n) { return CountContact() >= n; }
     bool ProbableDetachment(const N64& n) { return 64 - CountContact() >= n; }
   } state_[2];
-  uint32_t last_run_time = 0;
 
  private:
-  inline static const uint64_t new_contact = one_uint64 << 63;
+  inline static constexpr uint64_t new_contact = one_uint64 << 63;
 };
