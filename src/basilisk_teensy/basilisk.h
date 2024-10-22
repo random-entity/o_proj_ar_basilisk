@@ -12,6 +12,8 @@
 #include "globals/moteus_fmt.h"
 #include "globals/serials.h"
 #include "helpers/beat.h"
+#include "helpers/serial_print.h"
+#include "helpers/teensyid.h"
 #include "helpers/utils.h"
 #include "roster.h"
 
@@ -23,7 +25,21 @@ class Basilisk {
   // Configurations: //
 
   const struct Configuration {
-    int suid;       // 1 <= ID of this Basilisk <= 13
+    int suid  // 1 <= ID of this Basilisk <= 13
+        = [] {
+            int suid = 0xDEAD;
+            const auto teensyid = GetTeensyId();
+            const auto maybe_suid = teensyid_to_suid.find(teensyid);
+            if (maybe_suid != teensyid_to_suid.end()) {
+              suid = maybe_suid->second;
+            }
+#if DEBUG_TEENSYID
+            InitSerial();
+            P("Basilisk SUID set to ");
+            Serial.println(suid);
+#endif
+            return suid;
+          }();
     int suidm1() {  // 0 <= (SUID - 1) < 13
       static const auto suidm1 = suid - 1;
       return suidm1;

@@ -13,10 +13,10 @@
 #define DEBUG_XBEE_SEND (1)
 #define DEBUG_NEOKEYCR (1)
 // Add to the OR chain of ENABLE_SERIAL whenever adding a new flag.
-#define ENABLE_SERIAL                                            \
-  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_FAILURE ||    \
-   DEBUG_SERIAL_RS || DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE || \
-   DEBUG_XBEE_SEND || DEBUG_NEOKEYCR)
+#define ENABLE_SERIAL                                                   \
+  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_FAILURE || DEBUG_SERIAL_RS || \
+   DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE || DEBUG_XBEE_SEND ||        \
+   DEBUG_NEOKEYCR)
 
 #define SERIAL_BEGIN_WAIT_TIME_MS (250)
 
@@ -38,10 +38,12 @@ void InitSerial() {
   if (!imiham) {
     Serial.begin(SERIAL_BAUDRATE);
     delay(SERIAL_BEGIN_WAIT_TIME_MS);
-    Pln("*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.");
-    Pln(".*.*.*.*.*.*.*.*.*GOOD MORNING FOLKS.*.*.*.*.*.*.*.*.*.*");
-    Pln("*.*.*.*.*.*.*.*.*BASILISK HAS ARRIVED.*.*.*.*.*.*.*.*.*.");
-    Pln(".*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*");
+    Pln("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_");
+    Pln("*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.");
+    Pln(".*.*.*.*.*.*.*.*.*.*.*.*GOOD MORNING FOLKS.*.*.*.*.*.*.*.*.*.*.*.*.*");
+    Pln("*.*.*.*.*.*.*.*.*.*.*.*BASILISK HAS ARRIVED.*.*.*.*.*.*.*.*.*.*.*.*.");
+    Pln(".*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*");
+    Pln("^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~^~");
     imiham = true;
   }
 }

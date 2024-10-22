@@ -20,7 +20,7 @@ uint64_t GetTeensyId() {
 
 #if DEBUG_TEENSYID
   InitSerial();
-  Serial.printf("TeensyID is 0x%08X", teensyid.chunk[1]);
+  Serial.printf("TeensyID -> 0x%08X", teensyid.chunk[1]);
   Serial.printf("%08X\n", teensyid.chunk[0]);
 #endif
 

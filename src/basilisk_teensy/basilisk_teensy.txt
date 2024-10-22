@@ -11,10 +11,6 @@
 #include "rpl_sndrs/serial_rs.h"
 #include "servo_units/basilisk.h"
 
-// Basilisk and its executer.
-Basilisk b{cfg};
-Executer exec{&b};
-
 // CommandReceivers.
 XbeeCommandReceiver xb_cr;
 Neokey& nk = specifics::neokey1x4_i2c0;

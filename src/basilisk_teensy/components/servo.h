@@ -32,9 +32,9 @@ class Servo : public Moteus {
   bool SetQuery() {
     const auto prev_rpl = last_result().values;
 
-    const auto got_rpl = static_cast<Moteus*>(this)->SetQuery(q_fmt_);
+    failure_.query_failed = !(static_cast<Moteus*>(this)->SetQuery(q_fmt_));
 
-    if (!got_rpl) return false;
+    if (failure_.query_failed) return false;
 
     const auto rpl = GetReply();
 
@@ -42,7 +42,8 @@ class Servo : public Moteus {
         (static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)) != 0xF);
     failure_.aux2pos_invalid_range =
         (rpl.abs_position != Phi{rpl.abs_position});
-    failure_.aux2pos_frozen = (prev_rpl.abs_position == rpl.abs_position);
+    failure_.aux2pos_frozen =
+        (abs(prev_rpl.abs_position - rpl.abs_position) < 1e-1);
     failure_.stuck = (abs(GetExtraValue(rpl, kControlVelocity)) > 1e-2) &&
                      (abs(GetExtraValue(rpl, kControlVelocityError)) > 1e-1);
     failure_.overtorque =
@@ -64,7 +65,7 @@ class Servo : public Moteus {
   }
 
   struct Failure {
-    inline static const int num_items = 5;
+    inline static const int num_items = 6;
 
     struct Item {
       bool present = false;
@@ -80,13 +81,14 @@ class Servo : public Moteus {
       }
 
       operator bool() const { return present && since >= persist_thr; }
-    } items[num_items] = {{0}, {0}, {100}, {250}, {250}};
+    } items[num_items] = {{0}, {0}, {0}, {100}, {250}, {500}};
 
-    Item& encoder_invalid = items[0];
-    Item& aux2pos_invalid_range = items[1];
-    Item& aux2pos_frozen = items[2];
-    Item& stuck = items[3];
-    Item& overtorque = items[4];
+    Item& query_failed = items[0];
+    Item& encoder_invalid = items[1];
+    Item& aux2pos_invalid_range = items[2];
+    Item& aux2pos_frozen = items[3];
+    Item& stuck = items[4];
+    Item& overtorque = items[5];
 
     bool Exists() const {
       for (int i = 0; i < num_items; i++) {
@@ -113,40 +115,41 @@ class Servo : public Moteus {
  public:
   void Print() {
     const auto rpl = GetReply();
+    P("Servo ");
     Serial.print(id_);
     P(" -> t ");
     Serial.print(millis());
-    P(" / mod ");
+    P(" | mod ");
     Serial.print(static_cast<int>(rpl.mode));
-    P(" / pos ");
+    P(" | pos ");
     Serial.print(rpl.position, 4);
-    P(" / vel ");
+    P(" | vel ");
     Serial.print(rpl.velocity, 4);
-    P(" / trq ");
+    P(" | trq ");
     Serial.print(rpl.torque, 4);
-    P(" / qcr ");
+    P(" | qcr ");
     Serial.print(rpl.q_current);
-    P(" / dcr ");
+    P(" | dcr ");
     Serial.print(rpl.d_current);
-    P(" / a2p ");
+    P(" | a2p ");
     Serial.print(rpl.abs_position, 4);
-    P(" / mtp ");
+    P(" | mtp ");
     Serial.print(rpl.motor_temperature);
-    P(" / tjc ");
+    P(" | tjc ");
     Serial.print(rpl.trajectory_complete);
-    P(" / hom ");
+    P(" | hom ");
     Serial.print(static_cast<int>(rpl.home_state));
-    P(" / vlt ");
+    P(" | vlt ");
     Serial.print(rpl.voltage);
-    P(" / tmp ");
+    P(" | tmp ");
     Serial.print(rpl.temperature);
-    P(" / flt ");
+    P(" | flt ");
     Serial.print(rpl.fault);
-    P(" / ver ");
+    P(" | ver ");
     Serial.print(GetExtraValue(rpl, kControlVelocityError), 4);
-    P(" / a2v ");
+    P(" | a2v ");
     Serial.print(GetExtraValue(rpl, kEncoder1Velocity), 4);
-    P(" / evl ");
+    P(" | evl ");
     Serial.print(static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)),
                  BIN);
     Serial.println();
