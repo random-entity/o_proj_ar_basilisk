@@ -46,26 +46,26 @@ const QFmt q_fmt{[] {
   fmt.temperature = kFloat;
   fmt.fault = kInt8;
 
-//   fmt.extra[0] = {
-//       .register_number = kCommandPositionMaxTorque,
-//       .resolution = kFloat,
-//   };
-//   fmt.extra[1] = {
-//       .register_number = kControlVelocity,
-//       .resolution = kFloat,
-//   };
-//   fmt.extra[2] = {
-//       .register_number = kControlVelocityError,
-//       .resolution = kFloat,
-//   };
-//   fmt.extra[3] = {
-//       .register_number = kEncoder1Velocity,
-//       .resolution = kFloat,
-//   };
-//   fmt.extra[4] = {
-//       .register_number = kEncoderValidity,
-//       .resolution = kInt8,
-//   };
+  // fmt.extra[0] = {
+  //     .register_number = kCommandPositionMaxTorque,
+  //     .resolution = kFloat,
+  // };
+  // fmt.extra[1] = {
+  //     .register_number = kControlVelocity,
+  //     .resolution = kFloat,
+  // };
+  fmt.extra[0] = {
+      .register_number = kControlVelocityError,
+      .resolution = kFloat,
+  };
+  // fmt.extra[2] = {
+  //     .register_number = kEncoder1Velocity,
+  //     .resolution = kFloat,
+  // };
+  // fmt.extra[0] = {
+  //     .register_number = kEncoderValidity,
+  //     .resolution = kInt8,
+  // };
 
   return fmt;
 }()};

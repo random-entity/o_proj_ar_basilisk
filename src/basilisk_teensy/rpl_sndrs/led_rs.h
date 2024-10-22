@@ -2,8 +2,9 @@
 
 #include <Arduino.h>
 
-#include "../cmd_rcvrs/xbee_cr.h"
+// #include "../cmd_rcvrs/xbee_cr.h"
 #include "../components/neokey.h"
+#include "../helpers/beat.h"
 
 namespace led_rs {
 bool finding_me;

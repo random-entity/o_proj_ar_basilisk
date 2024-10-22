@@ -6,6 +6,7 @@
 #include "../components/neokey.h"
 #include "../globals/serials.h"
 #include "../helpers/serial_print.h"
+#include "../tests/modes.h"
 
 class NeokeyCommandReceiver {
  public:
@@ -62,6 +63,7 @@ class NeokeyCommandReceiver {
       } break;
       case 4: {
         // b_.crmux_ = Basilisk::CRMux::Xbee;
+        tests::SetPhis(b_);
         // tests::BounceWalk(b_);
         // tests::Pivot(b_);
         // tests::Diamond(b_);

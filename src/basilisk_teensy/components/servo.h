@@ -44,7 +44,7 @@ class Servo : public Moteus {
     // failure_.aux2pos_invalid_range =
     //     (rpl.abs_position != Phi{rpl.abs_position});
     // failure_.aux2pos_frozen =
-    //     (abs(prev_rpl.abs_position - rpl.abs_position) < 1e-1);
+    //     (abs(prev_rpl.abs_position - rpl.abs_position) < 1e-4);
     // failure_.stuck = (abs(GetExtraValue(rpl, kControlVelocity)) > 1e-2) &&
     //                  (abs(GetExtraValue(rpl, kControlVelocityError)) > 1e-1);
     // failure_.overtorque =

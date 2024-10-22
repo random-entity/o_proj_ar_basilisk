@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "basilisk.h"
-// #include "cmd_rcvrs/neokey_cr.h"
+#include "cmd_rcvrs/neokey_cr.h"
 #include "components/neokey.h"
 #include "components/specifics/neokey1x4_i2c0.h"
 #include "globals/serials.h"
@@ -9,6 +9,7 @@
 // #include "helpers/beat.h"
 #include "executer.h"
 #include "helpers/serial_print.h"
+#include "rpl_sndrs/led_rs.h"
 #include "rpl_sndrs/serial_rs.h"
 
 // Basilisk configuration.
@@ -27,9 +28,9 @@ Basilisk::Configuration cfg{
 };
 
 Basilisk b{cfg};
-Executer exec{&b};
 Neokey& nk = specifics::neokey1x4_i2c0;
-// NeokeyCommandReceiver nkcr{nk, b};
+NeokeyCommandReceiver nkcr{nk, b};
+Executer exec{b, nkcr};
 
 void setup() {
 #if ENABLE_SERIAL
@@ -46,26 +47,16 @@ void setup() {
   //   Serial.println(timing::xb::span);
   // #endif
 
-  CanFdDriverInitializer::Setup(1);
-  delay(100);
-  Servo l{1, 1, &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt};
-  delay(100);
-  l.SetStop();
-  delay(100);
-  l.SetQuery();
-  delay(100);
-  l.Print();
+  if (!b.Setup()) {
+    for (int i = 0; i < 4; i++) nk.setPixelColor(i, 0xF00000);
+#if DEBUG_SETUP
+    Pln("Basilisk initialization failed");
+    Pln("*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x");
+#endif
+    while (1);
+  }
 
-  //   if (!b.Setup()) {
-  //     nk.setPixelColor(0, 0xF00000);
-  // #if DEBUG_SETUP
-  //     Pln("Basilisk initialization failed");
-  //     Pln("*x*x*x*x*x*x*x*x*x*x*x*x*x*x*x");
-  // #endif
-  //     while (1);
-  //   }
-
-  // nkcr.Setup();
+  nkcr.Setup();
 
 #if DEBUG_SETUP
   Pln("setup() done!");
@@ -74,16 +65,19 @@ void setup() {
 }
 
 void loop() {
-  // b.Run();
+  b.Run();
 
-  // static Beat exec_beat{10};
-  // if (exec_beat.Hit()) exec.Run();
+  static Beat exec_beat{10};
+  if (exec_beat.Hit()) exec.Run();
 
-  // static Beat nkcr_beat{NeokeyCommandReceiver::run_interval_ms_};
-  // if (nkcr_beat.Hit()) nkcr.Run();
+  static Beat nkcr_beat{NeokeyCommandReceiver::run_interval_ms_};
+  if (nkcr_beat.Hit()) nkcr.Run();
 
-  // #if DEBUG_SERIAL_RS
-  // static Beat serial_rs_beat{1000};
-  // if (serial_rs_beat.Hit()) SerialReplySender(b);
-  // #endif
+  static Beat led_rs_beat{1};
+  if (led_rs_beat.Hit()) LedReplySender(nk);
+
+#if DEBUG_SERIAL_RS
+  static Beat serial_rs_beat{1000};
+  if (serial_rs_beat.Hit()) SerialReplySender(b);
+#endif
 }

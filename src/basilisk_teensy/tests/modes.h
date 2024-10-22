@@ -1,9 +1,21 @@
 #pragma once
 
-#include "../servo_units/basilisk.h"
+#include "../basilisk.h"
 
 namespace tests {
 using M = Basilisk::Command::Mode;
+
+void SetPhis(Basilisk& b) {
+  b.CommandBoth([](Servo* s) {
+    s->SetPosition([] {
+      PmCmd cmd = moteus_fmt::pm_cmd_template;
+      cmd.position = 0.0;
+      cmd.velocity = NaN;
+      cmd.watchdog_timeout = NaN;
+      return cmd;
+    }());
+  });
+}
 
 void Pivot(Basilisk* b) {
   auto& m = b->cmd_.mode;
@@ -15,8 +27,8 @@ void Pivot(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = -0.125;
-  c.speed = globals::stdval::speed::fast;
-  c.acclim = globals::stdval::acclim::standard;
+  c.speed = consts::speed::fast;
+  c.acclim = consts::acclim::standard;
   c.min_dur = 2000;
   c.max_dur = -1;
   c.exit_to_mode = M::Idle_Init;
@@ -33,8 +45,8 @@ void PivSpin(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = globals::stdval::speed::normal;
-  c.acclim = globals::stdval::acclim::standard;
+  c.speed = consts::speed::normal;
+  c.acclim = consts::acclim::standard;
   c.min_stepdur = 0;
   c.max_stepdur = -1;
   c.interval = 0;
@@ -48,8 +60,8 @@ void Diamond(Basilisk* b) {
   m = M::Diamond;
   c.init_didimbal = BOOL_L;
   c.init_stride = 0.3;
-  c.speed = globals::stdval::speed::fast;
-  c.acclim = globals::stdval::acclim::standard;
+  c.speed = consts::speed::fast;
+  c.acclim = consts::acclim::standard;
   c.min_stepdur = 0;
   c.max_stepdur = -1;
   c.interval = 100;
@@ -66,8 +78,8 @@ void WalkToDir(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = globals::stdval::speed::normal;
-  c.acclim = globals::stdval::acclim::standard;
+  c.speed = consts::speed::normal;
+  c.acclim = consts::acclim::standard;
   c.min_stepdur = 1000;
   c.max_stepdur = 3000;
   c.interval = 0;
@@ -86,8 +98,8 @@ void WalkToPos(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = globals::stdval::speed::normal;
-  c.acclim = globals::stdval::acclim::standard;
+  c.speed = consts::speed::normal;
+  c.acclim = consts::acclim::standard;
   c.min_stepdur = 1000;
   c.max_stepdur = 3000;
   c.interval = 0;
@@ -105,8 +117,8 @@ void Sufi(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = globals::stdval::speed::normal;
-  c.acclim = globals::stdval::acclim::standard;
+  c.speed = consts::speed::normal;
+  c.acclim = consts::acclim::standard;
   c.min_stepdur = 1000;
   c.max_stepdur = 3000;
   c.interval = 0;
