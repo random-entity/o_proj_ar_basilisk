@@ -13,8 +13,6 @@
 
 // CommandReceivers.
 XbeeCommandReceiver xb_cr;
-Neokey& nk = specifics::neokey1x4_i2c0;
-NeokeyCommandReceiver nk_cr{nk};
 
 // ReplySenders.
 XbeeReplySender xb_rs;
@@ -24,15 +22,9 @@ void setup() {
   nk_cr.Setup(&b);
   xb_rs.Setup(&b);
   led_rs::suid = b.cfg_.suid;
-  delay(250);
 }
 
 void loop() {
-  b.Run();
-
   xb_cr.Run();
   xb_rs.Run();
-
-  static Beat serial_rs_beat{500};
-  if (serial_rs_beat.Hit()) SerialReplySender(b);
 }
