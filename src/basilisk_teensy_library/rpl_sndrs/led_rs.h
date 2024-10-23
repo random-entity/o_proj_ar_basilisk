@@ -15,7 +15,7 @@ class LedReplySender {
   LedReplySender(Basilisk& b, Neokey& nk, const uint32_t run_interval = 10)
       : b_{b}, nk_{nk}, beat_{run_interval} {
     // [0]: The heart.
-    heart_.set = [this](const uint32_t& t) {
+    heart_.set = [this] {
       static const auto suid = b_.cfg_.suid;
       static const auto suidm1 = b_.cfg_.suidm1();
       static const int num_hearts = suid >= 13 ? 4 : suidm1 / 3 + 1;
@@ -72,6 +72,8 @@ class LedReplySender {
   void Run() {
     if (!beat_.Hit()) return;
 
+    for (const auto& form : forms_) form.set();
+
     ColorArray result;
     for (int i = 0; i < num_forms_; i++) {
       result += forms_[i].ca;
@@ -86,7 +88,7 @@ class LedReplySender {
 
     elapsedBeat beat;
     ColorArray ca;
-    std::function<void(const uint32_t&)> set;
+    std::function<void()> set;
   } forms_[num_forms_] = {{500}};
 
   Form& heart_ = forms_[0];
