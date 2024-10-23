@@ -21,6 +21,7 @@
 // 99 BounceWalk(tgt_yaw = random)
 
 // * PPP
+// 60 ~ 69 Set Pivot Tadak interval ###TODO###
 // 70 WalkToPosInField to grid arrangement
 // 71 WalkToPosInField to pyramid arrangement
 // 72 WalkToPosInField to solo-chorus arrangement
