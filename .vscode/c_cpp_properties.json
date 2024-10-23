@@ -14,12 +14,14 @@
             "compilerPath": "~/.arduino15/packages/teensy/tools/teensy-compile/11.3.1/arm/bin/arm-none-eabi-g++",
             "intelliSenseMode": "linux-gcc-arm",
             "defines": [
-                "__cplusplus=201703L",
-                "__arm__",
                 "__IMXRT1062__",
                 "TEENSYDUINO=159",
                 "ARDUINO=10607",
-                "USB_SERIAL"
+                "ARDUINO_TEENSY_MICROMOD",
+                "F_CPU=600000000",
+                "USB_SERIAL",
+                "__arm__",
+                "__cplusplus=201703L"
             ]
         },
         {
@@ -35,12 +37,37 @@
             "compilerPath": "/Users/tek/Library/Arduino15/packages/teensy/tools/teensy-compile/11.3.1/arm/bin/arm-none-eabi-g++",
             "intelliSenseMode": "macos-gcc-arm",
             "defines": [
-                "__cplusplus=201703L",
-                "__arm__",
                 "__IMXRT1062__",
                 "TEENSYDUINO=159",
                 "ARDUINO=10607",
-                "USB_SERIAL"
+                "ARDUINO_TEENSY_MICROMOD",
+                "F_CPU=600000000",
+                "USB_SERIAL",
+                "__arm__",
+                "__cplusplus=201703L"
+            ]
+        },
+        {
+            "name": "Windows",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Users/kxtxm/AppData/Local/Arduino15/packages/teensy/hardware/avr/1.59.0/cores/teensy4/**",
+                "C:/Users/kxtxm/AppData/Local/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/**",
+                "C:/Users/kxtxm/Documents/Arduino/libraries/**"
+            ],
+            "cppStandard": "c++17",
+            "cStandard": "c17",
+            "compilerPath": "C:/Users/kxtxm/AppData/Local/Arduino15/packages/teensy/tools/teensy-compile/11.3.1/arm/bin/arm-none-eabi-g++.exe",
+            "intelliSenseMode": "windows-gcc-arm",
+            "defines": [
+                "__IMXRT1062__",
+                "TEENSYDUINO=159",
+                "ARDUINO=10607",
+                "ARDUINO_TEENSY_MICROMOD",
+                "F_CPU=600000000",
+                "USB_SERIAL",
+                "__arm__",
+                "__cplusplus=201703L"
             ]
         }
     ],
