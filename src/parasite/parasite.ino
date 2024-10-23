@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <BasiliskParasite.h>
+#include <parasite.h>
 
 void setup() { parasite::setup(); }
 

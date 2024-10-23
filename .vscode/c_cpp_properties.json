@@ -21,6 +21,27 @@
                 "ARDUINO=10607",
                 "USB_SERIAL"
             ]
+        },
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "~/Documents/Arduino/libraries/**",
+                "~/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/cores/teensy4/**",
+                "~/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/**"
+            ],
+            "cppStandard": "c++17",
+            "cStandard": "c17",
+            "compilerPath": "/Users/tek/Library/Arduino15/packages/teensy/tools/teensy-compile/11.3.1/arm/bin/arm-none-eabi-g++",
+            "intelliSenseMode": "macos-gcc-arm",
+            "defines": [
+                "__cplusplus=201703L",
+                "__arm__",
+                "__IMXRT1062__",
+                "TEENSYDUINO=159",
+                "ARDUINO=10607",
+                "USB_SERIAL"
+            ]
         }
     ],
     "version": 4
