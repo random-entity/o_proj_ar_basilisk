@@ -89,7 +89,7 @@ class LedReplySender {
     elapsedBeat beat;
     ColorArray ca;
     std::function<void()> set;
-  } forms_[num_forms_] = {{500}};
+  } forms_[num_forms_] = {{250}};
 
   Form& heart_ = forms_[0];
 
