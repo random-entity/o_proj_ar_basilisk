@@ -4,22 +4,25 @@
 
 #include "consts.h"
 
-/* Assumes API with escape as radio operating mode. */
-class XbeeSender {
- public:
-  XbeeSender() { frame[0] = XB_START; }
+namespace xb {
 
-  void Send(const uint8_t* frame_data, const int& len) {
+/* Assumes 'API with escapes' as radio operating mode. */
+class Sender {
+ public:
+  Sender(HardwareSerial& s) : s_{s} {}
+
+  void Send(const uint8_t* frame_data, const uint32_t& len,
+            const uint64_t& dest_addr = c::addr::broadcast) {
     int idx = 1;
-    frame[idx++] = len & 0xFF00;
-    frame[idx++] = len & 0xFF;
+    f_[idx++] = (len >> 8) & 0xFF;
+    f_[idx++] = len & 0xFF;
+
+    s_.write(f_, 3);
   }
 
-  uint8_t frame[MAX_FRAME_DATA_SIZE];
+ private:
+  HardwareSerial& s_;
+  uint8_t f_[32] = {c::start};
 };
 
-// void Send(const uint64_t& dest_addr,  //
-//           const uint8_t* const data, const uint32_t& len) {
-//   static uint8_t frame[XB_MAX_PACKET_LEN] = {XB_STDLM};
-//   int idx = 1;
-// }
+}  // namespace xb

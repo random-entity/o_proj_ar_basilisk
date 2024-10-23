@@ -1,5 +1,4 @@
 #pragma once
 
-namespace bar {
-int foo;
-}  // namespace bar
+#include "xbrecv.h"
+#include "xbsend.h"
