@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <parasite.h>
 
 #include "consts.h"
 
@@ -18,8 +17,8 @@ class Receiver {
       if (n > 0) {
         for (int i = 0; i < s_.available(); i++) {
           Serial.print(micros());
-          P(" -> ");
-          Serial.println(s_.read());
+          Serial.print(" -> ");
+          Serial.println(s_.read(), HEX);
         }
       }
     }
