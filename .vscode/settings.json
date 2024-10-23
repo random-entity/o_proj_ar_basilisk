@@ -1,0 +1,30 @@
+{
+  "synthwave84.brightness": 0.4,
+  "editor.tokenColorCustomizations": {
+    "[LaserWave High Contrast]": {
+      "textMateRules": [
+        {
+          "scope": [
+            "entity.name.function.preprocessor.c",
+            "entity.name.function.preprocessor.cpp",
+          ],
+          "settings": {
+            "foreground": "#9ce39f"
+          }
+        },
+        {
+          "scope": [
+            "entity.name.namespace"
+          ],
+          "settings": {
+            "foreground": "#ffb6dd"
+          }
+        }
+      ]
+    }
+  },
+  "workbench.colorCustomizations": {
+    "editor.selectionBackground": "#ea02ff81",
+    "editor.selectionHighlightBackground": "#26ccf668"
+  }
+}
