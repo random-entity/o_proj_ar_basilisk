@@ -18,5 +18,3 @@ inline constexpr uint64_t broadcast = 0xFFFF;
 }
 
 }  // namespace xb::c
-
-// #define MAX_FRAME_DATA_SIZE (110)

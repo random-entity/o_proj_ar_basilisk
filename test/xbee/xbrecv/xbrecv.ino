@@ -1,16 +1,13 @@
 #include <Xbee3.h>
-
-#define XBEE_SERIAL (Serial4)
-#define XBEE_SERIAL_BAUDRATE (115200)
+#include <parasite.h>
 
 xb::Receiver r{XBEE_SERIAL};
 
 void setup() {
-  Serial.begin(9600);
-  delay(100);
+  InitSerial();
 
   XBEE_SERIAL.begin(XBEE_SERIAL_BAUDRATE);
-  delay(100);
+  delay(SERIAL_BEGIN_WAIT_TIME_MS);
 
   Serial.println("entering raw print");
 

@@ -17,12 +17,16 @@ class Sender {
     f_[idx++] = (len >> 8) & 0xFF;
     f_[idx++] = len & 0xFF;
 
-    s_.write(f_, 3);
+    for (; idx < 50; idx++) {
+      f_[idx] = 0xDD;
+    }
+
+    s_.write(f_, 50);
   }
 
  private:
   HardwareSerial& s_;
-  uint8_t f_[32] = {c::start};
+  uint8_t f_[50] = {c::start};
 };
 
 }  // namespace xb

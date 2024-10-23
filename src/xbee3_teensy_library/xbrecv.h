@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <parasite.h>
 
 #include "consts.h"
 
@@ -15,7 +16,11 @@ class Receiver {
     while (1) {
       const auto n = s_.available();
       if (n > 0) {
-        for (int i = 0; i < s_.available(); i++) Serial.println(s_.read());
+        for (int i = 0; i < s_.available(); i++) {
+          Serial.print(micros());
+          P(" -> ");
+          Serial.println(s_.read());
+        }
       }
     }
   }
