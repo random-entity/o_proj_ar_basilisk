@@ -9,6 +9,10 @@ uint8_t frame_data_2[2] = {0xAA, 0xBB};
 uint8_t frame_data_3[3] = {0xAA, 0xBB, 0xCC};
 uint8_t frame_data_4[5] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE};
 uint8_t frame_data_5[6] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0x7A};
+uint8_t frame_data_6[10] = {0xAA, 0xBB, 0xCC, 0x7D, 0xDD,
+                            0xEE, 0x7E, 0x11, 0x22, 0x13};
+uint8_t frame_data_7[10] = {0x7D, 0x7D, 0x7D, 0x7D, 0x7D,
+                            0x7D, 0x7D, 0x7D, 0x7D, 0x7D};
 
 void setup() {
   InitSerial();
@@ -18,10 +22,14 @@ void setup() {
 
   nk.Setup([](uint16_t key) {
     Pln("send");
-    if (key == 2) {
+    if (key == 0) {
       if (s.Send(frame_data_4, 5)) Pln("success");
-    } else if (key == 3) {
+    } else if (key == 1) {
       if (s.Send(frame_data_5, 6)) Pln("success");
+    } else if (key == 2) {
+      if (s.Send(frame_data_6, 10)) Pln("success");
+    } else if (key == 3) {
+      if (s.Send(frame_data_7, 10)) Pln("success");
     }
   });
 }

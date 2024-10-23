@@ -11,14 +11,12 @@ class Receiver {
  public:
   Receiver(HardwareSerial& s) : s_{s} {}
 
-  void RawPrint() {  // Will block everything.
+  void RawPrint() {  // Only for debug. Will block everything.
     while (1) {
       const auto n = s_.available();
       if (n > 0) {
         for (int i = 0; i < s_.available(); i++) {
-          Serial.print(micros());
-          Serial.print(" -> ");
-          Serial.println(s_.read(), HEX);
+          Serial.printf("%02X\n", s_.read());
         }
       }
     }

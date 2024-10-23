@@ -60,7 +60,7 @@ class Sender {
   }
 
   HardwareSerial& s_;
-  inline static constexpr int max_frame_size_ = 50;
+  inline static constexpr int max_frame_size_ = 100;
   uint8_t f_[max_frame_size_];
 };
 
