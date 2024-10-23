@@ -19,6 +19,25 @@
           "settings": {
             "foreground": "#ffb6dd"
           }
+        },
+        {
+          "scope": [
+            "variable.other",
+            "variable.other.readwrite"
+          ],
+          "settings": {
+            "foreground": "#96e2e8"
+          }
+        },
+        {
+          "scope": [
+            "entity.name.type",
+            "support.type"
+          ],
+          "settings": {
+            "foreground": "#edeaa0",
+            "fontStyle": ""
+          }
         }
       ]
     }
