@@ -10,11 +10,29 @@
 
 namespace xb {
 
+// Not including Start Delimiter and Length bytes.
+struct ReceivePacket {
+  uint8_t frame_type;          // 0x90 for Receive Packet.
+  uint64_t src_addr_reversed;  // Who sent this, big endian.
+  uint16_t random_entity;      // Doudemoii.
+  uint8_t recv_options;        // 0x42 for Point-multipoint broadcast.
+  uint8_t payload[c::buffer_capacity - 12 - 1];
+
+  uint64_t src_addr() {
+    const auto& r = src_addr_reversed;
+    return                       //
+        ((r & 0xFF) << 24) |     //
+        ((r & 0xFF00) << 8) |    //
+        ((r & 0xFF0000) >> 8) |  //
+        ((r & 0xFF000000) >> 24);
+  }
+} __attribute__((packed));
+
 /* Assumes 'API with escapes' as radio operating mode. */
 class Receiver {
  public:
   Receiver(HardwareSerial& s,
-           const std::function<void(uint8_t* payload, int size)>& callback)
+           const std::function<void(ReceivePacket&, int)>& callback)
       : s_{s}, callback_{callback} {}
 
   enum class Waiting {
@@ -23,7 +41,7 @@ class Receiver {
     Checksum,
   } w_ = Waiting::Start;
 
-  std::map<Waiting, std::function<void()>> go_to_ = {
+  const std::map<Waiting, std::function<void()>> go_to_ = {
       {Waiting::Start,
        [&] {  //
          w_ = Waiting::Start;
@@ -38,16 +56,23 @@ class Receiver {
          w_ = Waiting::Checksum;
          idx_ = 0;
          checksum_ = 0;
-         size_ = (buf_[0] << 8) + buf_[1];
+         size_ = (buf_.bytes[0] << 8) + buf_.bytes[1];
        }},
   };
 
   // Call continuously
   void Run() {
+    // Serial.println("as");
+
+
     if (w_ == Waiting::Start) {
+               Serial.print("s_.available() = ");
+               Serial.println(s_.available());
+
       while (s_.available() > 0) {
+               Serial.println("Waitstart AVA");
         if (static_cast<uint8_t>(s_.read()) == c::start) {
-          go_to_[Waiting::Length]();
+          go_to_.at(Waiting::Length)();
           break;
         }
       }
@@ -55,19 +80,26 @@ class Receiver {
     }
 
     if (w_ == Waiting::Length) {
+               Serial.println("WL");
+
       while (s_.available() > 0) {
         const auto r = static_cast<uint8_t>(s_.read());
         if (r == c::start) {
-          go_to_[Waiting::Length]();
+          go_to_.at(Waiting::Length)();
           continue;
         } else {
           if (!Put(r)) {
             /* This should never happen if c::buffer_capacity >= 4. */
-            go_to_[Waiting::Start]();
+            go_to_.at(Waiting::Start)();
             return;
           }
           if (idx_ >= 2) {
-            go_to_[Waiting::Checksum]();
+            go_to_.at(Waiting::Checksum)();
+            if (size_ < 12) {
+              // This should never happen.
+              go_to_.at(Waiting::Start);
+              return;
+            }
             break;
           } else {
             continue;
@@ -81,17 +113,21 @@ class Receiver {
       while (s_.available() > 0) {
         const auto r = static_cast<uint8_t>(s_.read());
         if (r == c::start) {
-          go_to_[Waiting::Length]();
+          go_to_.at(Waiting::Length)();
           return;
         } else {
           if (!Put(r, true)) {
             /* Receive buffer overflow. */
-            go_to_[Waiting::Start]();
+            go_to_.at(Waiting::Start)();
             return;
           }
           if (idx_ >= size_ + 1 /* One more byte due to the checksum. */) {
-            if (checksum_ == 0xFF) callback_(buf_, size_);
-            go_to_[Waiting::Start]();
+            if (checksum_ == 0xFF &&
+                buf_.packet.frame_type == c::frametype::rxpacket) {
+              // callback_(buf_.packet, size_ - 12);
+               Serial.println("OOO");
+            } else Serial.println("asd");
+            go_to_.at(Waiting::Start)();
             return;
           } else {
             continue;
@@ -115,17 +151,20 @@ class Receiver {
     }
 
     val = esc ? val ^ c::xor_with : val;
-    buf_[idx_++] = val;
+    buf_.bytes[idx_++] = val;
     if (sum) checksum_ += val;
     esc = false;
     return true;
   }
 
   HardwareSerial& s_;
-  uint8_t buf_[c::buffer_capacity];
+  union {
+    ReceivePacket packet;
+    uint8_t bytes[c::buffer_capacity];
+  } buf_;
   int idx_ = 0, size_ = 0;
   uint8_t checksum_ = 0;
-  std::function<void(uint8_t* payload, int size)> callback_;
+  std::function<void(ReceivePacket& packet, int payload_size)> callback_;
 
  public:
   void RawPrint() {  // Only for debug. Blocks everything.

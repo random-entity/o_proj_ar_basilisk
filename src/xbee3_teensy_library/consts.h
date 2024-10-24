@@ -13,8 +13,9 @@ inline constexpr uint8_t xor_with = 0x20;
 inline constexpr int buffer_capacity = 100;
 
 namespace frametype {
-inline constexpr uint8_t txreq = 0x10;
-}
+inline constexpr uint8_t txrequest = 0x10;
+inline constexpr uint8_t rxpacket = 0x90;
+}  // namespace frametype
 
 namespace addr {
 inline constexpr uint64_t broadcast = 0xFFFF;

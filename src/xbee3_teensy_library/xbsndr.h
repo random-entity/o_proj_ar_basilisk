@@ -19,7 +19,7 @@ class Sender {
 
     if (!Put(idx, (length >> 8) & 0xFF)) return false;
     if (!Put(idx, length & 0xFF)) return false;
-    buf_[idx++] = c::frametype::txreq;
+    buf_[idx++] = c::frametype::txrequest;
     buf_[idx++] = 0x00;  // Suppress response frame
     buf_[idx++] = 0x00;  // Broadcast address, MSB
     buf_[idx++] = 0x00;
