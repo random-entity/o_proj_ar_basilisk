@@ -20,7 +20,7 @@ void setup() {
   InitSerial();
 
   XBEE_SERIAL.begin(XBEE_SERIAL_BAUDRATE);
-  delay(SERIAL_BEGIN_WAIT_TIME_MS);
+  delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
 
   for (int i = 0; i < 40; i++) {
     frame_data_8[i] = xb::c::start;

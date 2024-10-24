@@ -12,8 +12,8 @@ namespace xb {
 // Not including Start Delimiter and Length bytes.
 struct ReceivePacket {
   uint8_t frame_type;          // 0x90 for Receive Packet.
-  uint64_t src_addr_reversed;  // Who sent this, big endian.
-  uint16_t random_entity;      // Doudemoii.
+  uint64_t src_addr_reversed;  // Who sent this, big endian, so byte-reversed.
+  uint16_t random_entity;      // The meaningless zone.
   uint8_t recv_options;        // 0x42 for Point-multipoint broadcast.
   uint8_t payload[c::buffer_capacity - 12 - 1];
 

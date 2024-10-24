@@ -18,7 +18,7 @@ class Imu {
   // Must be called before use.
   bool Setup() {
     IMU_SERIAL.begin(IMU_SERIAL_BAUDRATE);
-    delay(SERIAL_BEGIN_WAIT_TIME_MS);
+    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
     if (!IMU_SERIAL) {
 #if DEBUG_SETUP
       Pln("IMU: IMU_SERIAL(Serial2) begin failed");

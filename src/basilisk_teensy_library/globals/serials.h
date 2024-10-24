@@ -18,7 +18,7 @@
    DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE || DEBUG_XBEE_SEND ||        \
    DEBUG_NEOKEYCR)
 
-#define SERIAL_BEGIN_WAIT_TIME_MS (250)
+#define COMMON_SERIAL_BEGIN_WAIT_TIME (250)
 
 #define SERIAL_BAUDRATE (9600)
 
@@ -37,7 +37,7 @@ void InitSerial() {
   static bool imiham = false;
   if (!imiham) {
     Serial.begin(SERIAL_BAUDRATE);
-    delay(SERIAL_BEGIN_WAIT_TIME_MS);
+    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
     Pln("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_");
     Pln("*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.");
     Pln(".*.*.*.*.*.*.*.*.*.*.*.*GOOD MORNING FOLKS.*.*.*.*.*.*.*.*.*.*.*.*.*");
@@ -48,3 +48,12 @@ void InitSerial() {
   }
 }
 #endif
+
+void InitXbeeSerial() {
+  static bool imiham = false;
+  if (!imiham) {
+    XBEE_SERIAL.begin(XBEE_SERIAL_BAUDRATE);
+    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
+    imiham = true;
+  }
+}

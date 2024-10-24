@@ -12,32 +12,46 @@ class Sender {
   Sender(HardwareSerial& s) : s_{s} {}
 
   bool Send(const uint8_t* payload, const int& payload_size,
-            const uint64_t& dest_addr = c::addr::broadcast,
-            const uint16_t& hima = 0xFFFE) {
+            const uint64_t& dest_addr = c::addr::broadcast) {
     int idx = 1;
     uint8_t sum = 0;
     const auto length = static_cast<uint16_t>(payload_size + 14);
 
+    // Length Bytes
     to_bytes::ui16.n = length;
     for (int b = 1; b >= 0; b--) {
       if (!Put(idx, to_bytes::ui16.bytes[b])) return false;
     }
+
+    // Frame Type
     if (!Put(idx, c::frametype::tx, &sum)) return false;
+
+    // Frame ID (Unused)
     if (!Put(idx, 0)) return false;  // Suppress response frame.
+
+    // Destination Address
     to_bytes::ui64.n = dest_addr;
     for (int b = 7; b >= 0; b--) {
       if (!Put(idx, to_bytes::ui64.bytes[b], &sum)) return false;
     }
-    to_bytes::ui16.n = hima;
-    for (int b = 1; b >= 0; b--) {
-      if (!Put(idx, to_bytes::ui16.bytes[b], &sum)) return false;
-    }
+
+    // The meaningless zone
+    if (!Put(idx, 0xFF, &sum)) return false;
+    if (!Put(idx, 0xFE, &sum)) return false;
+
+    // Tranmission Configuration
     if (!Put(idx, 0)) return false;  // Use NH value for broadcast radius.
     if (!Put(idx, 0)) return false;  // Use TO value for transmit options.
+
+    // Ahh.. finally thehe payload
     for (int i = 0; i < payload_size; i++) {
       if (!Put(idx, payload[i], &sum)) return false;
     }
+
+    // Checksum
     if (!Put(idx, 0xFF - sum)) return false;
+
+    // Write to XBee UART Serial.
     s_.write(buf_, idx);
     return true;
   }

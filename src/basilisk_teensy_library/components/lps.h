@@ -45,7 +45,7 @@ class Lps {
   // Must be called before use.
   bool Setup() {
     LPS_SERIAL.begin(LPS_SERIAL_BAUDRATE);
-    delay(SERIAL_BEGIN_WAIT_TIME_MS);
+    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
     if (!LPS_SERIAL) {
 #if DEBUG_SETUP
       Pln("LPS: LPS_SERIAL(Serial6) begin failed");

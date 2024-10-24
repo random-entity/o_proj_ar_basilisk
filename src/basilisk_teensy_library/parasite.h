@@ -4,6 +4,7 @@
 
 #include "basilisk.h"
 #include "cmd_rcvrs/neokey_cr.h"
+#include "cmd_rcvrs/xbee_cr.h"
 #include "components/neokey.h"
 #include "components/specifics/neokey1x4_i2c0.h"
 #include "executer.h"
@@ -11,7 +12,6 @@
 #include "helpers/serial_print.h"
 #include "rpl_sndrs/led_rs.h"
 #include "rpl_sndrs/serial_rs.h"
-// #include "globals/timing.h"
 
 namespace parasite {
 
@@ -32,6 +32,7 @@ Basilisk b{cfg};
 // CommandReceivers.
 Neokey& nk = specifics::neokey1x4_i2c0;
 NeokeyCommandReceiver nkcr{nk, b};
+XbeeCommandReceiver xbcr{b};
 
 // ReplySenders.
 #if DEBUG_SERIAL_RS
@@ -67,6 +68,7 @@ void setup() {
 
   if (!b.Setup()) {
     for (int i = 0; i < 4; i++) nk.setPixelColor(i, 0xF00000);
+    nk.show();
 #if DEBUG_SETUP
     Pln("Basilisk initialization failed");
     Pln("x_x_x_x_x_x_x_x_x_x_x_x_x_x_x_");

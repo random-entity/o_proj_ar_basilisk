@@ -20,7 +20,7 @@ uint64_t GetTeensyId() {
 
 #if DEBUG_TEENSYID
   InitSerial();
-  Serial.printf("0x%016llX\n", teensyid.matome);
+  Serial.printf("TeensyID -> 0x%016llX\n", teensyid.matome);
 #endif
 
   return teensyid.matome;
