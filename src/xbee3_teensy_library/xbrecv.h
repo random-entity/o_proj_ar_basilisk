@@ -23,7 +23,7 @@ class Receiver {
     Checksum,
   } w_ = Waiting::Start;
 
-  std::map<Waiting, std::function<void()>> Init = {
+  std::map<Waiting, std::function<void()>> go_to_ = {
       {Waiting::Start,
        [&] {  //
          w_ = Waiting::Start;
@@ -47,7 +47,7 @@ class Receiver {
     if (w_ == Waiting::Start) {
       while (s_.available() > 0) {
         if (static_cast<uint8_t>(s_.read()) == c::start) {
-          Init[Waiting::Length]();
+          go_to_[Waiting::Length]();
           break;
         }
       }
@@ -58,14 +58,16 @@ class Receiver {
       while (s_.available() > 0) {
         const auto r = static_cast<uint8_t>(s_.read());
         if (r == c::start) {
-          Init[Waiting::Length]();
+          go_to_[Waiting::Length]();
           continue;
         } else {
           if (!Put(r)) {
-            /* This should never happen. */
+            /* This should never happen if c::buffer_capacity >= 4. */
+            go_to_[Waiting::Start]();
+            return;
           }
           if (idx_ >= 2) {
-            Init[Waiting::Checksum]();
+            go_to_[Waiting::Checksum]();
             break;
           } else {
             continue;
@@ -79,24 +81,23 @@ class Receiver {
       while (s_.available() > 0) {
         const auto r = static_cast<uint8_t>(s_.read());
         if (r == c::start) {
-          Init[Waiting::Length]();
-          break;
+          go_to_[Waiting::Length]();
+          return;
         } else {
-          if (!Put(r)) {
+          if (!Put(r, true)) {
             /* Receive buffer overflow. */
-            Init[Waiting::Start]();
+            go_to_[Waiting::Start]();
             return;
           }
-          if (idx_ >= size_ + 1 /* 1 more due to checksum */) {
-            Init[Waiting::Start]();
-            callback_(buf_, size_);
-            break;
+          if (idx_ >= size_ + 1 /* One more byte due to the checksum. */) {
+            if (checksum_ == 0xFF) callback_(buf_, size_);
+            go_to_[Waiting::Start]();
+            return;
           } else {
             continue;
           }
         }
       }
-      if (w_ == Waiting::Checksum) return;
     }
   }
 
@@ -113,18 +114,17 @@ class Receiver {
       return true;
     }
 
-    if (esc) {
-      buf_[idx_++] = val ^ c::xor_with;
-    } else {
-      buf_[idx_++] = val;
-    }
+    val = esc ? val ^ c::xor_with : val;
+    buf_[idx_++] = val;
+    if (sum) checksum_ += val;
     esc = false;
     return true;
   }
 
   HardwareSerial& s_;
   uint8_t buf_[c::buffer_capacity];
-  int idx_ = 0, size_ = 0, checksum_ = 0;
+  int idx_ = 0, size_ = 0;
+  uint8_t checksum_ = 0;
   std::function<void(uint8_t* payload, int size)> callback_;
 
  public:
