@@ -11,9 +11,9 @@
 #include "components/servo.h"
 #include "globals/moteus_fmt.h"
 #include "globals/serials.h"
+#include "globals/teensyid.h"
 #include "helpers/beat.h"
 #include "helpers/serial_print.h"
-#include "helpers/teensyid.h"
 #include "helpers/utils.h"
 #include "roster.h"
 

@@ -1,2 +1,3 @@
-helpers → globals → components → servo_units → cmd_rcvrs → executer → main
-                                             ↘ rpl_sndrs ↗
+helpers → globals → components → basilisk → cmd_rcvrs →→→→ executer → main
+                                          ↘ rpl_sndrs →→→↗
+                                          ↘ mode_runners ↗

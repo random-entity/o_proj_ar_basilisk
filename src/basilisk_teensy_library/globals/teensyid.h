@@ -4,7 +4,7 @@
 
 #include <map>
 
-#include "../globals/serials.h"
+#include "serials.h"
 
 #define TEENSYID_REGISTER_0 (0x401F4410)
 #define TEENSYID_REGISTER_1 (0x401F4420)
@@ -20,8 +20,7 @@ uint64_t GetTeensyId() {
 
 #if DEBUG_TEENSYID
   InitSerial();
-  Serial.printf("TeensyID -> 0x%08X", teensyid.chunk[1]);
-  Serial.printf("%08X\n", teensyid.chunk[0]);
+  Serial.printf("0x%016llX\n", teensyid.matome);
 #endif
 
   return teensyid.matome;
@@ -42,5 +41,5 @@ const std::map<uint64_t, int> teensyid_to_suid = {
     {0x422511D764FE06E6, 12},  //
     {0x3B2A51D7653F900A, 13},  //
     /////////////////////////////
-    {0x232411D764FE06E6, 99},
+    {0x232411D764FE06E6, 14},  // Kaktugi
 };

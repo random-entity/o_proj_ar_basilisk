@@ -22,7 +22,7 @@ class Sender {
     for (int b = 1; b >= 0; b--) {
       if (!Put(idx, to_bytes::ui16.bytes[b])) return false;
     }
-    if (!Put(idx, c::frametype::txrequest, &sum)) return false;
+    if (!Put(idx, c::frametype::tx, &sum)) return false;
     if (!Put(idx, 0)) return false;  // Suppress response frame.
     to_bytes::ui64.n = dest_addr;
     for (int b = 7; b >= 0; b--) {

@@ -18,16 +18,16 @@ struct ReceivePacket {
   uint8_t payload[c::buffer_capacity - 12 - 1];
 
   uint64_t src_addr() {
-    const auto& r = src_addr_reversed;
-    return                                                     //
-        (static_cast<uint64_t>(r & 0xFF) << 56) |              //
-        (static_cast<uint64_t>(r & 0xFF00) << 40) |            //
-        (static_cast<uint64_t>(r & 0xFF0000) << 24) |          //
-        (static_cast<uint64_t>(r & 0xFF000000) << 8) |         //
-        (static_cast<uint64_t>(r & 0xFF00000000) >> 8) |       //
-        (static_cast<uint64_t>(r & 0xFF0000000000) >> 24) |    //
-        (static_cast<uint64_t>(r & 0xFF000000000000) >> 40) |  //
-        (static_cast<uint64_t>(r & 0xFF00000000000000) >> 56);
+    static const auto& r = src_addr_reversed;
+    return                                                         //
+        (static_cast<uint64_t>(r & 0xFFULL) << 56) |               //
+        (static_cast<uint64_t>(r & 0xFF00ULL) << 40) |             //
+        (static_cast<uint64_t>(r & 0xFF0000ULL) << 24) |           //
+        (static_cast<uint64_t>(r & 0xFF000000ULL) << 8) |          //
+        (static_cast<uint64_t>(r & 0xFF00000000ULL) >> 8) |        //
+        (static_cast<uint64_t>(r & 0xFF0000000000ULL) >> 24) |     //
+        (static_cast<uint64_t>(r & 0xFF000000000000ULL) >> 40) |   //
+        (static_cast<uint64_t>(r & 0xFF00000000000000ULL) >> 56);  //
   }
 } __attribute__((packed));
 
@@ -119,7 +119,7 @@ class Receiver {
           }
           if (idx_ >= size_ + 1 /* One more byte due to the checksum. */) {
             if (checksum_ == 0xFF &&
-                buf_.packet.frame_type == c::frametype::rxpacket) {
+                buf_.packet.frame_type == c::frametype::rx) {
               callback_(buf_.packet, size_ - 12);
             }
             go_to_.at(Waiting::Start)();

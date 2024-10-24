@@ -3,8 +3,7 @@
 
 xb::Receiver r{XBEE_SERIAL, [](xb::ReceivePacket& packet, int payload_size) {
                  Serial.print("Received packet from address ");
-                 Serial.printf("0x%08X", packet.src_addr() >> 32);
-                 Serial.printf("%08X\n", packet.src_addr() & 0xFFFFFFFF);
+                 Serial.printf("0x%016llX\n", packet.src_addr());
                  Serial.print("Payload -> ");
                  for (int i = 0; i < payload_size; i++) {
                    Serial.printf("%02X ", packet.payload[i]);

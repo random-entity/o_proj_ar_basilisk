@@ -6,7 +6,8 @@
 
 namespace xb {
 
-const std::map<uint64_t, int> addr_to_suid{
+namespace addr {
+const std::map<uint64_t, int> to_suid{
     {0x0013A20041C22F0E, 1},   //
     {0x0013A20041C22D2A, 2},   //
                                // {0x0000000000000000, 3},
@@ -21,11 +22,17 @@ const std::map<uint64_t, int> addr_to_suid{
     {0x0013A20041C22EFC, 12},  //
     {0x0013A20041C2F781, 13},  //
     /////////////////////////////
-    //
-    //
+    //.*.*.*.*.*.*.*.*.*.*.*.*.*.
+    // .*.*.*.*.*.*.*.*.*.*.*.*.
     /////////////////////////////
+    {0x0013A20041C2A71B, 14},  // Kaktugi
     {0x0013A20041C2E64D, 50},  // Commander
     {0x0013A20041C14EC5, 51},  // Monitor
 };
+}  // namespace addr
+
+namespace timing {
+//
+}  // namespace timing
 
 }  // namespace xb
