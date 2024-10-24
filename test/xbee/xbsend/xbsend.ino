@@ -13,6 +13,7 @@ uint8_t frame_data_6[10] = {0xAA, 0xBB, 0xCC, 0x7D, 0xDD,
                             0xEE, 0x7E, 0x11, 0x22, 0x13};
 uint8_t frame_data_7[10] = {0x7D, 0x7D, 0x7D, 0x7D, 0x7D,
                             0x7D, 0x7D, 0x7D, 0x7D, 0x7D};
+uint8_t frame_data_8[41];
 uint8_t frame_data_flood[60];
 
 void setup() {
@@ -21,6 +22,11 @@ void setup() {
   XBEE_SERIAL.begin(XBEE_SERIAL_BAUDRATE);
   delay(SERIAL_BEGIN_WAIT_TIME_MS);
 
+  for (int i = 0; i < 40; i++) {
+    frame_data_8[i] = xb::c::start;
+  }
+  frame_data_8[40] = xb::c::xoff;
+
   for (auto& b : frame_data_flood) {
     b = 0x7D;
   }
@@ -28,16 +34,13 @@ void setup() {
   nk.Setup([](uint16_t key) {
     Pln("send");
     if (key == 0) {
-      if (s.Send(frame_data_flood, 60))
-        Pln("success");
-      else
-        Pln("failed");
-    } else if (key == 1) {
       if (s.Send(frame_data_5, 6)) Pln("success");
-    } else if (key == 2) {
+    } else if (key == 1) {
       if (s.Send(frame_data_6, 10)) Pln("success");
-    } else if (key == 3) {
+    } else if (key == 2) {
       if (s.Send(frame_data_7, 10)) Pln("success");
+    } else if (key == 3) {
+      if (s.Send(frame_data_8, 41)) Pln("success");
     }
   });
 }
