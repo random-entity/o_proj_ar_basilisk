@@ -22,11 +22,12 @@
         },
         {
           "scope": [
+            "variable.parameter",
             "variable.other",
             "variable.other.readwrite"
           ],
           "settings": {
-            "foreground": "#96e2e8"
+            "foreground": "#9aa1d1"
           }
         },
         {
@@ -35,7 +36,25 @@
             "support.type"
           ],
           "settings": {
-            "foreground": "#edeaa0",
+            "foreground": "#e2eea2",
+            "fontStyle": ""
+          }
+        },
+        {
+          "scope": [
+            "keyword.control.return"
+          ],
+          "settings": {
+            "foreground": "#ff6851",
+            "fontStyle": "bold"
+          }
+        },
+        {
+          "scope": [
+            "variable.other.property"
+          ],
+          "settings": {
+            "foreground": "#ffbde2",
             "fontStyle": ""
           }
         }
@@ -44,6 +63,7 @@
   },
   "workbench.colorCustomizations": {
     "editor.selectionBackground": "#ea02ff81",
-    "editor.selectionHighlightBackground": "#26ccf668"
+    "editor.selectionHighlightBackground": "#26ccf668",
+    "terminal.ansiGreen": "#47e15e"
   }
 }
