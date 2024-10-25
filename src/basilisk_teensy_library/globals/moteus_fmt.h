@@ -54,10 +54,10 @@ const QFmt q_fmt{[] {
   //     .register_number = kControlVelocity,
   //     .resolution = kFloat,
   // };
-  fmt.extra[0] = {
-      .register_number = kControlVelocityError,
-      .resolution = kFloat,
-  };
+  // fmt.extra[0] = {
+  //     .register_number = kControlVelocityError,
+  //     .resolution = kFloat,
+  // };
   // fmt.extra[2] = {
   //     .register_number = kEncoder1Velocity,
   //     .resolution = kFloat,

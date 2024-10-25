@@ -29,8 +29,8 @@ class Basilisk {
         = [] {
             int suid = 0xDEAD;
             const auto teensyid = GetTeensyId();
-            const auto maybe_suid = teensyid_to_suid.find(teensyid);
-            if (maybe_suid != teensyid_to_suid.end()) {
+            const auto maybe_suid = g::teensyid::to_suid.find(teensyid);
+            if (maybe_suid != g::teensyid::to_suid.end()) {
               suid = maybe_suid->second;
             }
 #if DEBUG_TEENSYID

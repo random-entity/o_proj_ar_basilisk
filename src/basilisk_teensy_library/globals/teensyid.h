@@ -26,7 +26,8 @@ uint64_t GetTeensyId() {
   return teensyid.matome;
 }
 
-const std::map<uint64_t, int> teensyid_to_suid = {
+namespace g::teensyid {
+const std::map<uint64_t, int> to_suid = {
     {0x322F51D7653F900A, 1},   //
     {0x3C18A1D265F8296A, 2},   //
     {0x134231D2677F0531, 3},   //
@@ -43,3 +44,4 @@ const std::map<uint64_t, int> teensyid_to_suid = {
     /////////////////////////////
     {0x232411D764FE06E6, 14},  // Kaktugi
 };
+}  // namespace g::teensyid

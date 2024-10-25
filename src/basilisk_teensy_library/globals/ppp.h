@@ -4,7 +4,7 @@
 
 #include "../helpers/range.h"
 
-namespace g ::ppp {
+namespace g::ppp {
 namespace idx {
 
 inline constexpr uint16_t crmux_xbee = 50002;
