@@ -2,40 +2,27 @@
 
 #include "basilisk.h"
 #include "cmd_rcvrs/neokey_cr.h"
-// #include "cmd_rcvrs/xbee_cr.h"
+#include "cmd_rcvrs/xbee_cr.h"
+#include "oneshots/shoot.h"
 // #include "mode_runners/_matome.h"
-// #include "oneshots/matome.h"
 
 class Executer {
  public:
-  Executer(Basilisk& b, NeokeyCommandReceiver& nkcr) : b_{b}, nkcr_{nkcr} {}
+  Executer(Basilisk& b, NeokeyCommandReceiver& nkcr, XbeeCommandReceiver& xbcr,
+           const uint32_t& run_interval = 10)
+      : b_{b}, xbcr_{xbcr}, nkcr_{nkcr}, beat_{run_interval} {}
 
+  // Query.
   void Run() {
+    using M = Basilisk::Command::Mode;
+    static auto& m = b_.cmd_.mode;
+
     if (!beat_.Hit()) return;
 
-    // if (XbeeCommandReceiver::waiting_parse_) {
-    //   if (XbeeCommandReceiver::xb_cmd_.decoded.oneshot &
-    //       (1 << ONESHOT_CRMuxXbee)) {
-    //     b_->cmd_.oneshot |= (1 << ONESHOT_CRMuxXbee);
-    //     XbeeCommandReceiver::waiting_parse_ = false;
-    //   }
-    //   if (XbeeCommandReceiver::xb_cmd_.decoded.mode ==
-    //           static_cast<uint8_t>(Basilisk::Command::Mode::BPPP) &&
-    //       XbeeCommandReceiver::xb_cmd_.decoded.u.bppp
-    //               .idx[b_->cfg_.suid - 1] == 50002) {
-    //     b_->cmd_.oneshot |= (1 << ONESHOT_CRMuxXbee);
-    //   }
-    // }
-    // BasiliskOneshots::Shoot(b_);
+    // Query.
+    b_.CommandBoth([](Servo& s) { s.SetQuery(); });
 
-    b_.CommandBoth([](Servo& s) {
-      s.SetQuery();
-
-      if (s.failure_.Exists()) {
-        /* Handle Servo failure */
-      }
-    });
-
+    // Inject.
     switch (b_.crmux_) {
       case Basilisk::CRMux::Neokey: {
         if (nkcr_.injection_ != 0) {
@@ -43,29 +30,27 @@ class Executer {
           nkcr_.injection_ = 0;
         }
       } break;
-        // case Basilisk::CRMux::Xbee: {
-        //     if (XbeeCommandReceiver::waiting_parse_) {
-        //       XbeeCommandReceiver::Inject();
-        //       XbeeCommandReceiver::waiting_parse_ = false;
-        //     }
-        //   } break;
-      default:
-        break;
+      case Basilisk::CRMux::Xbee: {
+        if (xbcr_.injection_.waiting) {
+          xbcr_.Inject();
+          xbcr_.injection_.waiting = false;
+        }
+      } break;
     }
 
-    // for (uint8_t id = 0; id < 4; id++) {
-    //   if (b_->mags_.heavenfall_[id]) {
-    //     P("Heavenfall ");
-    //     Serial.println(id);
+    // Oneshot.
+    Shoot(b_);
 
-    //     b_->cmd_.mode = Basilisk::Command::Mode::Idle_Init;
-    //     break;
-    //   }
-    // }
-
-    // if (b_->l_.GetReply().torque > 20.0 || b_->r_.GetReply().torque > 20.0) {
-    //   b_->cmd_.mode = Basilisk::Command::Mode::Idle_Init;
-    // }
+    // Handle failures right before Mode running.
+    if (b_.rpl_.heavenfall()) {
+      P("Heavenfall ");
+      Serial.printf("0x%04X\n", b_.rpl_.heavenfall(), HEX);
+      m = M::Idle_Init;
+    }
+    if (b_.l_.GetReply().torque > 0.4 || b_.r_.GetReply().torque > 0.4) {
+      m = M::Idle_Init;
+    }
+    /* TODO: Develop */
 
     // auto* maybe_mode_runner = SafeAt(ModeRunners::mode_runners,
     // b_.cmd_.mode); if (maybe_mode_runner) {
@@ -77,6 +62,7 @@ class Executer {
 
  private:
   Basilisk& b_;
+  XbeeCommandReceiver& xbcr_;
   NeokeyCommandReceiver& nkcr_;
-  Beat beat_{10};
+  Beat beat_;
 };

@@ -3,6 +3,7 @@
 #include <Xbee3.h>
 
 #include "../basilisk.h"
+#include "../globals/ppp.h"
 #include "../globals/serials.h"
 #include "../globals/xbee.h"
 #include "../roster.h"
@@ -65,13 +66,13 @@ class XbeeCommandReceiver {
 
         const auto suidm1 = b_.cfg_.suidm1();
         const auto ppp_idx = msg.cmd.u.bppp.idx[suidm1];
-        switch (static_cast<int>(ppp_idx)) {
+        switch (ppp_idx) {
           // Handle special indices that should be processed or ignored
           // immediately. PPP Command that requests Oneshot should be prevented
           // from changing the Mode of Basilisk.
           case 0:
             return;
-          case 50002:
+          case g::ppp::idx::crmux_xbee:
             b_.crmux_ = Basilisk::CRMux::Xbee;
             return;
 

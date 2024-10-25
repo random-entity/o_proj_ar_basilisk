@@ -53,7 +53,7 @@ class Servo : public Moteus {
   }
 
   // Aux2 position uncoiled.
-  QRpl GetReply() {
+  QRpl GetReply() const {
     auto rpl = last_result().values;
     // Convert aux2 encoder reading in [0, 1] to phi in [-0.5, 0.5]
     if (rpl.abs_position > 0.5) rpl.abs_position -= 1.0;
@@ -113,7 +113,7 @@ class Servo : public Moteus {
   const QFmt* const q_fmt_;
 
  public:
-  void Print() {
+  void Print() const {
     const auto rpl = GetReply();
     P("Servo ");
     Serial.print(id_);

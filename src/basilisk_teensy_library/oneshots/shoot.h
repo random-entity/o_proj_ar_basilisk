@@ -2,10 +2,11 @@
 
 #include "../basilisk.h"
 
-// Useless except usage by NeokeyCommandReceiver.
 void Shoot(Basilisk& b) {
   using O = Basilisk::Command::Oneshot;
   auto& o = b.cmd_.oneshot;
+
+  if (o == O::None) return;
 
   switch (o) {
     case O::CRMuxXbee: {
@@ -14,16 +15,16 @@ void Shoot(Basilisk& b) {
       b.crmux_ = Basilisk::CRMux::Xbee;
     } break;
     case O::SetBaseYaw: {
-      // Processed immediately at reception if sent as B-PPP to XbeeCR
-      // without setting Basilisk::oneshot.
       b.imu_.SetBaseYaw(b.cmd_.set_base_yaw.offset);
     } break;
     case O::Inspire: {
-      // Not yet implemented.
+      // Not yet implemented. Not sure if needed.
     } break;
     case O::TimeSlottedPoll: {
       // Processed immediately at reception if sent as Oneshot to XbeeCR
-      // without setting Basilisk::oneshot.
+      // without setting Basilisk::oneshot. Somosomo immediate processing at
+      // reception should work better for network timing related work
+      // unless synchronization with Executor is absolutely necessary.
       b.poll_clk_us_ = 0;
     } break;
   }

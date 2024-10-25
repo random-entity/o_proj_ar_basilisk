@@ -58,20 +58,6 @@ struct Presets {
     c.init_tgt_yaw = random(360) / 360.0;
   }
 
-  // PresetPivot nogadas are deprecated.
-  static void PivRFr45(Basilisk*);
-  static void PivLFr45(Basilisk*);
-  static void PivRBk45(Basilisk*);
-  static void PivLBk45(Basilisk*);
-  static void PivRFr90(Basilisk*);
-  static void PivLFr90(Basilisk*);
-  static void PivRBk90(Basilisk*);
-  static void PivLBk90(Basilisk*);
-  static void BendRIn45(Basilisk*);
-  static void BendROut45(Basilisk*);
-  static void BendLIn45(Basilisk*);
-  static void BendLOut45(Basilisk*);
-
   inline static const std::map<uint16_t, void (*)(Basilisk*)> presets = {
       // Meta
       {50000, &Idle},

@@ -513,6 +513,16 @@ class Basilisk {
     float phi_l() { return static_cast<float>(b.l_.GetReply().abs_position); }
     float phi_r() { return static_cast<float>(b.r_.GetReply().abs_position); };
 
+    uint8_t servo_l_failure() { return b.l_.failure_.Export(); }
+    uint8_t servo_r_failure() { return b.r_.failure_.Export(); }
+    uint8_t heavenfall() {
+      uint8_t result = 0;
+      for (int i = 0; i < 4; i++) {
+        if (b.mags_.heavenfall_[i]) result |= (1 << i);
+      }
+      return result;
+    }
+
     struct {
       elapsedMicros bppp_us;
       elapsedMicros tspoll_us;
