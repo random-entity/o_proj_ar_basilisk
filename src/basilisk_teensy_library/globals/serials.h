@@ -20,26 +20,33 @@
    DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE || DEBUG_XBEE_SEND ||        \
    DEBUG_NEOKEYCR)
 
-#define COMMON_SERIAL_BEGIN_WAIT_TIME (250)
+namespace g::serials {
 
-#define SERIAL_BAUDRATE (9600)
+inline constexpr uint32_t common_begin_wait_time = 250;
 
-#define IMU_SERIAL (Serial2)
-#define IMU_SERIAL_BAUDRATE (57600)
+struct HwSerial {
+  HwSerial(HardwareSerialIMXRT& _s, const uint32_t& _baudrate)
+      : s{_s}, baudrate{_baudrate} {
+    s.begin(baudrate);
+    delay(common_begin_wait_time);
+  }
+  HardwareSerialIMXRT& s;
+  uint32_t baudrate;
+};
 
-#define LPS_SERIAL (Serial6)
-#define LPS_SERIAL_BAUDRATE (9600)
+HwSerial imu{Serial2, 57600};
+HwSerial lps{Serial6, 9600};
+HwSerial xb{Serial4, 115200};
 
-#define XBEE_SERIAL (Serial4)
-#define XBEE_SERIAL_BAUDRATE (115200)
+}  // namespace g::serials
 
 #if ENABLE_SERIAL
 // Just initialize once and ignore Serial.begin() failure.
 void InitSerial() {
   static bool imiham = false;
   if (!imiham) {
-    Serial.begin(SERIAL_BAUDRATE);
-    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
+    Serial.begin(9600);
+    delay(g::serials::common_begin_wait_time);
     Pln("|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_");
     Pln("*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.");
     Pln(".*.*.*.*.*.*.*.*.*.*.*.*GOOD MORNING FOLKS.*.*.*.*.*.*.*.*.*.*.*.*.*");
@@ -50,11 +57,3 @@ void InitSerial() {
   }
 }
 #endif
-
-void InitSerial(HardwareSerial* serial, const uint32_t& baudrate) {
-  static std::unordered_set<HardwareSerial*> imiham;
-  if (imiham.find(serial) != imiham.end()) return;
-  serial->begin(baudrate);
-  delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
-  imiham.insert(serial);
-}
