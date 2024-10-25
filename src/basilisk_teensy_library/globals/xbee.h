@@ -7,7 +7,9 @@
 namespace g::xb {
 
 namespace addr {
-const std::map<uint64_t, int> to_nodeid{
+
+/* 64-bit MAC address -> Node ID within XBee network */
+const std::map<uint64_t, int> to_nid{
     /////////////////////////////
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
     // 1 <= Followers <= 13
@@ -35,17 +37,13 @@ const std::map<uint64_t, int> to_nodeid{
     {0x0013A20041C14EC5, 51},  // Monitor (Processing)
     /////////////////////////////
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
-    // The rest are kaktugis
-    //.*.*.*.*.*.*.*.*.*.*.*.*.*.
-    /////////////////////////////
-    {0x0013A20041C2A71B, 14},  // Kaktugi
-    /////////////////////////////
-    //.*.*.*.*.*.*.*.*.*.*.*.*.*.
+    // The rest are kaktugis.
     // Goodbye.
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
     /////////////////////////////
-    {((((((0)))))), ((((((0))))))},
+    {0x0013A20041C2A71B, 14},  // Kaktugi
 };
+
 }  // namespace addr
 
 namespace timing {

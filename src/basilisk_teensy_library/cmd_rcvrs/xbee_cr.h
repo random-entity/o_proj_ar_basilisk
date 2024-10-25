@@ -26,7 +26,8 @@ class XbeeCommandReceiver {
  public:
   XbeeCommandReceiver(Basilisk& b)
       : b_{b},
-        r_{XBEE_SERIAL, [this](xb::ReceivePacket& packet, int payload_size) {
+        r_{g::serials::xb(),
+           [this](xb::ReceivePacket& packet, int payload_size) {
              Parse(packet, payload_size);
            }} {}
 
@@ -34,9 +35,9 @@ class XbeeCommandReceiver {
   void Run() { r_.Run(); }
 
   void Parse(xb::ReceivePacket& packet, int payload_size) {
-    const auto maybe_nodeid_it = g::xb::addr::to_nodeid.find(packet.src_addr());
-    if (maybe_nodeid_it == g::xb::addr::to_nodeid.end()) return;
-    const auto nodeid = maybe_nodeid_it->second;
+    const auto srcnid_it = g::xb::addr::to_nid.find(packet.src_addr());
+    if (srcnid_it == g::xb::addr::to_nid.end()) return;
+    const auto nodeid = srcnid_it->second;
 
     //////////////////
     // Fellow Reply //
