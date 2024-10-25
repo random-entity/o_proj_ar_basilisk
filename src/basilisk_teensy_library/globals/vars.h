@@ -4,6 +4,6 @@
 
 #include "../helpers/clamped.h"
 
-namespace vars {
+namespace g::vars {
 PhiSpeed speed = 0.1;
-}  // namespace vars
+}  // namespace g::vars

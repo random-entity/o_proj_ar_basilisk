@@ -34,8 +34,8 @@ class XbeeCommandReceiver {
   void Run() { r_.Run(); }
 
   void Parse(xb::ReceivePacket& packet, int payload_size) {
-    const auto maybe_nodeid_it = xb::addr::to_nodeid.find(packet.src_addr());
-    if (maybe_nodeid_it == xb::addr::to_nodeid.end()) return;
+    const auto maybe_nodeid_it = g::xb::addr::to_nodeid.find(packet.src_addr());
+    if (maybe_nodeid_it == g::xb::addr::to_nodeid.end()) return;
     const auto nodeid = maybe_nodeid_it->second;
 
     //////////////////
@@ -43,8 +43,8 @@ class XbeeCommandReceiver {
     if (1 <= nodeid && nodeid <= 13) {  // Source is a Fellow.
       if (nodeid == b_.cfg_.suid) return;
 
-      Message msg{};
-      memcpy(msg.payload, packet.payload, payload_size);
+      Payload msg{};
+      memcpy(msg.bytes, packet.payload, payload_size);
 
       const auto other_suidm1 = nodeid - 1;
       auto& other = roster[other_suidm1];
@@ -60,8 +60,8 @@ class XbeeCommandReceiver {
       ///////////////////
       // B-PPP Command //
       if (om == static_cast<uint8_t>(M::BPPP)) {
-        Message msg{};
-        memcpy(msg.payload, packet.payload, payload_size);
+        Payload msg{};
+        memcpy(msg.bytes, packet.payload, payload_size);
 
         const auto suidm1 = b_.cfg_.suidm1();
         const auto ppp_idx = msg.cmd.u.bppp.idx[suidm1];
@@ -102,8 +102,8 @@ class XbeeCommandReceiver {
     b_.cmd_.ppp.prev_mode = b_.cmd_.mode;
   }
 
-  union Message {
-    uint8_t payload[xb::c::capacity::payload];
+  union Payload {
+    uint8_t bytes[xb::c::capacity::payload];
     struct __attribute__((packed)) FellowReply {
       float x, y, yaw;
     } fellow_rpl;

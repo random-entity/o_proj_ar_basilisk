@@ -4,7 +4,7 @@
 
 #include <map>
 
-namespace xb {
+namespace g::xb {
 
 namespace addr {
 const std::map<uint64_t, int> to_nodeid{
@@ -101,4 +101,4 @@ const std::map<int, uint32_t> send_times_us = [] {
 
 }  // namespace timing
 
-}  // namespace xb
+}  // namespace g::xb

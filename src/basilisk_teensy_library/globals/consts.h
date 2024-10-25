@@ -4,7 +4,7 @@
 
 #include "../helpers/clamped.h"
 
-namespace consts {
+namespace g::c {
 
 namespace speed {
 const PhiSpeed slower = 0.05;
@@ -28,4 +28,4 @@ constexpr uint32_t yoyuu = 5000;
 constexpr uint32_t beche = 8000;
 }  // namespace maxdur
 
-}  // namespace consts
+}  // namespace g::c

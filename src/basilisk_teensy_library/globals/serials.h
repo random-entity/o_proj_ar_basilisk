@@ -2,6 +2,8 @@
 
 #include <Arduino.h>
 
+#include <unordered_set>
+
 #include "../helpers/serial_print.h"
 
 #define DEBUG_SETUP (1)
@@ -49,11 +51,10 @@ void InitSerial() {
 }
 #endif
 
-void InitXbeeSerial() {
-  static bool imiham = false;
-  if (!imiham) {
-    XBEE_SERIAL.begin(XBEE_SERIAL_BAUDRATE);
-    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
-    imiham = true;
-  }
+void InitSerial(HardwareSerial* serial, const uint32_t& baudrate) {
+  static std::unordered_set<HardwareSerial*> imiham;
+  if (imiham.find(serial) != imiham.end()) return;
+  serial->begin(baudrate);
+  delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
+  imiham.insert(serial);
 }

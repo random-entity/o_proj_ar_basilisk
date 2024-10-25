@@ -65,5 +65,9 @@
     "editor.selectionBackground": "#ea02ff81",
     "editor.selectionHighlightBackground": "#26ccf668",
     "terminal.ansiGreen": "#47e15e"
+  },
+  "files.associations": {
+    "*.pde": "java",
+    "unordered_set": "cpp"
   }
 }

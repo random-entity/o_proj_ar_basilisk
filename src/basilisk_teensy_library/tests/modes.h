@@ -8,7 +8,7 @@ using M = Basilisk::Command::Mode;
 void SetPhis(Basilisk& b) {
   b.CommandBoth([](Servo& s) {
     s.SetPosition([] {
-      PmCmd cmd = moteus_fmt::pm_cmd_template;
+      PmCmd cmd = g::moteus_fmt::pm_cmd_template;
       cmd.position = 0.0;
       cmd.velocity = NaN;
       cmd.watchdog_timeout = NaN;
@@ -27,8 +27,8 @@ void Pivot(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = -0.125;
-  c.speed = consts::speed::fast;
-  c.acclim = consts::acclim::standard;
+  c.speed = g::c::speed::fast;
+  c.acclim = g::c::acclim::standard;
   c.min_dur = 2000;
   c.max_dur = -1;
   c.exit_to_mode = M::Idle_Init;
@@ -45,8 +45,8 @@ void PivSpin(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = consts::speed::normal;
-  c.acclim = consts::acclim::standard;
+  c.speed = g::c::speed::normal;
+  c.acclim = g::c::acclim::standard;
   c.min_stepdur = 0;
   c.max_stepdur = -1;
   c.interval = 0;
@@ -60,8 +60,8 @@ void Diamond(Basilisk* b) {
   m = M::Diamond;
   c.init_didimbal = BOOL_L;
   c.init_stride = 0.3;
-  c.speed = consts::speed::fast;
-  c.acclim = consts::acclim::standard;
+  c.speed = g::c::speed::fast;
+  c.acclim = g::c::acclim::standard;
   c.min_stepdur = 0;
   c.max_stepdur = -1;
   c.interval = 100;
@@ -78,8 +78,8 @@ void WalkToDir(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = consts::speed::normal;
-  c.acclim = consts::acclim::standard;
+  c.speed = g::c::speed::normal;
+  c.acclim = g::c::acclim::standard;
   c.min_stepdur = 1000;
   c.max_stepdur = 3000;
   c.interval = 0;
@@ -98,8 +98,8 @@ void WalkToPos(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = consts::speed::normal;
-  c.acclim = consts::acclim::standard;
+  c.speed = g::c::speed::normal;
+  c.acclim = g::c::acclim::standard;
   c.min_stepdur = 1000;
   c.max_stepdur = 3000;
   c.interval = 0;
@@ -117,8 +117,8 @@ void Sufi(Basilisk* b) {
   c.stride = 0.125;
   c.bend[IDX_L] = 0.0;
   c.bend[IDX_R] = 0.0;
-  c.speed = consts::speed::normal;
-  c.acclim = consts::acclim::standard;
+  c.speed = g::c::speed::normal;
+  c.acclim = g::c::acclim::standard;
   c.min_stepdur = 1000;
   c.max_stepdur = 3000;
   c.interval = 0;

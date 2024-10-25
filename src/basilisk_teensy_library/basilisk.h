@@ -84,11 +84,11 @@ class Basilisk {
 
   Basilisk(const Configuration& cfg)
       : cfg_{cfg},
-        pm_cmd_template_{&moteus_fmt::pm_cmd_template},
+        pm_cmd_template_{&g::moteus_fmt::pm_cmd_template},
         s_{{cfg.servo.id_l, cfg.servo.bus,  //
-            &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt},
+            &g::moteus_fmt::pm_fmt, &g::moteus_fmt::q_fmt},
            {cfg.servo.id_r, cfg.servo.bus,  //
-            &moteus_fmt::pm_fmt, &moteus_fmt::q_fmt}},
+            &g::moteus_fmt::pm_fmt, &g::moteus_fmt::q_fmt}},
         l_{s_[0]},
         r_{s_[1]},
         lps_{cfg.lps.c,    cfg.lps.x_c,  cfg.lps.y_c,  //
@@ -234,10 +234,11 @@ class Basilisk {
       /* PPP: Parameterized-preset-protocol. */
       BPPP = 4,  // PPP Command received by broadcast with payload of array of
                  // indices for all Basilisks in a single packet.
-      /* XPPP = n, // There may be additional PPP CR protocols, and Modes
-                      corresponding to it, but acting as the same Mode.
-                      This distinction is for the CommandReceivers to know
-                      which payload parse logic it should follow. */
+      /* XPPP = n, // There may be additional PPP CR protocols, and PPP Modes
+                      corresponding to it, acting as same Mode.
+                      This distinction is exposed in order to let Basilisk
+                      know what payload parse logic the CommandReceivers has
+                      intended. */
 
       /* SetMags: Control magnets.
        *          Future-chain-able.
@@ -248,7 +249,7 @@ class Basilisk {
       SetMags_Init = 5,  // -> SetMags_Wait
       SetMags_Wait = 6,  // -> Exit
 
-      /* RandomMags: Randomly tap-dance. */
+      /* RandomMags: Random Tibutibu. */
       RandomMags_Init = 18,
       RandomMags_Do = 19,
 

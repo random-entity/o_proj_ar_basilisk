@@ -83,9 +83,10 @@ void setup() {
 }
 
 void loop() {
+  nkcr.Run();
+  xbcr.Run();
   b.Run();
   exec.Run();
-  nkcr.Run();
   ledrs.Run();
 #if DEBUG_SERIAL_RS
   serrs.Run();

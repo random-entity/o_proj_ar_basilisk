@@ -4,7 +4,7 @@
 
 #include "../helpers/using_moteus.h"
 
-namespace moteus_fmt {
+namespace g::moteus_fmt {
 
 const PmFmt pm_fmt{.position = kFloat,
                    .velocity = kFloat,
@@ -70,4 +70,4 @@ const QFmt q_fmt{[] {
   return fmt;
 }()};
 
-}  // namespace moteus_fmt
+}  // namespace g::moteus_fmt

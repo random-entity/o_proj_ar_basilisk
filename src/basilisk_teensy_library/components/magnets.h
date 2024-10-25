@@ -55,7 +55,7 @@ class Magnets {
       } else {
         since_release_[id] = 0;
       }
-      heavenfall_[id] = (since_attach_[id] > consts::maxdur::yoyuu);
+      heavenfall_[id] = (since_attach_[id] > g::c::maxdur::yoyuu);
     }
   }
 
