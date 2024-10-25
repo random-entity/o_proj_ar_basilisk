@@ -11,7 +11,9 @@
 
 class NeokeyCommandReceiver {
  public:
-  NeokeyCommandReceiver(Neokey& nk, Basilisk& b) : nk_{nk}, b_{b} {}
+  NeokeyCommandReceiver(Neokey& nk, Basilisk& b,
+                        const uint32_t& run_interval = 10)
+      : nk_{nk}, b_{b}, beat_{run_interval} {}
 
   // Should be called before use.
   bool Setup() {
@@ -35,7 +37,7 @@ class NeokeyCommandReceiver {
 #if DEBUG_NEOKEYCR
     P("NeokeyCommandReceiver: Key rose: ");
     Serial.print(key);
-    P(", injection_: ");
+    P(", injection: ");
     Serial.println(injection_);
 #endif
   }
@@ -56,17 +58,17 @@ class NeokeyCommandReceiver {
       case 0: {
         // Last Neokey Command already processed, so don't touch.
       } break;
-      case 1: {
+      case 1: {  // Idle Mode
         m = M::Idle_Init;
       } break;
-      case 2: {
+      case 2: {  // Free Mode
         m = M::Free;
       } break;
       case 3: {  // SetBaseYaw(0.0)
         c.oneshot = O::SetBaseYaw;
         c.set_base_yaw.offset = 0.0;
       } break;
-      case 4: {
+      case 4: {  // Left for debug purposes.
       } break;
       default: {
       } break;
@@ -78,5 +80,5 @@ class NeokeyCommandReceiver {
  private:
   Neokey& nk_;
   Basilisk& b_;
-  Beat beat_{10};
+  Beat beat_;
 };
