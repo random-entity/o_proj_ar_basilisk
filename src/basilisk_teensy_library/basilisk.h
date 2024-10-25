@@ -192,7 +192,7 @@ class Basilisk {
       CRMuxXbee = 201,
       SetBaseYaw = 202,
       Inspire = 203,
-      BroadcastedPoll = 204,
+      TimeSlottedPoll = 204,
     } oneshots = Oneshot::None;
 
     struct SetBaseYaw {
@@ -203,7 +203,7 @@ class Basilisk {
       // Vec2 pos...
     } inspire;
 
-    struct BroadcastedPoll {
+    struct TimeSlottedPoll {
       int round_robin;
     } broadcasted_poll;
 
@@ -231,8 +231,13 @@ class Basilisk {
        * - then exit to Idle Mode. */
       Free = 3,  // -> Wait -> Idle
 
-      /* BPPP: Do a preset. */
-      BPPP = 4,
+      /* PPP: Parameterized-preset-protocol. */
+      BPPP = 4,  // PPP Command received by broadcast with payload of array of
+                 // indices for all Basilisks in a single packet.
+      /* XPPP = n, // There may be additional PPP CR protocols, and Modes
+                      corresponding to it, but acting as the same Mode.
+                      This distinction is for the CommandReceivers to know
+                      which payload parse logic it should follow. */
 
       /* SetMags: Control magnets.
        *          Future-chain-able.
@@ -308,10 +313,10 @@ class Basilisk {
       Gee = 252,
     } mode = Mode::Idle_Init;
 
-    struct BPPP {
+    struct PPP {
       uint16_t idx;
       Mode prev_mode;
-    } do_preset;
+    } ppp;
 
     struct Wait {
       uint32_t init_time;

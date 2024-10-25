@@ -8,14 +8,15 @@
 #include "../roster.h"
 
 /* This class is capable of handling the following type of messages:
- * - Broadcasted parameterized-preset-protocol (B-PPP) Commands
- *   <- Recognized iff (source is Commander) && payload[O/M] == 4.
- *   -> Set waiting injection flag and inject at next ExecutionCycle.
- * - Broadcasted Poll Commands
- *   <- Recognized iff (source is Commander) && payload[O/M] == 253.
- *   -> Reserve time slot for next ReplySend.
- * - Fellow Replies
- *   <- Recognized iff (source is Fellow).
+ * - Broadcasted parameterized-preset-protocol (B-PPP) Commands:
+ *   <- Is iff (source is Commander) && payload[O/M] == M::BPPP.
+ *   -> Set waiting injection flag to inject at next ExecutionCycle.
+ *     * Waiting is for time synchronization with ModeRunners.
+ * - Time-slotted Poll Commands:
+ *   <- Is iff (source is Commander) && payload[O/M] == O::TimeSlottedPoll.
+ *   -> Reset poll clock for next ReplySend.
+ * - Fellow Replies:
+ *   <- Is iff (source is Fellow).
  *   -> Save to Roster immediately. */
 class XbeeCommandReceiver {
   using C = Basilisk::Command;
@@ -36,14 +37,55 @@ class XbeeCommandReceiver {
     const auto maybe_nodeid_it = xb::addr::to_nodeid.find(packet.src_addr());
     if (maybe_nodeid_it == xb::addr::to_nodeid.end()) return;
     const auto nodeid = maybe_nodeid_it->second;
-    if (1 <= nodeid && nodeid <= 13) {  // Fellow Reply
+
+    //////////////////
+    // Fellow Reply //
+    if (1 <= nodeid && nodeid <= 13) {  // Source is a Fellow.
       if (nodeid == b_.cfg_.suid) return;
 
-    } else if (50 <= nodeid && nodeid <= 59) {  // Source is a Commander
+      Message msg{};
+      memcpy(msg.payload, packet.payload, payload_size);
+
+      const auto other_suidm1 = nodeid - 1;
+      auto& other = roster[other_suidm1];
+      other.x = static_cast<double>(msg.fellow_rpl.x);
+      other.y = static_cast<double>(msg.fellow_rpl.y);
+      other.yaw = static_cast<double>(msg.fellow_rpl.yaw);
+      other.since_update_us = 0;
+
+      return;
+    } else if (50 <= nodeid && nodeid <= 59) {  // Source is a Commander.
       const auto& om = packet.payload[0];
-      if (om == static_cast<uint8_t>(M::BPPP)) {  // B-PPP Command
-      } else if (om == static_cast<uint8_t>(
-                           O::BroadcastedPoll)) {  // Broadcasted Poll Command
+
+      ///////////////////
+      // B-PPP Command //
+      if (om == static_cast<uint8_t>(M::BPPP)) {
+        Message msg{};
+        memcpy(msg.payload, packet.payload, payload_size);
+
+        const auto suidm1 = b_.cfg_.suidm1();
+        const auto ppp_idx = msg.cmd.u.bppp.idx[suidm1];
+        switch (static_cast<int>(ppp_idx)) {
+          // Handle special indices that should be processed immediately.
+          case 0:
+            return;
+          case 50002:
+            b_.crmux_ = Basilisk::CRMux::Xbee;
+            return;
+
+          // For others, save index and wait to inject.
+          default:
+            injection_.ppp.idx = ppp_idx;
+            injection_.waiting = true;
+            return;
+        }
+      }
+
+      /////////////////////
+      // TimeSlottedPoll //
+      else if (om == static_cast<uint8_t>(O::TimeSlottedPoll)) {
+        b_.poll_clk_us_ = 0;
+        return;
       } else {
         return;
       }
@@ -52,29 +94,36 @@ class XbeeCommandReceiver {
     }
   }
 
+  void Inject() {
+    b_.cmd_.mode = M::BPPP;
+    b_.cmd_.ppp.idx = injection_.ppp.idx;
+    b_.cmd_.ppp.prev_mode = b_.cmd_.mode;
+  }
+
   union Message {
-    uint8_t payload[ xb::c:: ];
+    uint8_t payload[xb::c::capacity::payload];
+    struct __attribute__((packed)) FellowReply {
+      float x, y, yaw;
+    } fellow_rpl;
+    struct __attribute__((packed)) Command {
+      uint8_t om;
+      union {
+        struct __attribute__((packed)) TimeSlottedPoll {
+          uint8_t round_robin;
+        } tspoll;
+        struct __attribute__((packed)) BPPP {
+          uint16_t idx[13];
+        } bppp;
+      } u;
+    } cmd;
+  };
 
+  struct {
+    bool waiting = false;
+    struct {
+      uint16_t idx = 0;
+    } ppp;
   } injection_;
-
-
-  struct __attribute__((packed)) Message {
-    union {}
-
-
-
-    uint8_t om;
-    union {
-      struct __attribute__((packed))
-      {
-        /* data */
-      } bppp;
-      
-      struct __attribute__((packed)) {
-        float x, y, yaw;
-      } fellow_rpl;
-    } u;
-  } ;
 
  private:
   Basilisk& b_;

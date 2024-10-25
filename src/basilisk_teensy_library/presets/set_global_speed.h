@@ -10,5 +10,5 @@ void Presets::SetGlobalSetPhisSpeed(Basilisk* b, int level) {
                         : level == 4 ? globals::stdval::speed::faster
                                      : globals::stdval::speed::normal;
 
-  b->cmd_.mode = b->cmd_.do_preset.prev_mode;
+  b->cmd_.mode = b->cmd_.ppp.prev_mode;
 }

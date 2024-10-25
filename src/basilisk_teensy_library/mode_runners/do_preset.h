@@ -38,7 +38,7 @@
 // 10000 ~ 19999 WalkToPos
 // 20000 ~ 29999 WalkToPosInField
 
-namespace do_preset {
+namespace ppp {
 
 namespace pivot {
 double tgt_yaw;
@@ -49,11 +49,11 @@ namespace piv_spin {
 PhiSpeed speed = globals::stdval::speed::normal;
 }  // namespace piv_spin
 
-}  // namespace do_preset
+}  // namespace ppp
 
 void ModeRunners::BPPP(Basilisk* b) {
   auto& m = b->cmd_.mode;
-  auto idx = b->cmd_.do_preset.idx;  // Copy, not reference.
+  auto idx = b->cmd_.ppp.idx;  // Copy, not reference.
 
   P("Entered BPPP Mode, Preset idx ");
   Serial.println(idx);
@@ -84,10 +84,10 @@ void ModeRunners::BPPP(Basilisk* b) {
         m = M::Pivot_Init;
         auto& c = b->cmd_.pivot;
         c.didimbal = digits[3] == 1 ? BOOL_L : BOOL_R;
-        do_preset::pivot::tgt_yaw = (digits[2] - 3) * 0.125;
+        ppp::pivot::tgt_yaw = (digits[2] - 3) * 0.125;
         c.tgt_yaw = [](Basilisk* b) {
           const auto cur_yaw = b->imu_.GetYaw(true);
-          auto ty = nearest_pmn(cur_yaw, do_preset::pivot::tgt_yaw);
+          auto ty = nearest_pmn(cur_yaw, ppp::pivot::tgt_yaw);
           if (b->cmd_.pivot.didimbal == BOOL_L &&
               ty - cur_yaw < -(0.375 + 0.0625)) {
             ty += 1.0;
@@ -110,7 +110,7 @@ void ModeRunners::BPPP(Basilisk* b) {
                         : digits[0] == 4 ? -0.25
                         : digits[0] == 5 ? 0.25
                                          : 0.0;
-        c.speed = do_preset::pivot::speed;
+        c.speed = ppp::pivot::speed;
         c.acclim = globals::stdval::acclim::standard;
         c.min_dur = 0;
         c.max_dur = globals::stdval::maxdur::safe;
@@ -153,7 +153,7 @@ void ModeRunners::BPPP(Basilisk* b) {
           }
         }
         for (uint8_t f : IDX_LR) c.bend[f] = 0.0;
-        c.speed = do_preset::piv_spin::speed;
+        c.speed = ppp::piv_spin::speed;
         c.acclim = globals::stdval::acclim::standard;
         c.min_stepdur = 0;
         c.max_stepdur = globals::stdval::maxdur::safe;
@@ -192,7 +192,7 @@ void ModeRunners::BPPP(Basilisk* b) {
           }
         }
         for (uint8_t f : IDX_LR) c.bend[f] = 0.0;
-        c.speed = do_preset::piv_spin::speed;
+        c.speed = ppp::piv_spin::speed;
         c.acclim = globals::stdval::acclim::standard;
         c.min_stepdur = 0;
         c.max_stepdur = globals::stdval::maxdur::safe;
@@ -492,8 +492,8 @@ void ModeRunners::BPPP(Basilisk* b) {
           led_rs::finding_me = true;
         }
 
-        m = b->cmd_.do_preset.prev_mode;
-        b->cmd_.do_preset.idx = 0;
+        m = b->cmd_.ppp.prev_mode;
+        b->cmd_.ppp.idx = 0;
 
         return;
       }

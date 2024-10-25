@@ -95,7 +95,7 @@ class SerialReplySender {
         P(" / ");
         Serial.print(roster[suid - 1].yaw);
         P(" / ");
-        Serial.print(roster[suid - 1].time_since_update_us * 1e-6, 6);
+        Serial.print(roster[suid - 1].since_update_us * 1e-6, 6);
       }
       P(" | ");
       if (suid == 7) Serial.println();

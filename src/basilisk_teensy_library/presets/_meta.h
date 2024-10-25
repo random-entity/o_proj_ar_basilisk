@@ -15,18 +15,18 @@ struct Presets {
   inline static void CRMuxXbee(Basilisk* b) {
     // Executer handles the CRMux switching.
     XbeeCommandReceiver::xb_cmd_.decoded.mode =
-        static_cast<uint8_t>(b->cmd_.do_preset.prev_mode);
-    b->cmd_.mode = b->cmd_.do_preset.prev_mode;
+        static_cast<uint8_t>(b->cmd_.ppp.prev_mode);
+    b->cmd_.mode = b->cmd_.ppp.prev_mode;
   }
   inline static void SetBaseYawZero(Basilisk* b) {
     b->cmd_.oneshots |= (1 << 1);
     b->cmd_.set_base_yaw.offset = 0.0;
-    b->cmd_.mode = b->cmd_.do_preset.prev_mode;
+    b->cmd_.mode = b->cmd_.ppp.prev_mode;
   }
   inline static void SetBaseYawM025(Basilisk* b) {
     b->cmd_.oneshots |= (1 << 1);
     b->cmd_.set_base_yaw.offset = -0.25;
-    b->cmd_.mode = b->cmd_.do_preset.prev_mode;
+    b->cmd_.mode = b->cmd_.ppp.prev_mode;
   }
 
   static void RMagRls(Basilisk*);

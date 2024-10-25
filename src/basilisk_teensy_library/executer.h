@@ -13,21 +13,21 @@ class Executer {
   void Run() {
     if (!beat_.Hit()) return;
 
-    // if (XbeeCommandReceiver::waiting_parse_) {
-    //   if (XbeeCommandReceiver::xb_cmd_.decoded.oneshots &
-    //       (1 << ONESHOT_CRMuxXbee)) {
-    //     b_->cmd_.oneshots |= (1 << ONESHOT_CRMuxXbee);
-    //     XbeeCommandReceiver::waiting_parse_ = false;
-    //   }
-    //   if (XbeeCommandReceiver::xb_cmd_.decoded.mode ==
-    //           static_cast<uint8_t>(Basilisk::Command::Mode::BPPP) &&
-    //       XbeeCommandReceiver::xb_cmd_.decoded.u.do_preset
-    //               .idx[b_->cfg_.suid - 1] == 50002) {
-    //     b_->cmd_.oneshots |= (1 << ONESHOT_CRMuxXbee);
-    //   }
-    // }
+    if (XbeeCommandReceiver::waiting_parse_) {
+      if (XbeeCommandReceiver::xb_cmd_.decoded.oneshots &
+          (1 << ONESHOT_CRMuxXbee)) {
+        b_->cmd_.oneshots |= (1 << ONESHOT_CRMuxXbee);
+        XbeeCommandReceiver::waiting_parse_ = false;
+      }
+      if (XbeeCommandReceiver::xb_cmd_.decoded.mode ==
+              static_cast<uint8_t>(Basilisk::Command::Mode::BPPP) &&
+          XbeeCommandReceiver::xb_cmd_.decoded.u.bppp
+                  .idx[b_->cfg_.suid - 1] == 50002) {
+        b_->cmd_.oneshots |= (1 << ONESHOT_CRMuxXbee);
+      }
+    }
 
-    // BasiliskOneshots::Shoot(b_);
+    BasiliskOneshots::Shoot(b_);
 
     b_.CommandBoth([](Servo& s) {
       s.SetQuery();
@@ -68,12 +68,12 @@ class Executer {
     //   b_->cmd_.mode = Basilisk::Command::Mode::Idle_Init;
     // }
 
-    // auto* maybe_mode_runner = SafeAt(ModeRunners::mode_runners,
-    // b_->cmd_.mode); if (maybe_mode_runner) {
-    //   (*maybe_mode_runner)(b_);
-    // } else {
-    //   // Pln("Mode NOT registered to ModeRunners::mode_runners");
-    // }
+    auto* maybe_mode_runner = SafeAt(ModeRunners::mode_runners, b_->cmd_.mode);
+    if (maybe_mode_runner) {
+      (*maybe_mode_runner)(b_);
+    } else {
+      // Pln("Mode NOT registered to ModeRunners::mode_runners");
+    }
   }
 
  private:

@@ -10,5 +10,5 @@
 struct {
   double x = NaN, y = NaN;
   double yaw = NaN;
-  elapsedMicros time_since_update_us = 0;
+  elapsedMicros since_update_us = 0;
 } roster[13];
