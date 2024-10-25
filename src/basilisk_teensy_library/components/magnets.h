@@ -44,11 +44,11 @@ class Magnets {
     return true;
   }
 
+  // Call continuously to track if any of the electromagnets are
+  // being passed current for too long.
   void Run() {
     if (!beat_.Hit()) return;
 
-    // Call continuously to track if any of the electromagnets are
-    // being passed current for too long.
     for (int id = 0; id < 4; id++) {
       if (attaching_[id]) {
         since_attach_[id] = 0;

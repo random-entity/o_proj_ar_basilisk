@@ -59,8 +59,8 @@ class Lps {
     return true;
   }
 
-  // Should be called continuously to immediately receive to
-  // incoming sensor data and prevent Serial buffer overflow.
+  // Call continuously to immediately receive incoming sensor data
+  // and prevent Serial buffer overflow.
   void Run() {
     static HardwareSerial& serial = g::serials::lps;
     static bool start = false;

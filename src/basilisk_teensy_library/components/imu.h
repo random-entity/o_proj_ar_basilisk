@@ -30,9 +30,8 @@ class Imu {
     return true;
   }
 
-  // Should be called continuously to immediately receive to
-  // incoming sensor data and prevent Serial buffer overflow
-  // and correctly track full revolutions.
+  // Call continuously to immediately receive to incoming sensor data
+  // and prevent Serial buffer overflow and correctly track revolutions.
   void Run() {
     static HardwareSerial& serial = g::serials::imu;
     static const int buf_size = 64;
