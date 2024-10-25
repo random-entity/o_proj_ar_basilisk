@@ -98,11 +98,7 @@ class Basilisk {
         mags_{lego_,                             //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
               cfg.mags.pin_ra, cfg.mags.pin_rt, cfg.mags.run_interval},
-        rpl_{.b = this,
-             .suid = static_cast<uint8_t>(cfg.suid),
-             .mode = &cmd_.mode,
-             .lpsx = &lps_.x_,
-             .lpsy = &lps_.y_} {}
+        rpl_{.b = *this} {}
 
   ////////////////////////////////////////////////////////////
   // Setup method (should be called in setup() before use): //
@@ -508,20 +504,24 @@ class Basilisk {
   } cmd_;
 
   struct Reply {
-    Basilisk* b;
+    Basilisk& b;
     const uint8_t suid;
-    Command::Mode* mode;
-    double* lpsx;
-    double* lpsy;
-    double yaw() { return b->imu_.GetYaw(true); }
-    double phi_l() { return b->l_.GetReply().abs_position; }
-    double phi_r() { return b->r_.GetReply().abs_position; };
+    uint8_t mode() { return static_cast<uint8_t>(b.cmd_.mode); }
+    float x() { return static_cast<float>(b.lps_.x_); }
+    float y() { return static_cast<float>(b.lps_.y_); }
+    float yaw() { return static_cast<float>(b.imu_.GetYaw(true)); }
+    float phi_l() { return static_cast<float>(b.l_.GetReply().abs_position); }
+    float phi_r() { return static_cast<float>(b.r_.GetReply().abs_position); };
 
-    bool notnull() { return !!b && !!suid && !!mode && !!lpsx && !!lpsy; }
+    struct {
+      elapsedMicros bppp_us;
+      elapsedMicros tspoll_us;
+      const elapsedMicros* fellow_rpl_us(int suidm1) {
+        if (0 <= suidm1 && suidm1 <= 12) return &roster[suidm1].since_update_us;
+        return nullptr;
+      }
+    } since_xbrecv;
   } rpl_;
-
-  struct Light {
-  } light_;
 
   ///////////////////
   // Util methods: //

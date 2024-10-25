@@ -11,4 +11,4 @@ struct {
   double x = NaN, y = NaN;
   double yaw = NaN;
   elapsedMicros since_update_us = 0;
-} roster[13];
+} roster[13];  // (SUID - 1) -> Fellow Reply from SUID
