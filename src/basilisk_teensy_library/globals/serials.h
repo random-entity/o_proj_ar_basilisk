@@ -4,41 +4,13 @@
 
 #include <unordered_set>
 
+#include "../helpers/debug.h"
 #include "../helpers/serial_print.h"
 
-#define DEBUG_SETUP (1)
-#define DEBUG_TEENSYID (1)
-#define DEBUG_FAILURE (1)
-#define DEBUG_SERIAL_RS (1)
-#define DEBUG_XBEE_TIMING (1)
-#define DEBUG_XBEE_RECEIVE (1)
-#define DEBUG_XBEE_SEND (1)
-#define DEBUG_NEOKEYCR (1)
-// Add to the OR chain of ENABLE_SERIAL whenever adding a new flag.
 #define ENABLE_SERIAL                                                   \
   (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_FAILURE || DEBUG_SERIAL_RS || \
    DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE || DEBUG_XBEE_SEND ||        \
    DEBUG_NEOKEYCR)
-
-namespace g::serials {
-
-inline constexpr uint32_t common_begin_wait_time = 250;
-
-struct HwSerial {
-  HwSerial(HardwareSerialIMXRT& _s, const uint32_t& _baudrate)
-      : s{_s}, baudrate{_baudrate} {
-    s.begin(baudrate);
-    delay(common_begin_wait_time);
-  }
-  HardwareSerialIMXRT& s;
-  uint32_t baudrate;
-};
-
-HwSerial imu{Serial2, 57600};
-HwSerial lps{Serial6, 9600};
-HwSerial xb{Serial4, 115200};
-
-}  // namespace g::serials
 
 #if ENABLE_SERIAL
 // Just initialize once and ignore Serial.begin() failure.
@@ -57,3 +29,24 @@ void InitSerial() {
   }
 }
 #endif
+
+namespace g::serials {
+
+inline constexpr uint32_t common_begin_wait_time = 250;
+
+struct HardwareSerialWrapper {
+  HardwareSerialWrapper(HardwareSerial& _s, const uint32_t& _baudrate)
+      : s{_s}, baudrate{_baudrate} {
+    s.begin(baudrate);
+    delay(common_begin_wait_time);
+  }
+  HardwareSerial& s;
+  const uint32_t baudrate;
+};
+
+/* IMU, LPS, XBee Serials are all initialized here already. */
+HardwareSerialWrapper imu{Serial2, 57600};
+HardwareSerialWrapper lps{Serial6, 9600};
+HardwareSerialWrapper xb{Serial4, 115200};
+
+}  // namespace g::serials
