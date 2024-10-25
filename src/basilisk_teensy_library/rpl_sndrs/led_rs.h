@@ -12,7 +12,7 @@
 
 class LedReplySender {
  public:
-  LedReplySender(Basilisk& b, Neokey& nk, const uint32_t run_interval = 10)
+  LedReplySender(Basilisk& b, Neokey& nk, const uint32_t run_interval = 1)
       : b_{b}, nk_{nk}, beat_{run_interval} {
     // [0]: The heart.
     heart_.set = [this] {

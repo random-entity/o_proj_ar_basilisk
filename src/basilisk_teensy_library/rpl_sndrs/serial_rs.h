@@ -6,7 +6,8 @@
 
 class SerialReplySender {
  public:
-  SerialReplySender(Basilisk& b) : b_{b} {}
+  SerialReplySender(Basilisk& b, const uint32_t& run_interval = 1000)
+      : b_{b}, beat_{run_interval} {}
 
   void Run() {
     if (!beat_.Hit()) return;
@@ -105,5 +106,5 @@ class SerialReplySender {
 
  private:
   Basilisk& b_;
-  Beat beat_{1000};
+  Beat beat_;
 };
