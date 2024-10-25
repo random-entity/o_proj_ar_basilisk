@@ -10,7 +10,10 @@ inline constexpr uint8_t xon = 0x11;
 inline constexpr uint8_t xoff = 0x13;
 inline constexpr uint8_t xor_with = 0x20;
 
-inline constexpr int buffer_capacity = 100;
+namespace capacity {
+inline constexpr int buffer = 100;
+inline constexpr int payload = (buffer - 1) / 2 - 17;
+}  // namespace capacity
 
 namespace frametype {
 inline constexpr uint8_t tx = 0x10;

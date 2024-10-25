@@ -51,15 +51,15 @@ PhiSpeed speed = globals::stdval::speed::normal;
 
 }  // namespace do_preset
 
-void ModeRunners::DoPreset(Basilisk* b) {
+void ModeRunners::BPPP(Basilisk* b) {
   auto& m = b->cmd_.mode;
   auto idx = b->cmd_.do_preset.idx;  // Copy, not reference.
 
-  P("Entered DoPreset Mode, Preset idx ");
+  P("Entered BPPP Mode, Preset idx ");
   Serial.println(idx);
 
   switch (m) {
-    case M::DoPreset: {
+    case M::BPPP: {
       if (1000 <= idx && idx <= 2999) {  // PPP Pivot range
                                          // Decimal ABCD
                                          // A = didim = 1 ~ 2

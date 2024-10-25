@@ -13,6 +13,8 @@ class Sender {
 
   bool Send(const uint8_t* payload, const int& payload_size,
             const uint64_t& dest_addr = c::addr::broadcast) {
+    if (payload_size > c::capacity::payload) return false;
+
     int idx = 1;
     uint8_t sum = 0;
     const auto length = static_cast<uint16_t>(payload_size + 14);
@@ -60,11 +62,11 @@ class Sender {
   bool Put(int& idx, uint8_t val, uint8_t* sum = nullptr) {
     if (val == c::start || val == c::escape ||  //
         val == c::xon || val == c::xoff) {
-      if (idx + 1 >= c::buffer_capacity) return false;
+      if (idx + 1 >= c::capacity::buffer) return false;
       buf_[idx++] = c::escape;
       buf_[idx++] = val ^ c::xor_with;
     } else {
-      if (idx >= c::buffer_capacity) return false;
+      if (idx >= c::capacity::buffer) return false;
       buf_[idx++] = val;
     }
     if (sum) *sum += val;
@@ -72,7 +74,7 @@ class Sender {
   }
 
   HardwareSerial& s_;
-  uint8_t buf_[c::buffer_capacity] = {c::start};
+  uint8_t buf_[c::capacity::buffer] = {c::start};
 
   struct to_bytes {  // Little endian.
     inline static union {

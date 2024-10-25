@@ -7,7 +7,7 @@
 namespace xb {
 
 namespace addr {
-const std::map<uint64_t, int> to_suid{
+const std::map<uint64_t, int> to_nodeid{
     {0x0013A20041C22F0E, 1},   //
     {0x0013A20041C22D2A, 2},   //
                                // {0x0000000000000000, 3},

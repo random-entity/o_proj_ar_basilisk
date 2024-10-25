@@ -20,7 +20,7 @@ class Executer {
     //     XbeeCommandReceiver::waiting_parse_ = false;
     //   }
     //   if (XbeeCommandReceiver::xb_cmd_.decoded.mode ==
-    //           static_cast<uint8_t>(Basilisk::Command::Mode::DoPreset) &&
+    //           static_cast<uint8_t>(Basilisk::Command::Mode::BPPP) &&
     //       XbeeCommandReceiver::xb_cmd_.decoded.u.do_preset
     //               .idx[b_->cfg_.suid - 1] == 50002) {
     //     b_->cmd_.oneshots |= (1 << ONESHOT_CRMuxXbee);

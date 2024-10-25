@@ -15,7 +15,7 @@ struct ReceivePacket {
   uint64_t src_addr_reversed;  // Who sent this, big endian, so byte-reversed.
   uint16_t random_entity;      // The meaningless zone.
   uint8_t recv_options;        // 0x42 for Point-multipoint broadcast.
-  uint8_t payload[c::buffer_capacity - 12 - 1];
+  uint8_t payload[c::capacity::buffer - 13];
 
   uint64_t src_addr() {
     static const auto& r = src_addr_reversed;
@@ -85,7 +85,7 @@ class Receiver {
           continue;
         } else {
           if (!Put(r)) {
-            /* This should never happen if c::buffer_capacity >= 4. */
+            /* This should never happen if c::capacity::buffer >= 4. */
             go_to_.at(Waiting::Start)();
             return;
           }
@@ -135,7 +135,7 @@ class Receiver {
  private:
   bool Put(uint8_t val, bool sum = false) {
     static bool esc = false;
-    if (idx_ >= c::buffer_capacity) {
+    if (idx_ >= c::capacity::buffer) {
       return false;
     }
 
@@ -154,7 +154,7 @@ class Receiver {
 
   HardwareSerial& s_;
   union {
-    uint8_t bytes[c::buffer_capacity];
+    uint8_t bytes[c::capacity::buffer];
     ReceivePacket packet;
   } buf_;
   int idx_ = 0, size_ = 0;

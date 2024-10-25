@@ -184,15 +184,28 @@ class Basilisk {
   enum class CRMux : bool { Xbee, Neokey } crmux_ = CRMux::Xbee;
 
   struct Command {
-    uint8_t oneshots;  // Refer to utils.h for bit mapping.
-                       // Poll and Reply are handled independent of Executer.
+    // 200 <= Oneshot <= 255
+    // 0   <= Mode    <= 199
+
+    enum class Oneshot : uint8_t {
+      None = 200,
+      CRMuxXbee = 201,
+      SetBaseYaw = 202,
+      Inspire = 203,
+      BroadcastedPoll = 204,
+    } oneshots = Oneshot::None;
 
     struct SetBaseYaw {
       double offset;
     } set_base_yaw;
 
     struct Inspire {
+      // Vec2 pos...
     } inspire;
+
+    struct BroadcastedPoll {
+      int round_robin;
+    } broadcasted_poll;
 
     enum class Mode : uint8_t {
       // A child Mode cannot be future-chained after its parent Mode.
@@ -218,8 +231,8 @@ class Basilisk {
        * - then exit to Idle Mode. */
       Free = 3,  // -> Wait -> Idle
 
-      /* DoPreset: Do a preset. */
-      DoPreset = 4,
+      /* BPPP: Do a preset. */
+      BPPP = 4,
 
       /* SetMags: Control magnets.
        *          Future-chain-able.
@@ -295,7 +308,7 @@ class Basilisk {
       Gee = 252,
     } mode = Mode::Idle_Init;
 
-    struct DoPreset {
+    struct BPPP {
       uint16_t idx;
       Mode prev_mode;
     } do_preset;
