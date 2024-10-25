@@ -10,16 +10,16 @@ namespace addr {
 const std::map<uint64_t, int> to_nodeid{
     /////////////////////////////
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
-    // 1 <= Basilisks <= 13
+    // 1 <= Followers <= 13
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
     /////////////////////////////
     {0x0013A20041C22F0E, 1},   //
     {0x0013A20041C22D2A, 2},   //
-                               // {0x0000000000000000, 3},
+    {0x0013A20041C2AE4E, 3},   //
     {0x0013A20041C2AF68, 4},   //
     {0x0013A20041C15729, 5},   //
     {0x0013A20041C22D41, 6},   //
-                               // {0x0000000000000000, 7},
+    {0x0013A20041C1369C, 7},   //
     {0x0013A20041C2B6D4, 8},   //
     {0x0013A20041C22F71, 9},   //
     {0x0013A20041BEA1C1, 10},  //
@@ -39,15 +39,28 @@ const std::map<uint64_t, int> to_nodeid{
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
     /////////////////////////////
     {0x0013A20041C2A71B, 14},  // Kaktugi
+    /////////////////////////////
+    //.*.*.*.*.*.*.*.*.*.*.*.*.*.
+    // Goodbye.
+    //.*.*.*.*.*.*.*.*.*.*.*.*.*.
+    /////////////////////////////
+    {((((((0)))))), ((((((0))))))},
 };
 }  // namespace addr
 
 namespace timing {
 /* (all time in milliseconds for this section of comment)
  * Non-Poll Commands: 100M          (M = ?)
- * Polls            : p = 100N + c  (N = 0, 1, 2, ...)
+ * Polls            : p = 100N + c  (N = span * (0, 1, 2, ...))
  * Replies          : p + e + ((suid + pollid) % 13) * r,
-                      skipping around 100K */
+                      skipping around 100K
+
+  Time (ms)        : 0         100       200       300       400
+  Non-Poll Cmds    : ?         ?         ?         ?         ?
+  Broadcasted Polls: |P        |         |P        |         |P
+  Replies          : | 1234567 | 89ABCD  | D123456 | 789ABC  | CD1...
+                     <-----span == 2----->
+*/
 
 constexpr uint32_t recv_timeout_us = 10 * 1000;  // c
 #define R_MINUS_C_US (5 * 1000)

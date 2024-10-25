@@ -19,12 +19,12 @@ struct Presets {
     b->cmd_.mode = b->cmd_.ppp.prev_mode;
   }
   inline static void SetBaseYawZero(Basilisk* b) {
-    b->cmd_.oneshots |= (1 << 1);
+    b->cmd_.oneshot |= (1 << 1);
     b->cmd_.set_base_yaw.offset = 0.0;
     b->cmd_.mode = b->cmd_.ppp.prev_mode;
   }
   inline static void SetBaseYawM025(Basilisk* b) {
-    b->cmd_.oneshots |= (1 << 1);
+    b->cmd_.oneshot |= (1 << 1);
     b->cmd_.set_base_yaw.offset = -0.25;
     b->cmd_.mode = b->cmd_.ppp.prev_mode;
   }

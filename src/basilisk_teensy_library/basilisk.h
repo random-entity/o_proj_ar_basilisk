@@ -193,7 +193,7 @@ class Basilisk {
       SetBaseYaw = 202,
       Inspire = 203,
       TimeSlottedPoll = 204,
-    } oneshots = Oneshot::None;
+    } oneshot = Oneshot::None;
 
     struct SetBaseYaw {
       double offset;
@@ -518,6 +518,9 @@ class Basilisk {
 
     bool notnull() { return !!b && !!suid && !!mode && !!lpsx && !!lpsy; }
   } rpl_;
+
+  struct Light {
+  } light_;
 
   ///////////////////
   // Util methods: //

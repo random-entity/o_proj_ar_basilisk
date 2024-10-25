@@ -14,13 +14,13 @@
 // * Specific
 // 1 ~ 4 Tibu foot
 // 5 ~ 12 Tibu individual magnet ###TODO###
-// 5 ~ 16 Pivot nogadas (deprecated)
 // 23 ~ 24 RandomTibutibu
 // 30 ~ 34 Change global SetPhis speed
 // 50 ~ 51 Diamond
 // 99 BounceWalk(tgt_yaw = random)
 
 // * PPP
+// ?? ~ ?? Set Base Yaw towards Center and counterclockwise ###TODO###
 // 60 ~ 69 Set Pivot Tadak interval ###TODO###
 // 70 WalkToPosInField to grid arrangement
 // 71 WalkToPosInField to pyramid arrangement

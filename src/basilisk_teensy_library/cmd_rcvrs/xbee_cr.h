@@ -66,7 +66,9 @@ class XbeeCommandReceiver {
         const auto suidm1 = b_.cfg_.suidm1();
         const auto ppp_idx = msg.cmd.u.bppp.idx[suidm1];
         switch (static_cast<int>(ppp_idx)) {
-          // Handle special indices that should be processed immediately.
+          // Handle special indices that should be processed or ignored
+          // immediately. PPP Command that requests Oneshot should be prevented
+          // from changing the Mode of Basilisk.
           case 0:
             return;
           case 50002:

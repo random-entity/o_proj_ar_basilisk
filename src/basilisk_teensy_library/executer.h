@@ -14,16 +14,16 @@ class Executer {
     if (!beat_.Hit()) return;
 
     if (XbeeCommandReceiver::waiting_parse_) {
-      if (XbeeCommandReceiver::xb_cmd_.decoded.oneshots &
+      if (XbeeCommandReceiver::xb_cmd_.decoded.oneshot &
           (1 << ONESHOT_CRMuxXbee)) {
-        b_->cmd_.oneshots |= (1 << ONESHOT_CRMuxXbee);
+        b_->cmd_.oneshot |= (1 << ONESHOT_CRMuxXbee);
         XbeeCommandReceiver::waiting_parse_ = false;
       }
       if (XbeeCommandReceiver::xb_cmd_.decoded.mode ==
               static_cast<uint8_t>(Basilisk::Command::Mode::BPPP) &&
           XbeeCommandReceiver::xb_cmd_.decoded.u.bppp
                   .idx[b_->cfg_.suid - 1] == 50002) {
-        b_->cmd_.oneshots |= (1 << ONESHOT_CRMuxXbee);
+        b_->cmd_.oneshot |= (1 << ONESHOT_CRMuxXbee);
       }
     }
 
@@ -39,14 +39,14 @@ class Executer {
 
     switch (b_.crmux_) {
       case Basilisk::CRMux::Neokey: {
-        if (nkcr_.nk_cmd_ != 0) {
-          nkcr_.Parse();
-          nkcr_.nk_cmd_ = 0;
+        if (nkcr_.injection_ != 0) {
+          nkcr_.Inject();
+          nkcr_.injection_ = 0;
         }
       } break;
         // case Basilisk::CRMux::Xbee: {
         //     if (XbeeCommandReceiver::waiting_parse_) {
-        //       XbeeCommandReceiver::Parse();
+        //       XbeeCommandReceiver::Inject();
         //       XbeeCommandReceiver::waiting_parse_ = false;
         //     }
         //   } break;
