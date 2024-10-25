@@ -18,7 +18,8 @@ struct HardwareSerialWrapper {
     delay(common_begin_wait_time);
   }
 
-  HardwareSerial& operator()() { return s; }
+  operator HardwareSerial&() { return s; }
+  operator bool() { return s; }
 
   HardwareSerial& s;
   const uint32_t baudrate;

@@ -44,11 +44,9 @@ class Lps {
 
   // Must be called before use.
   bool Setup() {
-    LPS_SERIAL.begin(LPS_SERIAL_BAUDRATE);
-    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
-    if (!LPS_SERIAL) {
+    if (!g::serials::lps) {
 #if DEBUG_SETUP
-      Pln("LPS: LPS_SERIAL(Serial6) begin failed");
+      Pln("LPS: LPS Serial (Serial6) begin failed");
 #endif
       return false;
     }
@@ -64,23 +62,24 @@ class Lps {
   // Should be called continuously to immediately receive to
   // incoming sensor data and prevent Serial buffer overflow.
   void Run() {
+    static HardwareSerial& serial = g::serials::lps;
     static bool start = false;
 
-    if (LPS_SERIAL.available() >= 60) {
-      for (int i = 0; i < 60; i++) LPS_SERIAL.read();
+    if (serial.available() >= 60) {
+      for (int i = 0; i < 60; i++) serial.read();
     }
 
     if (!start) {
-      if (!(LPS_SERIAL.available() && LPS_SERIAL.read() == 255)) return;
-      if (!(LPS_SERIAL.available() && LPS_SERIAL.read() == 2)) return;
+      if (!(serial.available() && serial.read() == 255)) return;
+      if (!(serial.available() && serial.read() == 2)) return;
       start = true;
     }
 
-    if (LPS_SERIAL.available() < 4) return;
+    if (serial.available() < 4) return;
 
     error_.matome = 0;
     for (int i = 0; i < 3; i++) {
-      const auto raw = LPS_SERIAL.read();
+      const auto raw = serial.read();
       if (raw < 250) {
         dists_raw_[i] = raw;
         dists_sm_[i].add(10.0 * raw);
@@ -88,7 +87,7 @@ class Lps {
         error_.bytes[i] = raw;
       }
     }
-    latency_ = LPS_SERIAL.read();
+    latency_ = serial.read();
     if (!error_.matome) SetXY();
     since_raw_update_ = 0;
 

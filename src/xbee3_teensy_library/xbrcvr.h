@@ -36,7 +36,9 @@ class Receiver {
  public:
   Receiver(HardwareSerial& s,
            const std::function<void(ReceivePacket&, int)>& callback)
-      : s_{s}, callback_{callback} {}
+      : s_{s}, callback_{callback} {
+    // It is the client's responsibility to begin the HardwareSerial.
+  }
 
  private:
   enum class Waiting {

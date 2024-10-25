@@ -26,8 +26,7 @@ class XbeeCommandReceiver {
  public:
   XbeeCommandReceiver(Basilisk& b)
       : b_{b},
-        r_{g::serials::xb(),
-           [this](xb::ReceivePacket& packet, int payload_size) {
+        r_{g::serials::xb, [this](xb::ReceivePacket& packet, int payload_size) {
              Parse(packet, payload_size);
            }} {}
 

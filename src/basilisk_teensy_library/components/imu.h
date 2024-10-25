@@ -17,11 +17,9 @@ class Imu {
  public:
   // Must be called before use.
   bool Setup() {
-    IMU_SERIAL.begin(IMU_SERIAL_BAUDRATE);
-    delay(COMMON_SERIAL_BEGIN_WAIT_TIME);
-    if (!IMU_SERIAL) {
+    if (!g::serials::imu) {
 #if DEBUG_SETUP
-      Pln("IMU: IMU_SERIAL(Serial2) begin failed");
+      Pln("IMU: IMU Serial (Serial2) begin failed");
 #endif
       return false;
     }
@@ -36,6 +34,7 @@ class Imu {
   // incoming sensor data and prevent Serial buffer overflow
   // and correctly track full revolutions.
   void Run() {
+    static HardwareSerial& serial = g::serials::imu;
     static const int buf_size = 64;
     static char buf[buf_size];
     static int buf_idx = 0;
@@ -43,9 +42,9 @@ class Imu {
       if (++buf_idx >= 64) buf_idx = 0;
     };
 
-    const auto rbytes = IMU_SERIAL.available();
+    const auto rbytes = serial.available();
     for (int i = 0; i < rbytes; i++, increment_idx()) {
-      buf[buf_idx] = IMU_SERIAL.read();
+      buf[buf_idx] = serial.read();
       if (buf[buf_idx] == '\n') {
         char* temp[3];
         temp[0] = strtok(buf, ",");
@@ -61,8 +60,7 @@ class Imu {
           for (int i = 0; i < 3; i++) {
             euler_[i] = atof(temp[i]) / 360.0;
           }
-          euler_[2] *= -1.0;  // Translate to ((vertical up) = +z)
-                              // right hand system.
+          euler_[2] *= -1.0;  // Right hand thumbs up.
           const auto delta_yaw_coiled = euler_[2] - prev_yaw_coiled;
           if (delta_yaw_coiled > 0.5) {
             yaw_revs_--;

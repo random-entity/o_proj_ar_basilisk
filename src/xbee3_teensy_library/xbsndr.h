@@ -9,7 +9,9 @@ namespace xb {
 /* Assumes 'API with escapes' as radio operating mode. */
 class Sender {
  public:
-  Sender(HardwareSerial& s) : s_{s} {}
+  Sender(HardwareSerial& s) : s_{s} {
+    // It is the client's responsibility to begin the HardwareSerial.
+  }
 
   bool Send(const uint8_t* payload, const int& payload_size,
             const uint64_t& dest_addr = c::addr::broadcast) {
