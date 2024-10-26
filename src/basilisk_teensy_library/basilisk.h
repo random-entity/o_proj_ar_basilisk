@@ -200,8 +200,8 @@ class Basilisk {
     } inspire;
 
     struct TimeSlottedPoll {
-      int round_robin;
-    } broadcasted_poll;
+      uint8_t round_robin;
+    } tspoll;
 
     enum class Mode : uint8_t {
       // A child Mode cannot be future-chained after its parent Mode.

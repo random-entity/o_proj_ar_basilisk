@@ -88,6 +88,9 @@ class XbeeCommandReceiver {
       // TimeSlottedPoll //
       else if (om == static_cast<uint8_t>(O::TimeSlottedPoll)) {
         b_.poll_clk_us_ = 0;
+        Payload msg{};
+        memcpy(msg.bytes, packet.payload, payload_size);
+        b_.cmd_.tspoll.round_robin = msg.cmd.u.tspoll.round_robin;
         return;
       } else {
         return;
