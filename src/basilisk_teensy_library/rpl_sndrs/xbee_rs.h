@@ -9,81 +9,38 @@ class XbeeReplySender {
  public:
   XbeeReplySender(Basilisk& b) : b_{b}, s_{g::serials::xb} {}
 
-  // Should be called before use.
-  inline static bool Setup() {
-    if (!b) {
-      Pln("XbeeReplySender: Null reference to Basilisk");
-      return false;
+  // Run continuously.
+  void TimeSlottedReplyToBroadcastedPoll() {
+    const auto send_time_us = g::xb::Timing::mod13_to_send_time_us.at(
+        (b_.cmd_.bpoll.round_robin + b_.cfg_.suidm1()) % 13);
+    if (send_time_us <= b_.since_bpoll_us_ &&
+        b_.since_bpoll_us_ <= send_time_us + g::xb::Timing::send_timeout_us) {
+      Send();
     }
-    b_ = b;
-    xb_rpl_.decoded.suids = 1 << b->cfg_.suidm1();
-    Pln("XbeeReplySender: Setup complete");
-    return true;
   }
 
-  void TimeSlottedReply() {}
-
-  // Should be run continuously
-  inline static void Run() {
-    using namespace timing::xb;
-    static const auto sndtim_us = mod13_to_send_time_us.at(b_->cfg_.suid);
-
-    if (!waiting_send_) return;
-    if (globals::poll_clk_us < sndtim_us) return;
-    waiting_send_ = false;
-    if (globals::poll_clk_us >= sndtim_us + send_timeout_us) {
-#if DEBUG_XBEE_SEND
-      Pln("XbRS timeout");
-#endif
-      return;
-    }
-
-#if DEBUG_XBEE_TIMING
-    Pln("********");
-    Pln("My Reply");
-    P("Begin ");
-    Serial.println(globals::poll_clk_us);
-#endif
-
-    Send();
-
-#if DEBUG_XBEE_TIMING
-    P("Done ");
-    Serial.println(globals::poll_clk_us);
-#endif
-  }
-
-  inline static void Send() {
-    xb_rpl_.decoded.mode = static_cast<uint8_t>(*b_->rpl_.mode);
-    xb_rpl_.decoded.lpsx = static_cast<float>(*b_->rpl_.lpsx);
-    xb_rpl_.decoded.lpsy = static_cast<float>(*b_->rpl_.lpsy);
-    xb_rpl_.decoded.yaw = static_cast<float>(b_->rpl_.yaw());
-    xb_rpl_.decoded.phi_l = static_cast<float>(b_->rpl_.phi_l());
-    xb_rpl_.decoded.phi_r = static_cast<float>(b_->rpl_.phi_r());
+  void Send() {
+    xb_rpl_.decoded.phi_l = b_.rpl_.phi_l();
+    xb_rpl_.decoded.phi_r = b_.rpl_.phi_r();
+    xb_rpl_.decoded.lpsx =b_.rpl_.lpsx();
+    xb_rpl_.decoded.lpsy =b_.rpl_.lpsy();
+    xb_rpl_.decoded.yaw = >(b_->rpl_.yaw());
 
     XBEE_SERIAL.write(xb_rpl_.raw_bytes, XBEE_PACKET_LEN_INCLUDING_START_BYTES);
   }
 
-  inline static union SendBuf {
-    struct Decoded {
-      const uint32_t start_bytes;  // Start bytes are included!
-      uint16_t suids;
-      const uint8_t oneshots;
-      uint8_t mode;
+ private:
+  union SendBuf {
+    struct __attribute__((packed)) Decoded {
+      float phi_l;
+      float phi_r;
       float lpsx;
       float lpsy;
       float yaw;
-      float phi_l;
-      float phi_r;
-    } __attribute__((packed)) decoded;
-    uint8_t raw_bytes[XBEE_PACKET_LEN_INCLUDING_START_BYTES];
-
-    SendBuf()
-        : decoded{.start_bytes{static_cast<uint32_t>(-1)},
-                  .oneshots{1 << ONESHOT_SaveOthersReply}} {}
+    } decoded;
+    uint8_t raw_bytes[xb::c::capacity::payload];
   } xb_rpl_;
 
- private:
   Basilisk& b_;
   xb::Sender s_;
 };

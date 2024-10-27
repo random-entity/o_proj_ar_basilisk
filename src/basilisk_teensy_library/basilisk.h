@@ -459,11 +459,11 @@ class Basilisk {
     Basilisk& b;
     const uint8_t suid;
     uint8_t mode() { return static_cast<uint8_t>(b.cmd_.mode); }
-    float x() { return static_cast<float>(b.lps_.x_); }
-    float y() { return static_cast<float>(b.lps_.y_); }
-    float yaw() { return static_cast<float>(b.imu_.GetYaw(true)); }
     float phi_l() { return static_cast<float>(b.l_.GetReply().abs_position); }
     float phi_r() { return static_cast<float>(b.r_.GetReply().abs_position); };
+    float lpsx() { return static_cast<float>(b.lps_.x_); }
+    float lpsy() { return static_cast<float>(b.lps_.y_); }
+    float yaw() { return static_cast<float>(b.imu_.GetYaw(true)); }
 
     uint8_t servo_l_failure() { return b.l_.failure_.Export(); }
     uint8_t servo_r_failure() { return b.r_.failure_.Export(); }
@@ -476,13 +476,12 @@ class Basilisk {
     }
 
     struct {
-      elapsedMicros bppp_us;
-      elapsedMicros tspoll_us;
-      const elapsedMicros* fellow_rpl_us(int suidm1) {
-        if (0 <= suidm1 && suidm1 <= 12) return &roster[suidm1].since_update_us;
-        return nullptr;
+      elapsedMicros bppp;
+      elapsedMicros bpoll;
+      const elapsedMicros& fellow_rpl(int suidm1) {
+        return roster[suidm1].since_update_us;
       }
-    } since_xbrecv;
+    } since_xbrecv_us;
   } rpl_;
 
   ///////////////////

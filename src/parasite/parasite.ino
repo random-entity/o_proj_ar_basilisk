@@ -1,5 +1,15 @@
 #include <parasite.h>
 
-void setup() { parasite::setup(); }
+void setup() {
+  parasite::main({
+      .lps{.c = 1100.0,
+           .x_c = 1100.0,
+           .y_c = 700.0,
+           .minx = 50.0,
+           .maxx = 1050.0,
+           .miny = 50.0,
+           .maxy = 650.0},
+  });
+}
 
-void loop() { parasite::loop(); }
+void loop() {}
