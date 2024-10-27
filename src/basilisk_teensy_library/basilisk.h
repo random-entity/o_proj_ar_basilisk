@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <elapsedMillis.h>
 
+#include <functional>
+
 #include "components/canfd_drivers.h"
 #include "components/imu.h"
 #include "components/lego_blocks.h"
@@ -268,8 +270,8 @@ class Basilisk {
     } ppp;
 
     struct Wait {
-      uint32_t init_time;
-      bool (*exit_condition)(Basilisk*);
+      elapsedMillis since_init;
+      std::function<bool()> exit_condition;
       Mode exit_to_mode;
     } wait;
 

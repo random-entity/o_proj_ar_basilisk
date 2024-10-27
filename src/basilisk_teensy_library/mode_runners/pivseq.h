@@ -23,9 +23,9 @@ void ModeRunners::PivSeq(Basilisk* b) {
       m = M::Pivot_Init;
       b->cmd_.pivot = c.pivots(b, cur_step);
       b->cmd_.pivot.exit_to_mode = M::Wait;
-      b->cmd_.wait.init_time = millis();
+      b->cmd_.wait.since_init = millis();
       b->cmd_.wait.exit_condition = [](Basilisk* b) {
-        return millis() - b->cmd_.wait.init_time >=
+        return millis() - b->cmd_.wait.since_init >=
                b->cmd_.pivseq.intervals(b, cur_step);
       };
       b->cmd_.wait.exit_to_mode = M::PivSeq_Step;

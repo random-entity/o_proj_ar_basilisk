@@ -62,9 +62,9 @@ void ModeRunners::BounceWalk(Basilisk* b) {
           bounce_walk::tgt_yaw = bounce_walk::tgt_yaw + 0.5;
           bounce_walk::reinit = true;
           b->cmd_.pivseq.exit_to_mode = M::Wait;
-          b->cmd_.wait.init_time = millis();
+          b->cmd_.wait.since_init = millis();
           b->cmd_.wait.exit_condition = [](Basilisk* b) {
-            return millis() >= b->cmd_.wait.init_time + 1000;
+            return millis() >= b->cmd_.wait.since_init + 1000;
           };
           b->cmd_.wait.exit_to_mode = M::BounceWalk_Reinit;
           return true;

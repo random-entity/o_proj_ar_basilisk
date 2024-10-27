@@ -112,9 +112,9 @@ void ModeRunners::WalkToPosInField(Basilisk* b) {
               1e6 * Vec2{walk_to_pos_in_field::cur_tgt_yaw + 0.5};
           walk_to_pos_in_field::reinit = true;
           b->cmd_.pivseq.exit_to_mode = M::Wait;
-          b->cmd_.wait.init_time = millis();
+          b->cmd_.wait.since_init = millis();
           b->cmd_.wait.exit_condition = [](Basilisk* b) {
-            return millis() >= b->cmd_.wait.init_time + 1000;
+            return millis() >= b->cmd_.wait.since_init + 1000;
           };
           b->cmd_.wait.exit_to_mode = M::WalkToPosInField_Reinit;
           return true;

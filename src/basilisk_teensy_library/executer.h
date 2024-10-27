@@ -3,8 +3,8 @@
 #include "basilisk.h"
 #include "cmd_rcvrs/neokey_cr.h"
 #include "cmd_rcvrs/xbee_cr.h"
+#include "mode_runners/_matome.h"
 #include "oneshots/shoot.h"
-// #include "mode_runners/_matome.h"
 
 class Executer {
  public:
@@ -52,16 +52,13 @@ class Executer {
     }
     /* TODO: Develop */
 
-    // auto* maybe_mode_runner = SafeAt(ModeRunners::mode_runners,
-    // b_.cmd_.mode); if (maybe_mode_runner) {
-    //   (*maybe_mode_runner)(b_);
-    // } else {
-    //   // Pln("Mode NOT registered to ModeRunners::mode_runners");
-    // }
+    // Run Mode.
+    mr_.mode_runners.at(m)();
   }
 
  private:
   Basilisk& b_;
+  ModeRunners mr_{b_};
   XbeeCommandReceiver& xbcr_;
   NeokeyCommandReceiver& nkcr_;
   Beat beat_;

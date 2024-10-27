@@ -10,9 +10,9 @@ void ModeRunners::Free(Basilisk* b) {
       b->CommandBoth([](Servo& s) { s.SetStop(); });
       b->mags_.ReleaseAll();
       m = M::Wait;
-      b->cmd_.wait.init_time = millis();
+      b->cmd_.wait.since_init = millis();
       b->cmd_.wait.exit_condition = [](Basilisk* b) {
-        return millis() - b->cmd_.wait.init_time > 3000;
+        return millis() - b->cmd_.wait.since_init > 3000;
       };
       b->cmd_.wait.exit_to_mode = M::Idle_Init;
     } break;

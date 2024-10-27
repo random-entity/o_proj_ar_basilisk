@@ -109,12 +109,10 @@ class Servo : public Moteus {
     }
   } failure_;
 
-  //  private:
   const int id_;
   const PmFmt* const pm_fmt_;
   const QFmt* const q_fmt_;
 
- public:
   void Print() const {
 #if ENABLE_SERIAL
     const auto rpl = GetReply();
