@@ -49,7 +49,7 @@ const std::map<uint64_t, int> to_nid{
 /* (all time in milliseconds for this section of comment)
  * Non-Poll Commands : 100M      (M = ?)
  * Time Slotted Polls: 100N + p  (N = span * (0, 1, 2, ...))
- * Replies           : 100N + (f = p + e) + ((suid + robin) % 13) * r,
+ * Replies           : 100N + f (> p) + ((suid + robin) % 13) * r,
  *                     skipping around 100K
  *
  * Time (ms)        : 0         100       200       300       400
@@ -57,43 +57,33 @@ const std::map<uint64_t, int> to_nid{
  * Broadcasted Polls: |P        |         |P        |         |P
  * Replies          : | 1234567 | 89ABCD  | D123456 | 789ABC  | CD1...
  *                    <-----span == 2----->                         */
-struct Timing {
-  inline static constexpr uint32_t p_us = 10 * 1000;  // p
-  inline static constexpr uint32_t f_us = 15 * 1000;  // f = p + e
-  inline static constexpr uint32_t r_us = 10 * 1000;  // r
-  inline static constexpr uint32_t send_timeout_us = r_us * 3 / 4;
-
-  static int span;
-
-  inline static const std::map<int, uint32_t> send_times_us = [] {
-    const auto& r = r_us;
-    const auto& e = f_us;
-
-    std::map<int, uint32_t> result;
-
-    uint8_t i_within_command_interval = 0;
-    uint8_t command_interval_idx = 0;
-
-    for (uint8_t i = 0; i <= 12;) {  // i == SUID - 1
-      uint32_t base = p_us + e + command_interval_idx * (100 * 1000);
-      uint32_t maybe_next_cmd = (90 + 100 * command_interval_idx) * 1000;
-      uint32_t limit = maybe_next_cmd - r_us;
-      uint32_t maybe_send_time = base + i_within_command_interval * r;
-
-      if (maybe_send_time <= limit) {
-        result[i + 1] = maybe_send_time;  // TODO: Change to [0, 12] -> time
-        i++;
-        i_within_command_interval++;
-      } else {
-        command_interval_idx++;
-        i_within_command_interval = 0;
-      }
-    }
-
-    span = command_interval_idx + 1;
-
-    return result;
-  }();
-};
+// struct Timing {
+//   inline static constexpr uint32_t p_us = 10 * 1000;  // p
+//   inline static constexpr uint32_t f_us = 15 * 1000;  // f = p + e
+//   inline static constexpr uint32_t r_us = 5 * 1000;   // r
+//   inline static constexpr uint32_t send_timeout_us = r_us * 3 / 4;
+//   static int span;
+//   inline static const std::map<int, uint32_t> mod13_to_send_time_us = [] {
+//     std::map<int, uint32_t> result;
+//     int i_within_cmd_itv = 0;
+//     int cmd_itv = 0;
+//     for (int i = 0; i < 13;) {
+//       uint32_t base = f_us + cmd_itv * (100 * 1000);
+//       uint32_t maybe_next_cmd = (90 + 100 * cmd_itv) * 1000;
+//       uint32_t limit = maybe_next_cmd - r_us;
+//       uint32_t maybe_send_time = base + i_within_cmd_itv * r_us;
+//       if (maybe_send_time <= limit) {
+//         result[i + 1] = maybe_send_time;  // TODO: Change to [0, 12] -> time
+//         i++;
+//         i_within_cmd_itv++;
+//       } else {
+//         cmd_itv++;
+//         i_within_cmd_itv = 0;
+//       }
+//     }
+//     span = cmd_itv + 1;
+//     return result;
+//   }();
+// };
 
 }  // namespace g::xb

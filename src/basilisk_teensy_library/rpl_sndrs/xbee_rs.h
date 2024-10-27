@@ -26,7 +26,7 @@ class XbeeReplySender {
   // Should be run continuously
   inline static void Run() {
     using namespace timing::xb;
-    static const auto sndtim_us = send_times_us.at(b_->cfg_.suid);
+    static const auto sndtim_us = mod13_to_send_time_us.at(b_->cfg_.suid);
 
     if (!waiting_send_) return;
     if (globals::poll_clk_us < sndtim_us) return;

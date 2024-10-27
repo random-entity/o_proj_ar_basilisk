@@ -23,7 +23,7 @@ class LedReplySender {
                                     : suidm1 % 3 == 0 ? 0x400000
                                     : suidm1 % 3 == 1 ? 0x004000
                                                       : 0x000040;
-      static Beat hearbeat{250};
+      static Beat heartbeat{250};
       static bool high = false;
 
       if (!heartbeat.Hit()) return;

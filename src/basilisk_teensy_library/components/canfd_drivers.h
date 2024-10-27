@@ -28,7 +28,7 @@ void (*canfd_isrs[4])() = {
     [] { canfd_drivers[2].isr(); }, [] { canfd_drivers[3].isr(); }};
 
 void InitializeCanFdDriver(const int& bus) {
-  uint8_t imiham = 0;
+  static uint8_t imiham = 0;
 
   if (bus < 1 || bus > 4) {
     HALT("CanFdDriverInitializer: Unknown bus");

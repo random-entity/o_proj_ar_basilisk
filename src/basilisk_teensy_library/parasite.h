@@ -14,6 +14,8 @@
 
 namespace parasite {
 
+void main() {}
+
 // Basilisk configuration overrides.
 Basilisk::Configuration cfg{
     .lps{.c = 300.0,
@@ -46,7 +48,7 @@ void setup() {
   // #if DEBUG_XBEE_TIMING
   //   P("XbRS timing -> ");
   //   for (uint8_t suid = 1; suid <= 13; suid++) {
-  //     Serial.print(timing::xb::send_times_us.at(suid));
+  //     Serial.print(timing::xb::mod13_to_send_time_us.at(suid));
   //     P(", ");
   //   }
   //   P("span -> ");

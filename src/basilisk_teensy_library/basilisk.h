@@ -71,10 +71,10 @@ class Basilisk {
   Servo s_[2];
   Servo& l_;
   Servo& r_;
-  Lps lps_;          // Run every loop().
-  Imu imu_;          // Run every loop().
-  LegoBlocks lego_;  // Run in regular interval.
-  Magnets mags_;     // Run in regular interval.
+  Lps lps_;
+  Imu imu_;
+  LegoBlocks lego_;
+  Magnets mags_;
   elapsedMicros poll_clk_us_ = 1000000000;
 
   //////////////////

@@ -56,6 +56,7 @@ void InitSerial() {
 
 namespace g::serials {
 const bool serial_began = [] {
+  /* Serial is initialized here already. */
   InitSerial();
   return Serial;
 }();
