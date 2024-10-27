@@ -11,11 +11,11 @@
 #include "globals/serials.h"
 #include "rpl_sndrs/led_rs.h"
 #include "rpl_sndrs/serial_rs.h"
+#include "rpl_sndrs/xbee_rs.h"
 
 namespace parasite {
 
 void main(const Basilisk::Configuration& cfg) {
-
   // The Basilisk instance.
   Basilisk b{cfg};
 
@@ -29,6 +29,7 @@ void main(const Basilisk::Configuration& cfg) {
   SerialReplySender serrs{b};
 #endif
   LedReplySender ledrs{b, nk};
+  XbeeReplySender xbrs{b};
 
   // The Executer.
   Executer exec{b, nkcr, xbcr};
@@ -43,10 +44,11 @@ void main(const Basilisk::Configuration& cfg) {
     xbcr.Run();
     b.Run();
     exec.Run();
-    ledrs.Run();
 #if DEBUG_SERIAL_RS
     serrs.Run();
 #endif
+    ledrs.Run();
+    xbrs.Run();
   }
 }
 

@@ -10,7 +10,7 @@ class XbeeReplySender {
   XbeeReplySender(Basilisk& b) : b_{b}, s_{g::serials::xb} {}
 
   // Run continuously.
-  void TimeSlottedReplyToBroadcastedPoll() {
+  void Run() {  // Time-slotted Reply to Broadcasted Poll
     const auto send_time_us = g::xb::Timing::mod13_to_send_time_us.at(
         (b_.cmd_.bpoll.round_robin + b_.cfg_.suidm1()) % 13);
     if (send_time_us <= b_.since_bpoll_us_ &&
@@ -22,11 +22,11 @@ class XbeeReplySender {
   void Send() {
     xb_rpl_.decoded.phi_l = b_.rpl_.phi_l();
     xb_rpl_.decoded.phi_r = b_.rpl_.phi_r();
-    xb_rpl_.decoded.lpsx =b_.rpl_.lpsx();
-    xb_rpl_.decoded.lpsy =b_.rpl_.lpsy();
-    xb_rpl_.decoded.yaw = >(b_->rpl_.yaw());
+    xb_rpl_.decoded.lpsx = b_.rpl_.lpsx();
+    xb_rpl_.decoded.lpsy = b_.rpl_.lpsy();
+    xb_rpl_.decoded.yaw = b_.rpl_.yaw();
 
-    XBEE_SERIAL.write(xb_rpl_.raw_bytes, XBEE_PACKET_LEN_INCLUDING_START_BYTES);
+    s_.Send(xb_rpl_.raw_bytes, 20);
   }
 
  private:
