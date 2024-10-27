@@ -42,6 +42,11 @@ class Neokey : public Adafruit_MultiNeoKey1x4 {
 
   // Must be called before use.
   void Setup(const std::function<void(uint16_t)>& rise_callback) {
+#if DEBUG_SETUP
+    Pln("Neokey: Verifying rise callback");
+#endif
+    rise_callback(0);
+
     rise_callback_ = rise_callback;
 #if DEBUG_SETUP
     Pln("Neokey: Set rise callback");

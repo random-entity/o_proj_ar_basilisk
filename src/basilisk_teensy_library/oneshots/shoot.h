@@ -20,12 +20,12 @@ void Shoot(Basilisk& b) {
     case O::Inspire: {
       // Not yet implemented. Not sure if needed.
     } break;
-    case O::TimeSlottedPoll: {
+    case O::BroadcastedPoll: {
       // Processed immediately at reception if sent as Oneshot to XbeeCR
       // without setting Basilisk::oneshot. Somosomo immediate processing at
       // reception should work better for network timing related work
       // unless synchronization with Executor is absolutely necessary.
-      b.poll_clk_us_ = 0;
+      b.since_bpoll_us_ = 0;
     } break;
     default:
       break;

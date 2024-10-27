@@ -12,21 +12,8 @@ class NeokeyCommandReceiver {
  public:
   NeokeyCommandReceiver(Neokey& nk, Basilisk& b,
                         const uint32_t& run_interval = 10)
-      : nk_{nk}, b_{b}, beat_{run_interval} {}
-
-  // Should be called before use.
-  bool Setup() {
-    if (!nk_.Setup([this](uint16_t key) { Parse(key); })) {
-#if DEBUG_SETUP
-      Pln("NeokeyCommandReceiver: Neokey setup failed");
-#endif
-      return false;
-    };
-
-#if DEBUG_SETUP
-    Pln("NeokeyCommandReceiver: Setup complete");
-#endif
-    return true;
+      : nk_{nk}, b_{b}, beat_{run_interval} {
+    nk_.Setup([this](uint16_t key) { Parse(key); });
   }
 
   void Parse(uint16_t key) {

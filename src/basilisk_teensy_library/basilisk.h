@@ -75,7 +75,7 @@ class Basilisk {
   Imu imu_;
   LegoBlocks lego_;
   Magnets mags_;
-  elapsedMicros poll_clk_us_ = 1000000000;
+  elapsedMicros since_bpoll_us_ = 1000000000;
 
   //////////////////
   // Constructor: //
@@ -140,7 +140,7 @@ class Basilisk {
       CRMuxXbee = 201,
       SetBaseYaw = 202,
       Inspire = 203,
-      TimeSlottedPoll = 204,
+      BroadcastedPoll = 204,
     } oneshot = Oneshot::None;
 
     struct SetBaseYaw {
@@ -151,9 +151,9 @@ class Basilisk {
       // Vec2 pos...
     } inspire;
 
-    struct TimeSlottedPoll {
+    struct BroadcastedPoll {
       uint8_t round_robin;
-    } tspoll;
+    } bpoll;
 
     enum class Mode : uint8_t {
       // A child Mode cannot be future-chained after its parent Mode.

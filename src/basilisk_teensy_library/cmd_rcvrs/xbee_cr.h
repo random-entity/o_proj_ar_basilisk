@@ -14,7 +14,7 @@
  *   -> Set waiting injection flag to inject at next ExecutionCycle.
  *     * Waiting is for time synchronization with ModeRunners.
  * - Time-slotted Poll Commands:
- *   <- Is iff (source is Commander) && payload[O/M] == O::TimeSlottedPoll.
+ *   <- Is iff (source is Commander) && payload[O/M] == O::BroadcastedPoll.
  *   -> Reset poll clock for next ReplySend.
  * - Fellow Replies:
  *   <- Is iff (source is Fellow).
@@ -37,17 +37,17 @@ class XbeeCommandReceiver {
   void Parse(xb::ReceivePacket& packet, int payload_size) {
     const auto srcnid_it = g::xb::addr::to_nid.find(packet.src_addr());
     if (srcnid_it == g::xb::addr::to_nid.end()) return;
-    const auto nodeid = srcnid_it->second;
+    const auto srcnid = srcnid_it->second;
 
     //////////////////
     // Fellow Reply //
-    if (1 <= nodeid && nodeid <= 13) {  // Source is a Fellow.
-      if (nodeid == b_.cfg_.suid) return;
+    if (1 <= srcnid && srcnid <= 13) {  // Source is a Fellow.
+      if (srcnid == b_.cfg_.suid) return;
 
       Payload msg{};
       memcpy(msg.bytes, packet.payload, payload_size);
 
-      const auto other_suidm1 = nodeid - 1;
+      const auto other_suidm1 = srcnid - 1;
       auto& other = roster[other_suidm1];
       other.x = static_cast<double>(msg.fellow_rpl.x);
       other.y = static_cast<double>(msg.fellow_rpl.y);
@@ -55,7 +55,7 @@ class XbeeCommandReceiver {
       other.since_update_us = 0;
 
       return;
-    } else if (50 <= nodeid && nodeid <= 59) {  // Source is a Commander.
+    } else if (50 <= srcnid && srcnid <= 59) {  // Source is a Commander.
       const auto& om = packet.payload[0];
 
       ///////////////////
@@ -85,12 +85,12 @@ class XbeeCommandReceiver {
       }
 
       /////////////////////
-      // TimeSlottedPoll //
-      else if (om == static_cast<uint8_t>(O::TimeSlottedPoll)) {
-        b_.poll_clk_us_ = 0;
+      // BroadcastedPoll //
+      else if (om == static_cast<uint8_t>(O::BroadcastedPoll)) {
+        b_.since_bpoll_us_ = 0;
         Payload msg{};
         memcpy(msg.bytes, packet.payload, payload_size);
-        b_.cmd_.tspoll.round_robin = msg.cmd.u.tspoll.round_robin;
+        b_.cmd_.bpoll.round_robin = msg.cmd.u.bpoll.round_robin;
         return;
       } else {
         return;
@@ -114,9 +114,9 @@ class XbeeCommandReceiver {
     struct __attribute__((packed)) Command {
       uint8_t om;
       union {
-        struct __attribute__((packed)) TimeSlottedPoll {
+        struct __attribute__((packed)) BroadcastedPoll {
           uint8_t round_robin;
-        } tspoll;
+        } bpoll;
         struct __attribute__((packed)) BPPP {
           uint16_t idx[13];
         } bppp;
