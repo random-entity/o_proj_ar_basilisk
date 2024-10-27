@@ -5,7 +5,6 @@
 
 #include "../globals/consts.h"
 #include "../globals/serials.h"
-#include "../helpers/serial_print.h"
 #include "lego_blocks.h"
 
 enum class MagStren : int {
@@ -32,16 +31,13 @@ class Magnets {
           const uint32_t& run_interval = 100)
       : pins_{pin_la, pin_lt, pin_ra, pin_rt},
         lego_{lego},
-        beat_{run_interval} {}
-
-  // Must be called before use.
-  bool Setup() {
+        beat_{run_interval} {
     for (const auto& pin : pins_) pinMode(pin, OUTPUT);
     AttachAll();
+
 #if DEBUG_SETUP
     Pln("Magnets: Setup complete");
 #endif
-    return true;
   }
 
   // Call continuously to track if any of the electromagnets are

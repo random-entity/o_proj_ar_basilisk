@@ -5,7 +5,7 @@
 #include <elapsedMillis.h>
 
 #include "../globals/serials.h"
-#include "../helpers/serial_print.h"
+#include "../helpers/halt.h"
 #include "../helpers/vec2.h"
 
 /* Length unit of incoming bytes from the LPS board is '10cm', so the field
@@ -40,15 +40,10 @@ class Lps {
              .minx = minx,
              .maxx = maxx,
              .miny = miny,
-             .maxy = maxy} {}
-
-  // Must be called before use.
-  bool Setup() {
-    if (!g::serials::lps) {
-#if DEBUG_SETUP
-      Pln("LPS: LPS Serial (Serial6) begin failed");
-#endif
-      return false;
+             .maxy = maxy} {
+    if (!g::serials::lps) {  // .begin() already called at constructor call
+                             // for global definition
+      HALT("LPS: LPS Serial (Serial6) begin failed");
     }
 
     for (auto& dist_sm : dists_sm_) dist_sm.begin(SMOOTHED_AVERAGE, 5);
@@ -56,7 +51,6 @@ class Lps {
 #if DEBUG_SETUP
     Pln("LPS: Setup complete");
 #endif
-    return true;
   }
 
   // Call continuously to immediately receive incoming sensor data

@@ -2,14 +2,11 @@
 
 #include <Arduino.h>
 
-#include <unordered_set>
-
-#include "../helpers/debug.h"
-#include "../helpers/serial_print.h"
+#include "debug.h"
 
 namespace g::serials {
 
-inline constexpr uint32_t common_begin_wait_time = 250;
+inline constexpr uint32_t common_begin_wait_time = 200;
 
 struct HardwareSerialWrapper {
   HardwareSerialWrapper(HardwareSerial& _s, const uint32_t& _baudrate)
@@ -38,6 +35,9 @@ HardwareSerialWrapper xb{Serial4, 115200};
    DEBUG_NEOKEYCR)
 
 #if ENABLE_SERIAL
+#define P(str) (Serial.print(F(str)))
+#define Pln(str) (Serial.println(F(str)))
+
 // Just initialize once and ignore Serial.begin() failure.
 void InitSerial() {
   static bool imiham = false;
@@ -53,4 +53,11 @@ void InitSerial() {
     imiham = true;
   }
 }
+
+namespace g::serials {
+const bool serial_began = [] {
+  InitSerial();
+  return Serial;
+}();
+}  // namespace g::serials
 #endif

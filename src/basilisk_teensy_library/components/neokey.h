@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "../globals/serials.h"
-#include "../helpers/serial_print.h"
+#include "../helpers/halt.h"
 
 /* Definition of row, col, x, y in a matrix of NeoKey1x4s:
  *             col 0            1            2
@@ -20,14 +20,6 @@ class Neokey : public Adafruit_MultiNeoKey1x4 {
  public:
   Neokey(Adafruit_NeoKey_1x4* neokeys, uint8_t rows, uint8_t cols)
       : Adafruit_MultiNeoKey1x4{neokeys, rows, cols} {
-    prev_pressed_ = new uint8_t[_rows * _cols];
-    memset(prev_pressed_, 0, _rows * _cols);
-  }
-
-  ~Neokey() { delete[] prev_pressed_; }
-
-  // Must be called before use.
-  bool Setup(const std::function<void(uint16_t)>& rise_callback) {
     Wire.begin();
     delay(100);
 #if DEBUG_SETUP
@@ -35,22 +27,25 @@ class Neokey : public Adafruit_MultiNeoKey1x4 {
 #endif
 
     if (!begin()) {
-#if DEBUG_SETUP
-      Pln("Neokey: Neokey begin failed");
-#endif
-      return false;
+      HALT("Neokey: Begin failed");
     }
-#if DEBUG_SETUP
-    Pln("Neokey: Neokey began");
-#endif
 
-    rise_callback_ = rise_callback;
-#if DEBUG_SETUP
-    Pln("Neokey: Registered rise callback");
+    prev_pressed_ = new uint8_t[_rows * _cols];
+    memset(prev_pressed_, 0, _rows * _cols);
 
+#if DEBUG_SETUP
     Pln("Neokey: Setup complete");
 #endif
-    return true;
+  }
+
+  ~Neokey() { delete[] prev_pressed_; }
+
+  // Must be called before use.
+  void Setup(const std::function<void(uint16_t)>& rise_callback) {
+    rise_callback_ = rise_callback;
+#if DEBUG_SETUP
+    Pln("Neokey: Set rise callback");
+#endif
   }
 
   // Call in regular interval short enough to ensure that no physical press of a

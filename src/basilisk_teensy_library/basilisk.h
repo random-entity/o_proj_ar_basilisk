@@ -13,7 +13,6 @@
 #include "globals/serials.h"
 #include "globals/teensyid.h"
 #include "helpers/beat.h"
-#include "helpers/serial_print.h"
 #include "helpers/utils.h"
 #include "roster.h"
 
@@ -34,7 +33,6 @@ class Basilisk {
               suid = maybe_suid->second;
             }
 #if DEBUG_TEENSYID
-            InitSerial();
             P("SUID -> ");
             Serial.println(suid);
 #endif
@@ -98,28 +96,14 @@ class Basilisk {
         mags_{lego_,                             //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
               cfg.mags.pin_ra, cfg.mags.pin_rt, cfg.mags.run_interval},
-        rpl_{.b = *this} {}
-
-  ////////////////////////////////////////////////////////////
-  // Setup method (should be called in setup() before use): //
-
-  bool Setup() {
+        rpl_{.b = *this} {
     if (!(1 <= cfg_.suid && cfg_.suid <= 13)) {
-#if DEBUG_SETUP
-      Pln("Basilisk: Bad SUID");
-#endif
-      return false;
+      if (cfg_.suid == 14) {
+        Pln("Welcome, Kaktugi");
+      } else {
+        HALT("Basilisk: Bad SUID");
+      }
     }
-
-    if (!InitializeCanFdDriver(cfg_.servo.bus)) {
-#if DEBUG_SETUP
-      Pln("Basilisk: CanFdDriver setup failed");
-#endif
-      return false;
-    }
-#if DEBUG_SETUP
-    Pln("Basilisk: CanFdDriver setup done");
-#endif
 
     CommandBoth([](Servo& s) {
       s.SetStop();
@@ -128,40 +112,8 @@ class Basilisk {
     });
 #if DEBUG_SETUP
     Pln("Basilisk: Both Servos Stopped, Queried and Printed");
-#endif
-
-    if (!lps_.Setup()) {
-#if DEBUG_SETUP
-      Pln("Basilisk: LPS setup failed");
-#endif
-      return false;
-    }
-
-    if (!imu_.Setup()) {
-#if DEBUG_SETUP
-      Pln("Basilisk: IMU setup failed");
-#endif
-      return false;
-    }
-
-    if (!lego_.Setup()) {
-#if DEBUG_SETUP
-      Pln("Basilisk: LegoBlocks setup failed");
-#endif
-      return false;
-    }
-
-    if (!mags_.Setup()) {
-#if DEBUG_SETUP
-      Pln("Basilisk: Magnets setup failed");
-#endif
-      return false;
-    }
-
-#if DEBUG_SETUP
     Pln("Basilisk: All components setup succeeded");
 #endif
-    return true;
   }
 
   ////////////////////////

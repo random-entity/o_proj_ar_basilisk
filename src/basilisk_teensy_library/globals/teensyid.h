@@ -19,8 +19,8 @@ uint64_t GetTeensyId() {
   teensyid.chunk[1] = *(volatile uint32_t*)TEENSYID_REGISTER_1;
 
 #if DEBUG_TEENSYID
-  InitSerial();
-  Serial.printf("TeensyID -> 0x%016llX\n", teensyid.matome);
+  P("TeensyID -> 0x");
+  Serial.printf("%016llX\n", teensyid.matome);
 #endif
 
   return teensyid.matome;

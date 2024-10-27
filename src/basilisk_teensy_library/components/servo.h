@@ -4,9 +4,9 @@
 #include <elapsedMillis.h>
 
 #include "../globals/moteus_fmt.h"
+#include "../globals/serials.h"
 #include "../helpers/clamped.h"
 #include "../helpers/rpl_extra.h"
-#include "../helpers/serial_print.h"
 #include "../helpers/using_moteus.h"
 #include "canfd_drivers.h"
 
@@ -27,7 +27,9 @@ class Servo : public Moteus {
                }()},
         id_{id},
         pm_fmt_{pm_fmt},
-        q_fmt_{q_fmt} {}
+        q_fmt_{q_fmt} {
+    InitializeCanFdDriver(bus);
+  }
 
   bool SetQuery() {
     const auto prev_rpl = last_result().values;
@@ -114,6 +116,7 @@ class Servo : public Moteus {
 
  public:
   void Print() const {
+#if ENABLE_SERIAL
     const auto rpl = GetReply();
     P("Servo ");
     Serial.print(id_);
@@ -153,5 +156,6 @@ class Servo : public Moteus {
     Serial.print(static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)),
                  BIN);
     Serial.println();
+#endif
   }
 };

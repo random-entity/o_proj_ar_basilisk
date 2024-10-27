@@ -6,7 +6,6 @@
 #include "../globals/serials.h"
 #include "../helpers/beat.h"
 #include "../helpers/clamped.h"
-#include "../helpers/serial_print.h"
 #include "../helpers/typedefs.h"
 #include "../helpers/utils.h"
 
@@ -19,15 +18,12 @@ class LegoBlocks {
  public:
   LegoBlocks(const int& pin_l = 23, const int& pin_r = 29,
              const uint32_t& run_interval = 20)
-      : pins_{pin_l, pin_r}, beat_{run_interval} {}
-
-  // Must be called before use.
-  bool Setup() {
+      : pins_{pin_l, pin_r}, beat_{run_interval} {
     for (const auto& pin : pins_) pinMode(pin, INPUT);
+
 #if DEBUG_SETUP
     Pln("LegoBlocks: Setup complete");
 #endif
-    return true;
   }
 
   // Call continuously to track history of contact.

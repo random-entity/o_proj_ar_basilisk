@@ -27,6 +27,8 @@ void Shoot(Basilisk& b) {
       // unless synchronization with Executor is absolutely necessary.
       b.poll_clk_us_ = 0;
     } break;
+    default:
+      break;
   }
 
   o = O::None;

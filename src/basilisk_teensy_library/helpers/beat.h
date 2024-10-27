@@ -44,6 +44,8 @@ class elapsedBeat {
     }
   }
 
+  uint32_t t() { return t_; }
+
  private:
   elapsedMillis t_;
   uint32_t next_beat_;

@@ -9,7 +9,6 @@
 #include "components/specifics/neokey1x4_i2c0.h"
 #include "executer.h"
 #include "globals/serials.h"
-#include "helpers/serial_print.h"
 #include "rpl_sndrs/led_rs.h"
 #include "rpl_sndrs/serial_rs.h"
 
@@ -41,13 +40,9 @@ SerialReplySender serrs{b};
 LedReplySender ledrs{b, nk};
 
 // The Executer.
-Executer exec{b, nkcr};
+Executer exec{b, nkcr, xbcr};
 
 void setup() {
-#if ENABLE_SERIAL
-  InitSerial();
-#endif
-
   // #if DEBUG_XBEE_TIMING
   //   P("XbRS timing -> ");
   //   for (uint8_t suid = 1; suid <= 13; suid++) {

@@ -4,7 +4,7 @@
 #include <elapsedMillis.h>
 
 #include "../globals/serials.h"
-#include "../helpers/serial_print.h"
+#include "../helpers/halt.h"
 
 /* Angle unit of incoming data from the EBIMU board are in 'degrees', and
  * between -180.0 and 180.0, but the rest of the program assumes 'revolutions'
@@ -15,19 +15,15 @@
  * All yaw values including returns are uncoiled except `euler_[2]`. */
 class Imu {
  public:
-  // Must be called before use.
-  bool Setup() {
-    if (!g::serials::imu) {
-#if DEBUG_SETUP
-      Pln("IMU: IMU Serial (Serial2) begin failed");
-#endif
-      return false;
+  Imu() {
+    if (!g::serials::imu) {  // .begin() already called at constructor call
+                             // for global definition
+      HALT("IMU: IMU Serial (Serial2) begin failed");
     }
 
 #if DEBUG_SETUP
     Pln("IMU: Setup complete");
 #endif
-    return true;
   }
 
   // Call continuously to immediately receive to incoming sensor data

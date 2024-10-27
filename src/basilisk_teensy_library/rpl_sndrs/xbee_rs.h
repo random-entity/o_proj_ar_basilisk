@@ -1,20 +1,16 @@
 #pragma once
 
-#include "../globals/timing.h"
-#include "../basilisk.h"
+#include <Xbee3.h>
 
-#ifndef XBEE_SERIAL
-#define XBEE_SERIAL Serial4
-#endif
-#define XBEE_PACKET_LEN_INCLUDING_START_BYTES (50)
+#include "../basilisk.h"
+#include "../globals/xbee.h"
 
 class XbeeReplySender {
  public:
-  inline static Basilisk* b_;
-  inline static bool waiting_send_ = false;
+  XbeeReplySender(Basilisk& b) : b_{b}, s_{g::serials::xb} {}
 
   // Should be called before use.
-  inline static bool Setup(Basilisk* b) {
+  inline static bool Setup() {
     if (!b) {
       Pln("XbeeReplySender: Null reference to Basilisk");
       return false;
@@ -24,6 +20,8 @@ class XbeeReplySender {
     Pln("XbeeReplySender: Setup complete");
     return true;
   }
+
+  void TimeSlottedReply() {}
 
   // Should be run continuously
   inline static void Run() {
@@ -84,4 +82,8 @@ class XbeeReplySender {
         : decoded{.start_bytes{static_cast<uint32_t>(-1)},
                   .oneshots{1 << ONESHOT_SaveOthersReply}} {}
   } xb_rpl_;
+
+ private:
+  Basilisk& b_;
+  xb::Sender s_;
 };

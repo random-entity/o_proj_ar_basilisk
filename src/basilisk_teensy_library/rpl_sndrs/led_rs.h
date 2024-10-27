@@ -23,9 +23,10 @@ class LedReplySender {
                                     : suidm1 % 3 == 0 ? 0x400000
                                     : suidm1 % 3 == 1 ? 0x004000
                                                       : 0x000040;
+      static Beat hearbeat{250};
       static bool high = false;
 
-      if (!heart_.beat.Hit()) return;
+      if (!heartbeat.Hit()) return;
 
       high = !high;
       for (int i = 0; i < num_hearts; i++) {
@@ -84,12 +85,9 @@ class LedReplySender {
   inline static constexpr int num_forms_ = 1;
 
   struct Form {
-    Form(const uint32_t& set_interval) : beat{set_interval} {}
-
-    elapsedBeat beat;
     ColorArray ca;
     std::function<void()> set;
-  } forms_[num_forms_] = {{250}};
+  } forms_[num_forms_];
 
   Form& heart_ = forms_[0];
 

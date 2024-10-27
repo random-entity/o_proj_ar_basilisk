@@ -1,3 +1,3 @@
-helpers → globals → components → basilisk → cmd_rcvrs →→→→ executer → main
-                                          ↘ rpl_sndrs →→→↗
-                                          ↘ mode_runners ↗
+helpers, globals → components → basilisk → cmd_rcvrs →→→→ executer → main
+                                         ↘ rpl_sndrs →→→↗
+                                         ↘ mode_runners ↗

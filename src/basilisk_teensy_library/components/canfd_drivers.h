@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #include "../globals/serials.h"
-#include "../helpers/serial_print.h"
+#include "../helpers/halt.h"
 #include "../helpers/using_moteus.h"
 
 // The following pins are selected for the SeoulOpenMedia T4_CanFD board v1.5.
@@ -27,45 +27,56 @@ void (*canfd_isrs[4])() = {
     [] { canfd_drivers[0].isr(); }, [] { canfd_drivers[1].isr(); },
     [] { canfd_drivers[2].isr(); }, [] { canfd_drivers[3].isr(); }};
 
-bool InitializeCanFdDriver(const int& bus) {
+void InitializeCanFdDriver(const int& bus) {
+  uint8_t imiham = 0;
+
   if (bus < 1 || bus > 4) {
-#if DEBUG_SETUP
-    P("CanFdDriverInitializer: Unknown bus: ");
-    Serial.println(bus);
-#endif
-    return false;
-  } else if (bus <= 2) {
-    SPI.begin();
+    HALT("CanFdDriverInitializer: Unknown bus");
   } else {
-    SPI1.begin();
-  }
+    if (imiham & (1 << (bus - 1))) return;
+    imiham |= (1 << (bus - 1));
 
-  const auto err_code = canfd_drivers[bus - 1].begin(
-      [] {
-        ACAN2517FDSettings settings{ACAN2517FDSettings::OSC_40MHz,
-                                    1000ll * 1000ll, DataBitRateFactor::x1};
-        settings.mArbitrationSJW = 2;
-        settings.mDriverTransmitFIFOSize = 1;
-        settings.mDriverReceiveFIFOSize = 2;
-
-        return settings;
-      }(),
-      canfd_isrs[bus - 1]);
-
-  if (err_code) {
+    if (bus <= 2) {
+      SPI.begin();
 #if DEBUG_SETUP
-    P("CanFdDriverInitializer: CAN FD driver on bus ");
-    Serial.print(bus);
-    P(" begin failed, error code 0x");
-    Serial.println(err_code, HEX);
+      Pln("CanFdDriverInitializer: SPI began");
 #endif
-    return false;
+    } else {
+      SPI1.begin();
+#if DEBUG_SETUP
+      Pln("CanFdDriverInitializer: SPI1 began");
+#endif
+    }
   }
+
+  uint32_t err = 0;
+  do {
+    err = canfd_drivers[bus - 1].begin(
+        [] {
+          ACAN2517FDSettings settings{ACAN2517FDSettings::OSC_40MHz,
+                                      1000ll * 1000ll, DataBitRateFactor::x1};
+          settings.mArbitrationSJW = 2;
+          settings.mDriverTransmitFIFOSize = 1;
+          settings.mDriverReceiveFIFOSize = 2;
+
+          return settings;
+        }(),
+        canfd_isrs[bus - 1]);
+
+    if (err) {
+#if DEBUG_SETUP
+      P("CanFdDriverInitializer: CAN FD driver on bus ");
+      Serial.print(bus);
+      P(" begin failed, error code 0x");
+      Serial.println(err, HEX);
+#endif
+      delay(1000);
+    }
+  } while (err);
 
 #if DEBUG_SETUP
   P("CanFdDriverInitializer: CAN FD driver on bus ");
   Serial.print(bus);
   Pln(" started");
 #endif
-  return true;
 }
