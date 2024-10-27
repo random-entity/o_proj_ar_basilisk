@@ -21,9 +21,9 @@ class NeokeyCommandReceiver {
     b_.crmux_ = Basilisk::CRMux::Neokey;
 
 #if DEBUG_NEOKEYCR
-    P("NeokeyCommandReceiver: Key rose: ");
+    P("NeokeyCommandReceiver: Key rose -> ");
     Serial.print(key);
-    P(", injection: ");
+    P(", injection -> ");
     Serial.println(injection_);
 #endif
   }
