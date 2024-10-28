@@ -15,7 +15,8 @@ struct ModeRunners {
         pp{.c = c.ppp},
         mg{.c = c.set_mags},
         rm{.c = c.random_mags},
-        ph{.c = c.set_phis} {}
+        ph{.c = c.set_phis},
+        pv{.c = c.pivot} {}
 
   void Idle();
   void Wait();
@@ -67,10 +68,20 @@ struct ModeRunners {
 
   struct SetPhis {
     C::SetPhis& c;
+    elapsedMillis since_init;
+    uint32_t fixing_cycles[2];
   } ph;
 
-  // C::SetPhis& ph{c.set_phis};
-  // C::Pivot& pv{c.pivot};
+  struct Pivot {
+    C::Pivot& c;
+    int didim_idx;
+    int kick_idx;
+    elapsedMillis since_init;
+    double didim_init_yaw;
+    double kick_init_yaw;
+    double kick_init_phi_didim;
+  } pv;
+
   // C::PivSeq& ps{c.pivseq};
 
   // static void PivSeq(Basilisk*);

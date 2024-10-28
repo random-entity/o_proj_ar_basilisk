@@ -6,7 +6,7 @@
 #include "../components/neokey.h"
 #include "../globals/serials.h"
 #include "../helpers/beat.h"
-#include "../tests/modes.h"
+// #include "../tests/modes.h"
 
 class NeokeyCommandReceiver {
  public:

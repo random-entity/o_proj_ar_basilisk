@@ -2,6 +2,8 @@
 
 #include "free.h"
 #include "idle.h"
+#include "pivot.h"
+#include "ppp.h"
 #include "random_mags.h"
 #include "set_mags.h"
 #include "set_phis.h"
@@ -12,7 +14,6 @@
 // #include "do_preset.h"
 // #include "orbit.h"
 // #include "piv_spin.h"
-// #include "pivot.h"
 // #include "pivseq.h"
 // #include "shear.h"
 // #include "sufi.h"

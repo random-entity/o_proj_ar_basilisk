@@ -303,6 +303,7 @@ class Basilisk {
 
       PhiThr damp_thr;
       PhiThr fix_thr;
+
       uint32_t fixing_cycles_thr;
       uint32_t min_dur, max_dur;
       std::function<bool()> exit_condition;
@@ -331,13 +332,14 @@ class Basilisk {
 
       std::function<PhiSpeed()> speed;
       std::function<PhiAccLim()> acclim;
+
       uint32_t min_dur, max_dur;
 
       // Passed down to SetPhis.
-      // Exit condition priority:
-      // max_dur > exit_condition > min_dur
       std::function<bool()> exit_condition;
 
+      // Exit condition priority:
+      // max_dur > exit_condition > min_dur
       Mode exit_to_mode;
     } pivot;
 
