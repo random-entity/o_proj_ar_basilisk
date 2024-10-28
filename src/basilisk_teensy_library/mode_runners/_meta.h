@@ -6,26 +6,31 @@
 #include "../basilisk.h"
 
 struct ModeRunners {
-  using M = Basilisk::Command::Mode;
+  using C = Basilisk::Command;
+  using M = C::Mode;
 
   ModeRunners(Basilisk& _b) : b{_b} {}
 
   void Idle();
   void Wait();
+  void Free();
+  void SetMags();
 
   const std::map<M, std::function<void()>> mode_runners = {
       {M::Idle_Init, [this] { Idle(); }},
       {M::Idle_Nop, [this] { Idle(); }},
       {M::Wait, [this] { Wait(); }},
+      {M::Free, [this] { Free(); }},
+      {M::SetMags_Init, [this] { SetMags(); }},
+      {M::SetMags_Wait, [this] { SetMags(); }},
   };
 
   Basilisk& b;
+  C& c{b.cmd_};
+  M& m{b.cmd_.mode};
 
   // static void BPPP(Basilisk*);
-  // static void Idle(Basilisk*);
-  // static void Wait(Basilisk*);
   // static void Free(Basilisk*);
-  // static void SetMags(Basilisk*);
   // static void RandomMags(Basilisk*);
   // static void SetPhis(Basilisk*);
   // static void Pivot(Basilisk*);
@@ -42,12 +47,7 @@ struct ModeRunners {
   // static void Shear(Basilisk*);
   // inline static const std::map<M, void (*)(Basilisk*)> mode_runners = {
   //     {M::BPPP, &BPPP},
-  //     {M::Idle_Init, &Idle},
-  //     {M::Idle_Nop, &Idle},
-  //     {M::Wait, &Wait},
   //     {M::Free, &Free},
-  //     {M::SetMags_Init, &SetMags},
-  //     {M::SetMags_Wait, &SetMags},
   //     {M::RandomMags_Init, &RandomMags},
   //     {M::RandomMags_Do, &RandomMags},
   //     {M::SetPhis_Init, &SetPhis},

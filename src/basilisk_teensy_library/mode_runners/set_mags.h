@@ -1,44 +1,43 @@
 #pragma once
 
+#include <elapsedMillis.h>
+
 #include "_meta.h"
 
-void ModeRunners::SetMags(Basilisk* b) {
-  static uint32_t init_time;
-
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.set_mags;
+void ModeRunners::SetMags() {
+  static elapsedMillis since_init;
 
   switch (m) {
     case M::SetMags_Init: {
-      b->CommandBoth([](Servo& s) { s->SetStop(); });
-      for (uint8_t id = 0; id < 4; id++) {
-        b->mags_.SetStrength(id, c.strengths[id]);
+      b.CommandBoth([](Servo& s) { s.SetStop(); });
+      for (int id = 0; id < 4; id++) {
+        b.mags_.SetStrength(id, c.set_mags.strengths[id]);
       }
-      init_time = millis();
+      since_init = 0;
       m = M::SetMags_Wait;
     } break;
     case M::SetMags_Wait: {
       if ([&] {
-            if (millis() - init_time > c.max_dur) {
+            if (since_init > c.set_mags.max_dur) {
               return true;
             }
-            if (millis() - init_time < c.min_dur) {
+            if (since_init < c.set_mags.min_dur) {
               return false;
             }
-            for (const uint8_t f : IDX_LR) {
-              if (c.expected_state[f]) {
-                if (!b->lego_.state_[f].ConsecutiveContact(c.verif_thr)) {
+            for (const auto f : IDX_LR) {
+              if (c.set_mags.expected_state[f]) {
+                if (!b.lego_.state_[f].ConsecutiveContact(c.set_mags.verif_thr)) {
                   return false;
                 }
               } else {
-                if (!b->lego_.state_[f].ConsecutiveDetachment(c.verif_thr)) {
+                if (!b.lego_.state_[f].ConsecutiveDetachment(c.set_mags.verif_thr)) {
                   return false;
                 }
               }
             }
             return true;
           }()) {
-        m = c.exit_to_mode;
+        m = c.set_mags.exit_to_mode;
       };
     } break;
     default:

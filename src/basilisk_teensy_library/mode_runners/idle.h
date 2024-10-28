@@ -3,8 +3,6 @@
 #include "_meta.h"
 
 void ModeRunners::Idle() {
-  auto& m = b.cmd_.mode;
-
   switch (m) {
     case M::Idle_Init: {
       b.CommandBoth([](Servo& s) { s.SetStop(); });

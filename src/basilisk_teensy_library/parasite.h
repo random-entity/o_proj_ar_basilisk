@@ -7,6 +7,7 @@
 #include "cmd_rcvrs/xbee_cr.h"
 #include "components/neokey.h"
 #include "components/specifics/neokey1x4_i2c0.h"
+#include "components/specifics/neokey3x4_i2c0.h"
 #include "executer.h"
 #include "globals/serials.h"
 #include "rpl_sndrs/led_rs.h"
@@ -15,12 +16,11 @@
 
 namespace parasite {
 
-void main(const Basilisk::Configuration& cfg) {
+void main(const Basilisk::Configuration& cfg, Neokey& nk) {
   // The Basilisk instance.
   Basilisk b{cfg};
 
   // CommandReceivers.
-  Neokey& nk = specifics::neokey1x4_i2c0;
   NeokeyCommandReceiver nkcr{nk, b};
   XbeeCommandReceiver xbcr{b};
 
@@ -33,6 +33,16 @@ void main(const Basilisk::Configuration& cfg) {
 
   // The Executer.
   Executer exec{b, nkcr, xbcr};
+
+#if DEBUG_XBEE_TIMING
+  P("XbRS timing -> ");
+  for (int i = 0; i < 13; i++) {
+    Serial.print(g::xb::Timing::mod13_to_send_time_us.at(i));
+    P(", ");
+  }
+  P("span -> ");
+  Serial.println(g::xb::Timing::span);
+#endif
 
 #if DEBUG_SETUP
   Pln("setup() done!");
@@ -53,13 +63,3 @@ void main(const Basilisk::Configuration& cfg) {
 }
 
 }  // namespace parasite
-
-// #if DEBUG_XBEE_TIMING
-//   P("XbRS timing -> ");
-//   for (uint8_t suid = 1; suid <= 13; suid++) {
-//     Serial.print(timing::xb::mod13_to_send_time_us.at(suid));
-//     P(", ");
-//   }
-//   P("span -> ");
-//   Serial.println(timing::xb::span);
-// #endif
