@@ -11,6 +11,7 @@
 #include "set_phis.h"
 #include "wait.h"
 #include "walk.h"
+#include "walk_to_dir.h"
 
 // #include "bounce_walk.h"
 // #include "diamond.h"
@@ -18,6 +19,5 @@
 // #include "orbit.h"
 // #include "shear.h"
 // #include "sufi.h"
-// #include "walk_to_dir.h"
 // #include "walk_to_pos.h"
 // #include "walk_to_pos_in_field.h"

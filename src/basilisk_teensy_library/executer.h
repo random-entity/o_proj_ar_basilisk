@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdexcept>
+
 #include "basilisk.h"
 #include "cmd_rcvrs/neokey_cr.h"
 #include "cmd_rcvrs/xbee_cr.h"

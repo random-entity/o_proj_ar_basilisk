@@ -7,7 +7,6 @@
 #include "cmd_rcvrs/xbee_cr.h"
 #include "components/neokey.h"
 #include "components/specifics/neokey1x4_i2c0.h"
-#include "components/specifics/neokey3x4_i2c0.h"
 #include "executer.h"
 #include "globals/serials.h"
 #include "rpl_sndrs/led_rs.h"
@@ -16,15 +15,18 @@
 
 namespace parasite {
 
-void main(const Basilisk::Configuration& cfg, Neokey& nk) {
+void main(const Basilisk::Configuration& cfg) {
   // The Basilisk instance.
   Basilisk b{cfg};
+
+  // Neokey.
+  Neokey& nk = specifics::neokey1x4_i2c0;
 
   // CommandReceivers.
   NeokeyCommandReceiver nkcr{nk, b};
   XbeeCommandReceiver xbcr{b};
 
-// ReplySenders.
+  // ReplySenders.
 #if DEBUG_SERIAL_RS
   SerialReplySender serrs{b};
 #endif

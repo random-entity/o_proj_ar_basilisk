@@ -2,46 +2,33 @@
 
 #include "_meta.h"
 
-namespace walk_to_dir {
-double tgt_yaw;
-}  // namespace walk_to_dir
-
-void ModeRunners::WalkToDir(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.walk_to_dir;
-  auto& w = b->cmd_.walk;
-
+void ModeRunners::WalkToDir() {
   switch (m) {
     case M::WalkToDir: {
-      m = M::Walk;
-      w.init_didimbal = c.init_didimbal;
+      wd.init_yaw = b.yaw();
 
-      for (LRIdx f : IDX_LR) {
-        if (isnan(c.tgt_yaw)) {
-          walk_to_dir::tgt_yaw = b->imu_.GetYaw(true);
-          w.tgt_yaw[f] = [](Basilisk* b) { return walk_to_dir::tgt_yaw; };
-        } else {
-          w.tgt_yaw[f] = [](Basilisk* b) {
-            const auto& c = b->cmd_.walk_to_dir;
-            return c.tgt_yaw;
-          };
-        }
-        w.stride[f] = [](Basilisk* b) {
-          const auto& c = b->cmd_.walk_to_dir;
-          return c.stride;
+      m = M::Walk;
+      wa.c.init_didimbal = wd.c.init_didimbal;
+
+      for (const auto f : IDX_LR) {
+        wa.c.tgt_yaw[f] = [this] {
+          auto tgt_yaw = wd.c.tgt_yaw();
+          if (isnan(tgt_yaw)) tgt_yaw = wd.init_yaw;
+          return tgt_yaw;
         };
-        w.bend[f] = c.bend[f];
-        w.speed[f] = c.speed;
-        w.acclim[f] = c.acclim;
-        w.min_stepdur[f] = c.min_stepdur;
-        w.max_stepdur[f] = c.max_stepdur;
-        w.interval[f] = c.interval;
+        wa.c.stride[f] = wd.c.stride;
+        wa.c.bend[f] = wd.c.bend[f];
+        wa.c.speed[f] = wd.c.speed;
+        wa.c.acclim[f] = wd.c.acclim;
+        wa.c.min_stepdur[f] = wd.c.min_stepdur;
+        wa.c.max_stepdur[f] = wd.c.max_stepdur;
+        wa.c.interval[f] = wd.c.interval;
       }
-      w.steps = c.steps;
-      w.exit_condition = [](Basilisk* b) {
-        return !(b->lps_.Bound()) || !!(b->BoundaryCollision());
+      wa.c.steps = wd.c.steps;
+      wa.c.exit_condition = [this] {
+        return !(b.lps_.Bound()) || !!(b.BoundaryCollision());
       };
-      w.exit_to_mode = M::Idle_Init;
+      wa.c.exit_to_mode = M::Idle_Init;
     } break;
     default:
       break;

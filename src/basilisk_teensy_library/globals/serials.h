@@ -29,10 +29,10 @@ HardwareSerialWrapper xb{Serial4, 115200};
 
 }  // namespace g::serials
 
-#define ENABLE_SERIAL                                                   \
-  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_FAILURE || DEBUG_SERIAL_RS || \
-   DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE || DEBUG_XBEE_SEND ||        \
-   DEBUG_NEOKEYCR)
+#define ENABLE_SERIAL                                                \
+  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_SERVOS || DEBUG_FAILURE || \
+   DEBUG_SERIAL_RS || DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE ||     \
+   DEBUG_XBEE_SEND || DEBUG_NEOKEYCR)
 
 #if ENABLE_SERIAL
 #define P(str) (Serial.print(F(str)))

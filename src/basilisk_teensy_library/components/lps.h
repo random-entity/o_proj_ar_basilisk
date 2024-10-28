@@ -41,8 +41,8 @@ class Lps {
              .maxx = maxx,
              .miny = miny,
              .maxy = maxy} {
-    if (!g::serials::lps) {  // .begin() already called at constructor call
-                             // for global definition
+    if (!ser_) {  // .begin() already called at constructor call for global
+                  // definition.
       HALT("LPS: LPS Serial (Serial6) begin failed");
     }
 
@@ -56,24 +56,21 @@ class Lps {
   // Call continuously to immediately receive incoming sensor data
   // and prevent Serial buffer overflow.
   void Run() {
-    static HardwareSerial& serial = g::serials::lps;
-    static bool start = false;
-
-    if (serial.available() >= 60) {
-      for (int i = 0; i < 60; i++) serial.read();
+    if (ser_.available() >= 60) {
+      for (int i = 0; i < 60; i++) ser_.read();
     }
 
-    if (!start) {
-      if (!(serial.available() && serial.read() == 255)) return;
-      if (!(serial.available() && serial.read() == 2)) return;
-      start = true;
+    if (!rx_start_) {
+      if (!(ser_.available() && ser_.read() == 255)) return;
+      if (!(ser_.available() && ser_.read() == 2)) return;
+      rx_start_ = true;
     }
 
-    if (serial.available() < 4) return;
+    if (ser_.available() < 4) return;
 
     error_.matome = 0;
     for (int i = 0; i < 3; i++) {
-      const auto raw = serial.read();
+      const auto raw = ser_.read();
       if (raw < 250) {
         dists_raw_[i] = raw;
         dists_sm_[i].add(10.0 * raw);
@@ -81,11 +78,11 @@ class Lps {
         error_.bytes[i] = raw;
       }
     }
-    latency_ = serial.read();
+    latency_ = ser_.read();
     if (!error_.matome) SetXY();
     since_raw_update_ = 0;
 
-    start = false;
+    rx_start_ = false;
   }
 
  private:
@@ -117,6 +114,8 @@ class Lps {
     return BoundMinX() && BoundMaxX() && BoundMinY() && BoundMaxY();
   }
 
+  HardwareSerial& ser_ = g::serials::lps;
+  bool rx_start_ = false;
   uint8_t dists_raw_[3] = {0, 0, 0};
   union {
     uint8_t bytes[3];

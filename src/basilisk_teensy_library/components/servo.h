@@ -114,7 +114,7 @@ class Servo : public Moteus {
   const QFmt* const q_fmt_;
 
   void Print() const {
-#if ENABLE_SERIAL
+#if DEBUG_SERVOS
     const auto rpl = GetReply();
     P("Servo ");
     Serial.print(id_);

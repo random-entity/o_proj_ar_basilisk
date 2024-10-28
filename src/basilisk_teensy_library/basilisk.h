@@ -30,9 +30,9 @@ class Basilisk {
         = [] {
             int suid = 0xDEAD;
             const auto teensyid = GetTeensyId();
-            const auto maybe_suid = g::teensyid::to_suid.find(teensyid);
-            if (maybe_suid != g::teensyid::to_suid.end()) {
-              suid = maybe_suid->second;
+            const auto suid_it = g::teensyid::to_suid.find(teensyid);
+            if (suid_it != g::teensyid::to_suid.end()) {
+              suid = suid_it->second;
             }
 #if DEBUG_TEENSYID
             P("SUID -> ");
@@ -41,8 +41,7 @@ class Basilisk {
             return suid;
           }();
     int suidm1() const {  // 0 <= (SUID - 1) < 13
-      static const auto suidm1 = suid - 1;
-      return suidm1;
+      return suid - 1;
     }
     struct {
       int id_l = 1, id_r = 2;
@@ -60,7 +59,7 @@ class Basilisk {
       int pin_la = 3, pin_lt = 4, pin_ra = 5, pin_rt = 6;
       uint32_t run_interval = 100;
     } mags;
-    double gr = 21.0;  // delta_rotor = delta_output * gear_ratio
+    double gr = 21.0;  // delta_rotor = delta_output * gr
     double collision_thr = 100.0;
     double overlap_thr = 50.0;
   } cfg_;
@@ -71,13 +70,13 @@ class Basilisk {
   // Components: //
 
   Servo s_[2];
-  Servo& l_;
-  Servo& r_;
+  Servo& l_{s_[IDX_L]};
+  Servo& r_{s_[IDX_R]};
   Lps lps_;
   Imu imu_;
   LegoBlocks lego_;
   Magnets mags_;
-  elapsedMicros since_bpoll_us_ = 1e9;
+  elapsedMicros since_bpoll_us_ = static_cast<uint32_t>(1e9);
 
   //////////////////
   // Constructor: //
@@ -89,8 +88,6 @@ class Basilisk {
             &g::moteus_fmt::pm_fmt, &g::moteus_fmt::q_fmt},
            {cfg.servo.id_r, cfg.servo.bus,  //
             &g::moteus_fmt::pm_fmt, &g::moteus_fmt::q_fmt}},
-        l_{s_[0]},
-        r_{s_[1]},
         lps_{cfg.lps.c,    cfg.lps.x_c,  cfg.lps.y_c,  //
              cfg.lps.minx, cfg.lps.maxx, cfg.lps.miny, cfg.lps.maxy},
         imu_{},
@@ -134,32 +131,27 @@ class Basilisk {
   enum class CRMux : bool { Xbee, Neokey } crmux_ = CRMux::Xbee;
 
   struct Command {
-    // 200 <= Oneshot <= 255
-    // 0   <= Mode    <= 199
+    /// 200 <= Oneshot <= 255
+    /// 0   <= Mode    <= 199
 
     enum class Oneshot : uint8_t {
       None = 200,
       CRMuxXbee = 201,
       SetBaseYaw = 202,
-      Inspire = 203,
-      BroadcastedPoll = 204,
+      BroadcastedPoll = 203,
     } oneshot = Oneshot::None;
 
     struct SetBaseYaw {
       double offset;
     } set_base_yaw;
 
-    struct Inspire {
-      // Vec2 pos...
-    } inspire;
-
     struct BroadcastedPoll {
-      int round_robin;
+      uint8_t round_robin = 0;
     } bpoll;
 
     enum class Mode : uint8_t {
-      // A child Mode cannot be future-chained after its parent Mode.
-      // No loop should be formed in a future-chain.
+      /// A child Mode cannot be future-chained after its parent Mode.
+      /// No loop should be formed in a future-chain.
 
       /* Idle: Kill everything. Relax.
        * - Stop both Servos, attach all magnets,
@@ -394,14 +386,27 @@ class Basilisk {
 
     struct WalkToDir {
       LR init_didimbal;
-      double tgt_yaw;  // NaN means yaw at WalkToDir initialization.
-      double stride;
+
+      /// Set to true to make Basilisk to automatically walk backwards
+      /// if
+      bool auto_moonwalk;
+
+      /// NaN means yaw at WalkToDir initialization.
+      std::function<double()> tgt_yaw;
+
+      std::function<double()> stride;
       Phi bend[2];
-      PhiSpeed speed;
-      PhiAccLim acclim;
+      std::function<PhiSpeed()> speed;
+      std::function<PhiAccLim()> acclim;
+
+      /// Minimum and maximum duration of all step pivots in milliseconds.
       uint32_t min_stepdur, max_stepdur;
+
+      /// Time interval between steps in milliseconds.
       uint32_t interval;
-      uint8_t steps;
+
+      /// Total steps counting both feet. Negative value means infinity.
+      int steps;
     } walk_to_dir;
 
     struct WalkToPos {
@@ -484,17 +489,18 @@ class Basilisk {
   double phi(int f) { return f % 2 == IDX_L ? phi_l() : phi_r(); }
   double lpsx() { return lps_.x_; }
   double lpsy() { return lps_.y_; }
+  uint32_t lps_since_raw_update() { return lps_.since_raw_update_; }
   double yaw() { return imu_.GetYaw(true); }
 
   struct Reply {
     Basilisk& b;
     const uint8_t suid;
     uint8_t mode() { return static_cast<uint8_t>(b.cmd_.mode); }
-    float phi_l() { return static_cast<float>(phi_l()); }
-    float phi_r() { return static_cast<float>(phi_r()); };
-    float lpsx() { return static_cast<float>(lpsx()); }
-    float lpsy() { return static_cast<float>(lpsy()); }
-    float yaw() { return static_cast<float>(yaw()); }
+    float phi_l() { return static_cast<float>(b.phi_l()); }
+    float phi_r() { return static_cast<float>(b.phi_r()); };
+    float lpsx() { return static_cast<float>(b.lpsx()); }
+    float lpsy() { return static_cast<float>(b.lpsy()); }
+    float yaw() { return static_cast<float>(b.yaw()); }
 
     uint8_t servo_l_failure() { return b.l_.failure_.Export(); }
     uint8_t servo_r_failure() { return b.r_.failure_.Export(); }
@@ -512,7 +518,7 @@ class Basilisk {
       const elapsedMicros& fellow_rpl(int suidm1) {
         return roster[suidm1].since_update_us;
       }
-    } since_xbrecv_us;
+    } since_xbrx_us;
   } rpl_;
 
   ///////////////////
@@ -542,7 +548,7 @@ class Basilisk {
     return collision;
   }
 
-  void Print() {
+  void QPrint() {
     CommandBoth([](Servo& s) {
       s.SetQuery();
       s.Print();

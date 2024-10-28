@@ -17,9 +17,6 @@ void Shoot(Basilisk& b) {
     case O::SetBaseYaw: {
       b.imu_.SetBaseYaw(b.cmd_.set_base_yaw.offset);
     } break;
-    case O::Inspire: {
-      // Not yet implemented. Not sure if needed.
-    } break;
     case O::BroadcastedPoll: {
       // Processed immediately at reception if sent as Oneshot to XbeeCR
       // without setting Basilisk::oneshot. Somosomo immediate processing at

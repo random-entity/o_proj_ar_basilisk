@@ -14,6 +14,18 @@ void incu8(uint8_t& n) {
   if (n != 0xFF) n++;
 }
 
+void incu32(uint32_t& n) {
+  if (n != 0xFFFFFFFF) n++;
+}
+
+int PosMod(const int& a, const int& b) {
+  int r = a % b;
+  while (r < 0) {
+    r += abs(b);
+  }
+  return r;
+}
+
 double signedpow(const double& base, const float& exponent) {
   const auto y = pow(abs(base), exponent);
   return base >= 0 ? y : -y;

@@ -29,7 +29,11 @@ class XbeeCommandReceiver {
       : b_{b},
         r_{g::serials::xb, [this](xb::ReceivePacket& packet, int payload_size) {
              Parse(packet, payload_size);
-           }} {}
+           }} {
+#if DEBUG_SETUP
+    Pln("XbeeCommandReceiver: Setup complete");
+#endif
+  }
 
   // Call continuously.
   void Run() { r_.Run(); }

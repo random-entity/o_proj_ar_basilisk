@@ -7,12 +7,12 @@
 
 class XbeeReplySender {
  public:
-  XbeeReplySender(Basilisk& b) : b_{b}, s_{g::serials::xb} {}
+  XbeeReplySender(Basilisk& b) : b_{b}, tx_{g::serials::xb} {}
 
   // Run continuously.
   void Run() {  // Time-slotted Reply to Broadcasted Poll
     const auto send_time_us = g::xb::Timing::mod13_to_send_time_us.at(
-        (b_.cmd_.bpoll.round_robin + b_.cfg_.suidm1()) % 13);
+        (b_.cfg_.suidm1() + b_.cmd_.bpoll.round_robin) % 13);
     if (send_time_us <= b_.since_bpoll_us_ &&
         b_.since_bpoll_us_ <= send_time_us + g::xb::Timing::send_timeout_us) {
       Send();
@@ -26,7 +26,7 @@ class XbeeReplySender {
     xb_rpl_.decoded.lpsy = b_.rpl_.lpsy();
     xb_rpl_.decoded.yaw = b_.rpl_.yaw();
 
-    s_.Send(xb_rpl_.raw_bytes, 20);
+    tx_.Send(xb_rpl_.raw_bytes, 20);
   }
 
  private:
@@ -42,5 +42,5 @@ class XbeeReplySender {
   } xb_rpl_;
 
   Basilisk& b_;
-  xb::Sender s_;
+  xb::Sender tx_;
 };

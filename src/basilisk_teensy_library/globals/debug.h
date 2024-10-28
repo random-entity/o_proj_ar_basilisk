@@ -4,6 +4,7 @@
 
 #define DEBUG_SETUP (1)
 #define DEBUG_TEENSYID (1)
+#define DEBUG_SERVOS (1)
 #define DEBUG_FAILURE (1)
 #define DEBUG_SERIAL_RS (1)
 #define DEBUG_XBEE_TIMING (1)
