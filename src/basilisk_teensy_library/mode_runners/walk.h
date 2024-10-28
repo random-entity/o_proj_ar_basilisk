@@ -2,7 +2,7 @@
 
 #include "_meta.h"
 
-void ModeRunners::Walk(Basilisk* b) {
+void ModeRunners::Walk() {
   auto& m = b->cmd_.mode;
   auto& c = b->cmd_.walk;
   auto& ps = b->cmd_.pivseq;

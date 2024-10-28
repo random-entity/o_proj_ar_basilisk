@@ -17,7 +17,8 @@ struct ModeRunners {
         rm{.c = c.random_mags},
         ph{.c = c.set_phis},
         pv{.c = c.pivot},
-        ps{.c = c.pivseq} {}
+        ps{.c = c.pivseq},
+        sp{.c = c.piv_spin} {}
 
   void Idle();
   void Wait();
@@ -28,6 +29,8 @@ struct ModeRunners {
   void SetPhis();
   void Pivot();
   void PivSeq();
+  void PivSpin();
+  void Walk();
 
   const std::map<M, std::function<void()>> mode_runners = {
       {M::Idle_Init, [this] { Idle(); }},
@@ -45,6 +48,8 @@ struct ModeRunners {
       {M::Pivot_Kick, [this] { Pivot(); }},
       {M::PivSeq_Init, [this] { PivSeq(); }},
       {M::PivSeq_Step, [this] { PivSeq(); }},
+      {M::PivSpin, [this] { PivSpin(); }},
+      {M::Walk, [this] { Walk(); }},
   };
 
   Basilisk& b;
@@ -91,8 +96,10 @@ struct ModeRunners {
     int cur_step;
   } ps;
 
-  // static void PivSpin(Basilisk*);
-  // static void Walk(Basilisk*);
+  struct PivSpin {
+    C::PivSpin& c;
+  } sp;
+
   // static void WalkToDir(Basilisk*);
   // static void WalkToPos(Basilisk*);
   // static void Sufi(Basilisk*);
@@ -103,8 +110,6 @@ struct ModeRunners {
   // static void Shear(Basilisk*);
   // inline static const std::map<M, void (*)(Basilisk*)> mode_runners = {
   //
-  //     {M::PivSpin, &PivSpin},
-  //     {M::Walk, &Walk},
   //     {M::WalkToDir, &WalkToDir},
   //     {M::WalkToPos, &WalkToPos},
   //     {M::Sufi, &Sufi},

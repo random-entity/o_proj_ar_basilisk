@@ -2,41 +2,31 @@
 
 #include "_meta.h"
 
-void ModeRunners::PivSpin(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.piv_spin;
-  auto& ps = b->cmd_.pivseq;
-
+void ModeRunners::PivSpin() {
   switch (m) {
     case M::PivSpin: {
       m = M::PivSeq_Init;
-      ps.pivots = [](Basilisk* b, int idx) {
-        auto& c = b->cmd_.piv_spin;
+      ps.c.pivots = [this](int) {
         Basilisk::Command::Pivot p;
-        p.didimbal = c.didimbal;
-        p.tgt_yaw = [](Basilisk*) { return NaN; };
-        p.stride = c.stride;
-        for (const uint8_t f : IDX_LR) p.bend[f] = c.bend[f];
-        p.speed = c.speed;
-        p.acclim = c.acclim;
-        p.min_dur = c.min_stepdur;
-        p.max_dur = c.max_stepdur;
-        p.exit_condition = [](Basilisk* b) {
-          auto& c = b->cmd_.piv_spin;
-          return abs(b->imu_.GetYaw(true) - c.dest_yaw) < c.exit_thr;
+        p.didimbal = sp.c.didimbal;
+        p.tgt_yaw = [] { return NaN; };
+        p.stride = [this] { return sp.c.stride; };
+        for (const auto f : IDX_LR) p.bend[f] = sp.c.bend[f];
+        p.speed = sp.c.speed;
+        p.acclim = sp.c.acclim;
+        p.min_dur = sp.c.min_stepdur;
+        p.max_dur = sp.c.max_stepdur;
+        p.exit_condition = [this] {
+          return abs(b.yaw() - sp.c.dest_yaw) < sp.c.exit_thr;
         };
         return p;
       };
-      ps.intervals = [](Basilisk* b, int idx) {
-        auto& c = b->cmd_.piv_spin;
-        return c.interval;
+      ps.c.intervals = [this](int) { return sp.c.interval; };
+      ps.c.steps = sp.c.steps;
+      ps.c.exit_condition = [this] {
+        return abs(b.yaw() - sp.c.dest_yaw) < sp.c.exit_thr;
       };
-      ps.steps = c.steps;
-      ps.exit_condition = [](Basilisk* b) {
-        auto& c = b->cmd_.piv_spin;
-        return abs(b->imu_.GetYaw(true) - c.dest_yaw) < c.exit_thr;
-      };
-      ps.exit_to_mode = M::Idle_Init;
+      ps.c.exit_to_mode = M::Idle_Init;
     } break;
     default:
       break;

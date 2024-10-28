@@ -364,15 +364,18 @@ class Basilisk {
 
     struct PivSpin {
       LR didimbal;
-      double dest_yaw;  // NaN means no destination.
+
+      /// NaN means no destination (spin indefinitely).
+      double dest_yaw;
+
       double exit_thr;
       double stride;
       Phi bend[2];
-      PhiSpeed speed;
-      PhiAccLim acclim;
+      std::function<PhiSpeed()> speed;
+      std::function<PhiAccLim()> acclim;
       uint32_t min_stepdur, max_stepdur;
       uint32_t interval;
-      uint8_t steps;
+      int steps;
     } piv_spin;
 
     struct Walk {
