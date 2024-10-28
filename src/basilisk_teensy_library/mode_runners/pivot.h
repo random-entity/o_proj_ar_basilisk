@@ -44,7 +44,7 @@ void ModeRunners::Pivot(Basilisk* b) {
       mags.max_dur = 200;
       mags.exit_to_mode = M::SetPhis_Init;
       phis.tgt_phi[didim_idx] =
-          b->imu_.GetYaw(true) - tgt_yaw - c.bend[didim_idx];
+          init_yaw - tgt_yaw - c.bend[didim_idx];
       phis.tgt_phispeed[didim_idx] = [](Basilisk* b) {
         return globals::var::speed;  // b->cmd_.pivot.speed;
       };

@@ -185,17 +185,17 @@ class Basilisk {
       BPPP = 4,  // PPP Command received by broadcast with payload of array of
                  // indices for all Basilisks in a single packet.
       /* XPPP = n, // There may be additional PPP CR protocols, and PPP Modes
-                      corresponding to it, acting as same Mode.
-                      This distinction is exposed in order to let Basilisk
-                      know what payload parse logic the CommandReceivers has
-                      intended. */
+                      corresponding to it, acting as same Modes.
+                      Distinction in Mode index is exposed in order to let
+                      Basilisk know what payload parse logic the
+                      Command sender has intended. */
 
       /* SetMags: Control magnets.
        *          Future-chain-able.
+       *          Duration will be clamped.
        * - Attach or release individual magnets,
        * - then wait for contact/detachment verification,
-       * - then exit to designated Mode.
-       * - Duration will be clamped. */
+       * - then exit to designated Mode. */
       SetMags_Init = 5,  // -> SetMags_Wait
       SetMags_Wait = 6,  // -> Exit
 
@@ -205,18 +205,18 @@ class Basilisk {
 
       /* SetPhis: Control Servos to achieve target phis.
        *          Future-chain-able.
+       *          Phi and duration will be clamped throughout.
        * - PositionMode-Command Servos continuously with .position
        *   set to NaN, .velocity and .accel_limit set to computed as follows:
        *     tgt_rtrvel = tgt_phi == NaN || abs(tgt_delta_phi) < fix_thr ? 0 :
-       *                  21 * tgt_phispeed * (tgt_delta_phi >  damp_thr ?  1 :
+       *                  gr * tgt_phispeed * (tgt_delta_phi >  damp_thr ?  1 :
        *                                       tgt_delta_phi < -damp_thr ? -1 :
        *                                       tgt_delta_phi / damp_thr);
-       *     tgt_rtracclim = 21 * tgt_phiacclim;
+       *     tgt_rtracclim = gr * tgt_phiacclim;
        *   Fix cycles count is incremented every cycle where tgt_rtrvel == 0
        *   and reset elsewhere. Wait until fix cycles count reaches threshold
        *   for both Servos,
-       * - then exit to designated Mode.
-       * - Phi and duration will be clamped throughout. */
+       * - then exit to designated Mode. */
       SetPhis_Init = 7,  // -> SetPhis_Move
       SetPhis_Move = 8,  // -> Exit
 
@@ -259,9 +259,9 @@ class Basilisk {
       WalkToPosInField_Reinit = 30,  // Necessary for immediate re-Pivot.
 
       /* Gee: */
-      Shear_Init = 250,
-      Shear_Move = 251,
-      Gee = 252,
+      Shear_Init = 100,
+      Shear_Move = 101,
+      Gee = 102,
     } mode = Mode::Idle_Init;
 
     struct PPP {
@@ -290,15 +290,16 @@ class Basilisk {
     } random_mags;
 
     struct SetPhis {
-      Phi tgt_phi[2];  // [0]: l, [1]: r
-                       // NaN means fix phi (speed and acclim ignored).
-      PhiSpeed (*tgt_phispeed[2])(Basilisk*);  // [0]: l, [1]: r
-      PhiAccLim tgt_phiacclim[2];              // [0]: l, [1]: r
+      std::function<Phi()> tgt_phi[2];              // [0]: l, [1]: r
+                                                    // NaN == fix phi
+                                                    // (speed, acclim ignored)
+      std::function<PhiSpeed()> tgt_phispeed[2];    // [0]: l, [1]: r
+      std::function<PhiAccLim()> tgt_phiacclim[2];  // [0]: l, [1]: r
       PhiThr damp_thr;
       PhiThr fix_thr;
-      uint8_t fixing_cycles_thr;          // Exit condition priority:
-      uint32_t min_dur, max_dur;          // (max_dur || exit_condition)
-      bool (*exit_condition)(Basilisk*);  // > (min_dur && fixed_enough)
+      uint32_t fixing_cycles_thr;            // Exit condition priority:
+      uint32_t min_dur, max_dur;             // (max_dur || exit_condition)
+      std::function<bool()> exit_condition;  // > (min_dur && fixed_enough)
       Mode exit_to_mode;
     } set_phis;
 
@@ -457,15 +458,22 @@ class Basilisk {
     } gee;
   } cmd_;
 
+  double phi_l() { return l_.GetReply().abs_position; };
+  double phi_r() { return r_.GetReply().abs_position; }
+  double phi(int f) { return f % 2 == IDX_L ? phi_l() : phi_r(); }
+  double lpsx() { return lps_.x_; }
+  double lpsy() { return lps_.y_; }
+  double yaw() { return imu_.GetYaw(true); }
+
   struct Reply {
     Basilisk& b;
     const uint8_t suid;
     uint8_t mode() { return static_cast<uint8_t>(b.cmd_.mode); }
-    float phi_l() { return static_cast<float>(b.l_.GetReply().abs_position); }
-    float phi_r() { return static_cast<float>(b.r_.GetReply().abs_position); };
-    float lpsx() { return static_cast<float>(b.lps_.x_); }
-    float lpsy() { return static_cast<float>(b.lps_.y_); }
-    float yaw() { return static_cast<float>(b.imu_.GetYaw(true)); }
+    float phi_l() { return static_cast<float>(phi_l()); }
+    float phi_r() { return static_cast<float>(phi_r()); };
+    float lpsx() { return static_cast<float>(lpsx()); }
+    float lpsy() { return static_cast<float>(lpsy()); }
+    float yaw() { return static_cast<float>(yaw()); }
 
     uint8_t servo_l_failure() { return b.l_.failure_.Export(); }
     uint8_t servo_r_failure() { return b.r_.failure_.Export(); }

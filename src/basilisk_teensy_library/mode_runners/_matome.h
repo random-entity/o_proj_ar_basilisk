@@ -3,6 +3,7 @@
 #include "free.h"
 #include "idle.h"
 #include "set_mags.h"
+#include "set_phis.h"
 #include "wait.h"
 
 // #include "bounce_walk.h"
@@ -13,7 +14,6 @@
 // #include "pivot.h"
 // #include "pivseq.h"
 // #include "random_mags.h"
-// #include "set_phis.h"
 // #include "shear.h"
 // #include "sufi.h"
 // #include "walk.h"

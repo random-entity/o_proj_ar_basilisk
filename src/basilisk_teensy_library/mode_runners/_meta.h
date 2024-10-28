@@ -15,6 +15,7 @@ struct ModeRunners {
   void Wait();
   void Free();
   void SetMags();
+  void SetPhis();
 
   const std::map<M, std::function<void()>> mode_runners = {
       {M::Idle_Init, [this] { Idle(); }},
@@ -23,6 +24,8 @@ struct ModeRunners {
       {M::Free, [this] { Free(); }},
       {M::SetMags_Init, [this] { SetMags(); }},
       {M::SetMags_Wait, [this] { SetMags(); }},
+      {M::SetPhis_Init, [this] { SetPhis(); }},
+      {M::SetPhis_Move, [this] { SetPhis(); }},
   };
 
   Basilisk& b;
@@ -30,9 +33,7 @@ struct ModeRunners {
   M& m{b.cmd_.mode};
 
   // static void BPPP(Basilisk*);
-  // static void Free(Basilisk*);
   // static void RandomMags(Basilisk*);
-  // static void SetPhis(Basilisk*);
   // static void Pivot(Basilisk*);
   // static void PivSeq(Basilisk*);
   // static void PivSpin(Basilisk*);
@@ -50,8 +51,6 @@ struct ModeRunners {
   //     {M::Free, &Free},
   //     {M::RandomMags_Init, &RandomMags},
   //     {M::RandomMags_Do, &RandomMags},
-  //     {M::SetPhis_Init, &SetPhis},
-  //     {M::SetPhis_Move, &SetPhis},
   //     {M::Pivot_Init, &Pivot},
   //     {M::Pivot_Kick, &Pivot},
   //     {M::PivSeq_Init, &PivSeq},
