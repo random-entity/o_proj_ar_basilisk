@@ -2,35 +2,29 @@
 
 #include "_meta.h"
 
-void ModeRunners::PivSeq(Basilisk* b) {
-  static int cur_step;
-
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.pivseq;
-
+void ModeRunners::PivSeq() {
   switch (m) {
     case M::PivSeq_Init: {
-      cur_step = 0;
+      ps.cur_step = 0;
       m = M::PivSeq_Step;
     } break;
     case M::PivSeq_Step: {
-      if ((c.exit_condition && c.exit_condition(b)) ||
-          (c.steps != 255 && cur_step >= c.steps)) {
-        m = c.exit_to_mode;
+      if (ps.c.exit_condition() ||
+          (ps.c.steps >= 0 && ps.cur_step >= ps.c.steps)) {
+        m = ps.c.exit_to_mode;
         return;
       }
 
       m = M::Pivot_Init;
-      b->cmd_.pivot = c.pivots(b, cur_step);
-      b->cmd_.pivot.exit_to_mode = M::Wait;
-      b->cmd_.wait.since_init = millis();
-      b->cmd_.wait.exit_condition = [](Basilisk* b) {
-        return millis() - b->cmd_.wait.since_init >=
-               b->cmd_.pivseq.intervals(b, cur_step);
+      pv.c = ps.c.pivots(ps.cur_step);
+      pv.c.exit_to_mode = M::Wait;
+      wt.c.since_init = 0;
+      wt.c.exit_condition = [this] {
+        return wt.c.since_init >= ps.c.intervals(ps.cur_step);
       };
-      b->cmd_.wait.exit_to_mode = M::PivSeq_Step;
+      wt.c.exit_to_mode = M::PivSeq_Step;
 
-      cur_step++;
+      ps.cur_step++;
     } break;
     default:
       break;

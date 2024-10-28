@@ -344,17 +344,21 @@ class Basilisk {
     } pivot;
 
     struct PivSeq {
-      Pivot (*pivots)(Basilisk*, int);  // exit_to_mode will be
-                                        // overwritten by PivSeq.
-      uint32_t (*intervals)(Basilisk*, int);
-      int steps;                          // Counting both feet.
-      bool (*exit_condition)(Basilisk*);  // This is exit condition
-                                          // evaluated every interval
-                                          // between Pivots. Exit condition
-                                          // while Pivoting should be set
-                                          // at Pivot::exit_condition.
-                                          // Exit condition priority:
-                                          // exit_condition > steps
+      /// exit_to_mode will be overwritten by PivSeq.
+      std::function<Pivot(int step)> pivots;
+
+      std::function<uint32_t(int step)> intervals;
+
+      /// Counting both feet.
+      /// Negative value means infinite steps.
+      int steps;
+
+      /// This is exit condition evaluated every interval between Pivots.
+      /// Exit condition while Pivoting should be set at Pivot::exit_condition.
+      std::function<bool()> exit_condition;
+
+      /// Exit condition priority:
+      /// exit_condition > steps
       Mode exit_to_mode;
     } pivseq;
 
