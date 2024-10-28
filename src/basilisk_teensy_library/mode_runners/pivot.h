@@ -1,30 +1,30 @@
 #pragma once
 
+#include <elapsedMillis.h>
+
 #include "_meta.h"
 
-void ModeRunners::Pivot(Basilisk* b) {
-  static uint32_t init_time;
-  static double init_yaw;
-  static double tgt_yaw;
+void ModeRunners::Pivot() {
+  static auto& pv = c.pivot;
 
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.pivot;
-  auto& mags = b->cmd_.set_mags;
-  auto& phis = b->cmd_.set_phis;
+  static elapsedMillis since_init;
+  static double didim_init_yaw;
+  static double kick_init_yaw;
 
-  const uint8_t didim_idx = c.didimbal == BOOL_L ? IDX_L : IDX_R;
-  const uint8_t kick_idx = c.didimbal == BOOL_L ? IDX_R : IDX_L;
+  const auto didim_idx = pv.didimbal == BOOL_L ? IDX_L : IDX_R;
+  const auto kick_idx = pv.didimbal == BOOL_L ? IDX_R : IDX_L;
 
   switch (m) {
     case M::Pivot_Init: {
-      init_time = millis();
+      since_init = 0;
 
-      init_yaw = b->imu_.GetYaw(true);
-      tgt_yaw = c.tgt_yaw(b);
+      didim_init_yaw = b.yaw();
+      const auto tgt_yaw = pv.tgt_yaw();
+
       if (isnan(tgt_yaw)) tgt_yaw = init_yaw;
 
       // Check if we need to set didimbal.
-      if (c.bend[didim_idx].isnan()) {
+      if (pv.bend[didim_idx].isnan()) {
         m = M::Pivot_Kick;
         return;
       }
@@ -43,8 +43,7 @@ void ModeRunners::Pivot(Basilisk* b) {
       mags.min_dur = 50;
       mags.max_dur = 200;
       mags.exit_to_mode = M::SetPhis_Init;
-      phis.tgt_phi[didim_idx] =
-          init_yaw - tgt_yaw - c.bend[didim_idx];
+      phis.tgt_phi[didim_idx] = init_yaw - tgt_yaw - c.bend[didim_idx];
       phis.tgt_phispeed[didim_idx] = [](Basilisk* b) {
         return globals::var::speed;  // b->cmd_.pivot.speed;
       };

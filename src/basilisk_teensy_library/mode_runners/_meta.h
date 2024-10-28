@@ -9,32 +9,70 @@ struct ModeRunners {
   using C = Basilisk::Command;
   using M = C::Mode;
 
-  ModeRunners(Basilisk& _b) : b{_b} {}
+  ModeRunners(Basilisk& _b)
+      : b{_b},  //
+        wt{.c = c.wait},
+        pp{.c = c.ppp},
+        mg{.c = c.set_mags},
+        rm{.c = c.random_mags},
+        ph{.c = c.set_phis} {}
 
   void Idle();
   void Wait();
   void Free();
+  void PPP();
   void SetMags();
+  void RandomMags();
   void SetPhis();
+  void Pivot();
 
   const std::map<M, std::function<void()>> mode_runners = {
       {M::Idle_Init, [this] { Idle(); }},
       {M::Idle_Nop, [this] { Idle(); }},
       {M::Wait, [this] { Wait(); }},
       {M::Free, [this] { Free(); }},
+      {M::BPPP, [this] { PPP(); }},
       {M::SetMags_Init, [this] { SetMags(); }},
       {M::SetMags_Wait, [this] { SetMags(); }},
+      {M::RandomMags_Init, [this] { RandomMags(); }},
+      {M::RandomMags_Do, [this] { RandomMags(); }},
       {M::SetPhis_Init, [this] { SetPhis(); }},
       {M::SetPhis_Move, [this] { SetPhis(); }},
+      {M::Pivot_Init, [this] { Pivot(); }},
+      {M::Pivot_Kick, [this] { Pivot(); }},
   };
 
   Basilisk& b;
   C& c{b.cmd_};
-  M& m{b.cmd_.mode};
+  M& m{c.mode};
 
-  // static void BPPP(Basilisk*);
-  // static void RandomMags(Basilisk*);
-  // static void Pivot(Basilisk*);
+  struct Wait {
+    C::Wait& c;
+  } wt;
+
+  struct PPP {
+    C::PPP& c;
+  } pp;
+
+  struct SetMags {
+    C::SetMags& c;
+    elapsedMillis since_init;
+  } mg;
+
+  struct RandomMags {
+    C::RandomMags& c;
+    elapsedMillis since_init;
+    uint32_t dur[4] = {0};
+  } rm;
+
+  struct SetPhis {
+    C::SetPhis& c;
+  } ph;
+
+  // C::SetPhis& ph{c.set_phis};
+  // C::Pivot& pv{c.pivot};
+  // C::PivSeq& ps{c.pivseq};
+
   // static void PivSeq(Basilisk*);
   // static void PivSpin(Basilisk*);
   // static void Walk(Basilisk*);
@@ -47,12 +85,6 @@ struct ModeRunners {
   // static void WalkToPosInField(Basilisk*);
   // static void Shear(Basilisk*);
   // inline static const std::map<M, void (*)(Basilisk*)> mode_runners = {
-  //     {M::BPPP, &BPPP},
-  //     {M::Free, &Free},
-  //     {M::RandomMags_Init, &RandomMags},
-  //     {M::RandomMags_Do, &RandomMags},
-  //     {M::Pivot_Init, &Pivot},
-  //     {M::Pivot_Kick, &Pivot},
   //     {M::PivSeq_Init, &PivSeq},
   //     {M::PivSeq_Step, &PivSeq},
   //     {M::PivSpin, &PivSpin},

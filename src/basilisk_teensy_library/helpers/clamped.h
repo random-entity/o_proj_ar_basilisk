@@ -36,7 +36,7 @@ class clamped {
 
   operator T() const { return val_; }
 
-  bool isnan() { return val_ != val_; }
+  bool isnan() const { return val_ != val_; }
 
  protected:
   T val_;

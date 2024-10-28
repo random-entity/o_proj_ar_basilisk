@@ -77,7 +77,7 @@ class Basilisk {
   Imu imu_;
   LegoBlocks lego_;
   Magnets mags_;
-  elapsedMicros since_bpoll_us_ = 1000000000;
+  elapsedMicros since_bpoll_us_ = 1e9;
 
   //////////////////
   // Constructor: //
@@ -154,7 +154,7 @@ class Basilisk {
     } inspire;
 
     struct BroadcastedPoll {
-      uint8_t round_robin;
+      int round_robin;
     } bpoll;
 
     enum class Mode : uint8_t {
@@ -277,9 +277,10 @@ class Basilisk {
 
     struct SetMags {
       MagStren strengths[4];
-      bool expected_state[2];     // [0]: l, [1]: r
-                                  // true: contact, false: detachment
-      N64 verif_thr;              // Exit condition priority:
+      bool expected_state[2];  // [0]: l, [1]: r
+                               // true: contact, false: detachment
+      N64 verif_thr;
+      // Exit condition priority:
       uint32_t min_dur, max_dur;  // max_dur > min_dur > lego_verification
       Mode exit_to_mode;
     } set_mags;
@@ -290,42 +291,53 @@ class Basilisk {
     } random_mags;
 
     struct SetPhis {
-      std::function<Phi()> tgt_phi[2];              // [0]: l, [1]: r
-                                                    // NaN == fix phi
-                                                    // (speed, acclim ignored)
-      std::function<PhiSpeed()> tgt_phispeed[2];    // [0]: l, [1]: r
-      std::function<PhiAccLim()> tgt_phiacclim[2];  // [0]: l, [1]: r
+      /// [0]: l, [1]: r
+      /// NaN means fix phi (speed, acclim ignored).
+      std::function<Phi()> tgt_phi[2];
+
+      /// [0]: l, [1]: r
+      std::function<PhiSpeed()> tgt_phispeed[2];
+
+      /// [0]: l, [1]: r
+      std::function<PhiAccLim()> tgt_phiacclim[2];
+
       PhiThr damp_thr;
       PhiThr fix_thr;
-      uint32_t fixing_cycles_thr;            // Exit condition priority:
-      uint32_t min_dur, max_dur;             // (max_dur || exit_condition)
-      std::function<bool()> exit_condition;  // > (min_dur && fixed_enough)
+      uint32_t fixing_cycles_thr;
+      uint32_t min_dur, max_dur;
+      std::function<bool()> exit_condition;
+
+      /// Exit condition priority:
+      /// (max_dur || exit_condition) > (min_dur && fixed_enough)
       Mode exit_to_mode;
     } set_phis;
 
     struct Pivot {
-      LR didimbal;                   // Foot to pivot about.
-      double (*tgt_yaw)(Basilisk*);  // Evaluated at Pivot_Init
-                                     // and used throughout Pivot.
-                                     // NaN means yaw at Pivot_Init.
-      // (*.*) oO(Ignore me...)
-      double stride;   // Forward this much more from tgt_yaw.
-                       // Negative value manifests as walking backwards.
-                       // NaN means do NOT kick.
-      Phi bend[2];     // [0]: l, [1]: r
-                       // tgt_sig == tgt_yaw + bend
-                       // or bend == -tgt_phi (at stride 0)
-                       // NaN means preserve initial sig for didimbal,
-                       // initial phi for kickbal.
-      PhiSpeed speed;  // EMERGENCY CHANGE ahead of real performance:
-                       // Pivot::speed will be ignored and NOT be passed down
-                       // to SetPhis. SetPhis::tgt_phispeed will always be
-                       // the value of globals::var::speed.
-      PhiAccLim acclim;
+      /// Foot to pivot about.
+      LR didimbal;
+
+      /// NaN means yaw at Pivot_Init.
+      std::function<double()> tgt_yaw;
+
+      /// Forward this much more from tgt_yaw. Negative value manifests as
+      /// walking backwards.
+      /// NaN means do NOT kick.
+      std::function<double()> stride;
+
+      // [0]: l, [1]: r
+      // tgt_sig == tgt_yaw + bend
+      // NaN means preserve initial sig for didimbal, initial phi for kickbal.
+      Phi bend[2];
+
+      std::function<PhiSpeed()> speed;
+      std::function<PhiAccLim()> acclim;
       uint32_t min_dur, max_dur;
-      bool (*exit_condition)(Basilisk*);  // Passed down to SetPhis.
-                                          // Exit condition priority:
-                                          // max_dur > exit_condition > min_dur
+
+      // Passed down to SetPhis.
+      // Exit condition priority:
+      // max_dur > exit_condition > min_dur
+      std::function<bool()> exit_condition;
+
       Mode exit_to_mode;
     } pivot;
 
