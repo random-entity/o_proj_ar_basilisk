@@ -18,7 +18,8 @@ struct ModeRunners {
         ph{.c = c.set_phis},
         pv{.c = c.pivot},
         ps{.c = c.pivseq},
-        sp{.c = c.piv_spin} {}
+        sp{.c = c.piv_spin},
+        wa{.c = c.walk} {}
 
   void Idle();
   void Wait();
@@ -99,6 +100,10 @@ struct ModeRunners {
   struct PivSpin {
     C::PivSpin& c;
   } sp;
+
+  struct Walk {
+    C::Walk& c;
+  } wa;
 
   // static void WalkToDir(Basilisk*);
   // static void WalkToPos(Basilisk*);

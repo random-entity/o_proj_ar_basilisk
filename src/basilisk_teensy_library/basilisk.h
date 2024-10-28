@@ -380,15 +380,15 @@ class Basilisk {
 
     struct Walk {
       LR init_didimbal;
-      double (*tgt_yaw[2])(Basilisk*);          // [0]: l, [1]: r (didimbal)
-      double (*stride[2])(Basilisk*);           // [0]: l, [1]: r (didimbal)
+      std::function<double()> tgt_yaw[2];       // [0]: l, [1]: r (didimbal)
+      std::function<double()> stride[2];        // [0]: l, [1]: r (didimbal)
       Phi bend[2];                              // [0]: l, [1]: r (didimbal)
-      PhiSpeed speed[2];                        // [0]: l, [1]: r (didimbal)
-      PhiAccLim acclim[2];                      // [0]: l, [1]: r (didimbal)
+      std::function<PhiSpeed()> speed[2];       // [0]: l, [1]: r (didimbal)
+      std::function<PhiAccLim()> acclim[2];     // [0]: l, [1]: r (didimbal)
       uint32_t min_stepdur[2], max_stepdur[2];  // [0]: l, [1]: r (didimbal)
       uint32_t interval[2];                     // [0]: l, [1]: r (didimbal)
-      uint8_t steps;                            // Counting both feet.
-      bool (*exit_condition)(Basilisk*);  // Passed down to PivSeq AND Pivot.
+      int steps;                                // Counting both feet.
+      std::function<bool()> exit_condition;  // Passed down to PivSeq AND Pivot.
       Mode exit_to_mode;
     } walk;
 
