@@ -27,7 +27,7 @@ void main(const Basilisk::Configuration& cfg) {
   XbeeCommandReceiver xbcr{b};
 
   // ReplySenders.
-#if DEBUG_SERIAL_RS
+#if DEBUG_SERIALRS
   SerialReplySender serrs{b};
 #endif
   LedReplySender ledrs{b, nk};
@@ -36,7 +36,7 @@ void main(const Basilisk::Configuration& cfg) {
   // The Executer.
   Executer exec{b, nkcr, xbcr};
 
-#if DEBUG_XBEE_TIMING
+#if DEBUG_SETUP
   P("XbRS timing -> ");
   for (int i = 0; i < 13; i++) {
     Serial.print(g::xb::Timing::mod13_to_send_time_us.at(i));
@@ -56,7 +56,7 @@ void main(const Basilisk::Configuration& cfg) {
     xbcr.Run();
     b.Run();
     exec.Run();
-#if DEBUG_SERIAL_RS
+#if DEBUG_SERIALRS
     serrs.Run();
 #endif
     ledrs.Run();

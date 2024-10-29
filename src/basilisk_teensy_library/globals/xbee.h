@@ -5,6 +5,7 @@
 #include <map>
 
 #include "../helpers/range.h"
+#include "debug.h"
 
 namespace g::xb {
 
@@ -34,7 +35,7 @@ const std::map<uint64_t, int> to_nid{
     // 50 <= Commanders <= 59
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
     /////////////////////////////
-    {0x0013A20041C2E64D, 50},  // Commander (Pd)
+    {0x0013A20041C2E64D, 50},  // Main Commander (Pd)
     {0x0013A20041C14EC5, 51},  // Monitor (Processing)
     /////////////////////////////
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
@@ -42,7 +43,7 @@ const std::map<uint64_t, int> to_nid{
     // Goodbye.
     //.*.*.*.*.*.*.*.*.*.*.*.*.*.
     /////////////////////////////
-    {0x0013A20041C2A71B, 14},  // Kaktugi
+    {0x0013A20041C2A71B, KAKTUGI_14_SUID},  // Kaktugi with sticker 14.
 };
 }  // namespace addr
 

@@ -8,15 +8,7 @@ namespace g::serials {
 inline constexpr uint32_t common_begin_wait_time = 200;
 }
 
-#define ENABLE_SERIAL                                             \
-  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_SUID || DEBUG_SERVOS || \
-   DEBUG_FAILURE || DEBUG_SERIAL_RS || DEBUG_XBEE_TIMING ||       \
-   DEBUG_XBEE_RECEIVE || DEBUG_XBEE_SEND || DEBUG_NEOKEYCR)
-
 #if ENABLE_SERIAL
-void P(const char* str) { Serial.print(F(str)); }
-void Pln(const char* str) { Serial.println(F(str)); }
-
 // Just initialize once and ignore Serial.begin() failure.
 void InitSerial() {
   static bool imiham = false;
@@ -41,16 +33,6 @@ const bool serial_began = [] {
 }();
 }  // namespace g::serials
 #endif
-
-void HALT(const char* err_str = nullptr) {
-#if ENABLE_SERIAL
-  Pln("x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x");
-  if (err_str) Pln(err_str);
-  Pln("Halting program");
-#endif
-
-  while (1);
-}
 
 namespace g::serials {
 

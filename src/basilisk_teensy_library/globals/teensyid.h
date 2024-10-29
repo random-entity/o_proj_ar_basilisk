@@ -4,6 +4,7 @@
 
 #include <map>
 
+#include "debug.h"
 #include "serials.h"
 
 #define TEENSYID_REGISTER_0 (0x401F4410)
@@ -18,7 +19,7 @@ uint64_t GetTeensyId() {
   teensyid.chunk[0] = *(volatile uint32_t*)TEENSYID_REGISTER_0;
   teensyid.chunk[1] = *(volatile uint32_t*)TEENSYID_REGISTER_1;
 
-#if DEBUG_TEENSYID
+#if DEBUG_SETUP
   P("TeensyID -> 0x");
   Serial.printf("%016llX\n", teensyid.matome);
 #endif
@@ -42,6 +43,6 @@ const std::map<uint64_t, int> to_suid = {
     {0x422511D764FE06E6, 12},  //
     {0x3B2A51D7653F900A, 13},  //
     /////////////////////////////
-    {0x232411D764FE06E6, 14},  // Kaktugi
+    {0x232411D764FE06E6, KAKTUGI_14_SUID},  // Kaktugi
 };
 }  // namespace g::teensyid

@@ -35,7 +35,7 @@ class Basilisk {
             if (suid_it != g::teensyid::to_suid.end()) {
               result = suid_it->second;
             }
-#if DEBUG_SUID
+#if DEBUG_SETUP
             P("SUID -> ");
             Serial.println(result);
 #endif
@@ -44,7 +44,7 @@ class Basilisk {
     int suidm1  // 0 <= (SUID - 1) < 13
         = [&] {
             const auto result = suid - 1;
-#if DEBUG_SUID
+#if DEBUG_SETUP
             P("SUIDM1 -> ");
             Serial.println(result);
 #endif
@@ -102,12 +102,16 @@ class Basilisk {
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
               cfg.mags.pin_ra, cfg.mags.pin_rt, cfg.mags.run_interval} {
     if (!(1 <= cfg_.suid && cfg_.suid <= 13)) {
-      if (cfg_.suid == 14) {
-        Pln("Welcome, Kaktugi");
-      } else {
-        HALT("Basilisk: Bad SUID");
-      }
+      HALT("Basilisk: Bad SUID");
     }
+#if DEBUG_SETUP
+    Pln("Basilisk: SUID is in valid range [1, 13]");
+#endif
+
+    if (cfg_.suidm1 != cfg_.suid - 1) {
+      HALT("Basilisk: Bad SUIDM1");
+    }
+    Pln("Basilisk: Verified SUIDM1 == SUID - 1");
 
     CommandBoth([](Servo& s) {
       s.SetStop();
