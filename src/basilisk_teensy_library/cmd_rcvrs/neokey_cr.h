@@ -4,7 +4,7 @@
 
 #include "../basilisk.h"
 #include "../components/neokey.h"
-#include "../globals/serials.h"
+#include "../globals/debug.h"
 #include "../helpers/beat.h"
 // #include "../tests/modes.h"
 
