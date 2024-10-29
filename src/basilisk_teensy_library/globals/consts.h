@@ -7,6 +7,7 @@
 namespace g::c {
 
 namespace speed {
+const PhiSpeed sloth = 0.025;
 const PhiSpeed slower = 0.05;
 const PhiSpeed slow = 0.075;
 const PhiSpeed normal = 0.1;
