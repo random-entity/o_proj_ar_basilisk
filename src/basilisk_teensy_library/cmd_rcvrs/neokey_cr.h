@@ -59,7 +59,8 @@ class NeokeyCommandReceiver {
           s.SetPosition([] {
             auto cmd = g::moteus_fmt::pm_cmd_template;
             cmd.position = NaN;
-            cmd.velocity = 0.1;
+            cmd.velocity = 0.2;
+            cmd.maximum_torque = 0.02;
             cmd.watchdog_timeout = NaN;
             return cmd;
           }());

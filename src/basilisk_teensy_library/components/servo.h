@@ -46,10 +46,9 @@ class Servo : public Moteus {
         (rpl.abs_position != Phi{rpl.abs_position});
     failure_.aux2pos_frozen =
         (abs(prev_rpl.abs_position - rpl.abs_position) < 1e-4);
-    failure_.stuck = (abs(GetExtraValue(rpl, kControlVelocity)) > 1e-2) &&
-                     (abs(GetExtraValue(rpl, kControlVelocityError)) > 1e-1);
+    failure_.stuck = (abs(GetExtraValue(rpl, kControlPositionError)) > 0.5);
     failure_.overtorque =
-        (abs(rpl.torque) > 0.9 * GetExtraValue(rpl, kCommandPositionMaxTorque));
+        (abs(rpl.torque) > 0.9 * g::moteus_fmt::pm_cmd_template.maximum_torque);
 
     return failure_.Exists();
   }
@@ -152,17 +151,21 @@ class Servo : public Moteus {
     Serial.print(rpl.temperature);
     P(" | flt ");
     Serial.print(rpl.fault);
-    // P(" | cmt ");
-    // Serial.print(GetExtraValue(rpl, kCommandPositionMaxTorque), 4);
-    // P(" | cvl ");
-    // Serial.print(GetExtraValue(rpl, kControlVelocity), 4);
-    // P(" | ver ");
-    // Serial.print(GetExtraValue(rpl, kControlVelocityError), 4);
-    P(" | a2v ");
-    Serial.print(GetExtraValue(rpl, kEncoder1Velocity), 4);
+    P(" | cpe ");
+    Serial.print(GetExtraValue(rpl, kControlPositionError), 4);
     P(" | evl ");
     Serial.print(static_cast<uint8_t>(GetExtraValue(rpl, kEncoderValidity)),
                  BIN);
+    /*
+    P(" | cmt ");
+    Serial.print(GetExtraValue(rpl, kCommandPositionMaxTorque), 4);
+    P(" | cvl ");
+    Serial.print(GetExtraValue(rpl, kControlVelocity), 4);
+    P(" | ver ");
+    Serial.print(GetExtraValue(rpl, kControlVelocityError), 4);
+    P(" | a2v ");
+    Serial.print(GetExtraValue(rpl, kEncoder1Velocity), 4);
+    */
     Serial.println();
 #endif
   }
