@@ -31,6 +31,6 @@ void HALT(const char* err_str = nullptr) {
 
 #define KAKTUGI_14_SUID (13)
 
-#define MOCK_AUX2 (0)
-#define MOCK_LPS (0)
-#define MOCK_IMU (0)
+#define MOCK_AUX2 (1)
+#define MOCK_LPS (1)
+#define MOCK_IMU (1)

@@ -23,6 +23,11 @@ class Imu {
   // Call continuously to immediately receive to incoming sensor data
   // and prevent Serial buffer overflow and correctly track revolutions.
   void Run() {
+#if MOCK_IMU
+    euler_[2] = micros() * 1e-7;
+    return;
+#endif
+
     static const auto increment_idx = [&] {
       if (++buf_idx_ >= buf_size_) buf_idx_ = 0;
     };

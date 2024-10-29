@@ -50,6 +50,12 @@ class Lps {
   // Call continuously to immediately receive incoming sensor data
   // and prevent Serial buffer overflow.
   void Run() {
+#if MOCK_LPS
+    x_ = micros() * 1e-7;
+    y_ = micros() * 1e-7;
+    return;
+#endif
+
     if (ser_.available() >= 60) {
       for (int i = 0; i < 60; i++) ser_.read();
     }

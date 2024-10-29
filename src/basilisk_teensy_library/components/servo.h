@@ -57,6 +57,12 @@ class Servo : public Moteus {
   // Aux2 position uncoiled.
   QRpl GetReply() const {
     auto rpl = last_result().values;
+
+#if MOCK_AUX2
+    rpl.abs_position = rpl.position / 21.0;
+    return rpl;
+#endif
+
     // Convert aux2 encoder reading in [0, 1] to phi in [-0.5, 0.5]
     if (rpl.abs_position > 0.5) rpl.abs_position -= 1.0;
     return rpl;
