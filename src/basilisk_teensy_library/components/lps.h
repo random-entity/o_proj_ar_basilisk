@@ -5,7 +5,6 @@
 #include <elapsedMillis.h>
 
 #include "../globals/serials.h"
-#include "../helpers/halt.h"
 #include "../helpers/vec2.h"
 
 /* Length unit of incoming bytes from the LPS board is '10cm', so the field

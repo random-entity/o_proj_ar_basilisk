@@ -3,7 +3,6 @@
 #include <Arduino.h>
 
 #include "../globals/serials.h"
-#include "../helpers/halt.h"
 #include "../helpers/using_moteus.h"
 
 // The following pins are selected for the SeoulOpenMedia T4_CanFD board v1.5.

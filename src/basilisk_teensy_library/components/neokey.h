@@ -6,7 +6,6 @@
 #include <functional>
 
 #include "../globals/serials.h"
-#include "../helpers/halt.h"
 
 /* Definition of row, col, x, y in a matrix of NeoKey1x4s:
  *             col 0            1            2

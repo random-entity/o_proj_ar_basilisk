@@ -4,7 +4,6 @@
 #include <elapsedMillis.h>
 
 #include "../globals/serials.h"
-#include "../helpers/halt.h"
 
 /* Angle unit of incoming data from the EBIMU board are in 'degrees', and
  * between -180.0 and 180.0, but the rest of the program assumes 'revolutions'
@@ -29,15 +28,7 @@ class Imu {
     };
 
     const auto rbytes = ser_.available();
-    if (rbytes <= 0) {
-      Serial.print(rbytes);
-      // Pln("NO");
-      return;
-    }
     for (int i = 0; i < rbytes; i++, increment_idx()) {
-      Serial.print(ser_.read());
-      continue;
-
       buf_[buf_idx_] = ser_.read();
       if (buf_[buf_idx_] == '\n') {
         char* temp[3];
@@ -82,8 +73,8 @@ class Imu {
     base_yaw_ = GetYaw(false) - offset;
   }
 
-  HardwareSerial& ser_ = g::serials::imu;
-  inline static constexpr uint32_t buf_size_ = 64;
+  HardwareSerial& ser_ = Serial2;  // g::serials::imu;
+  inline static constexpr int buf_size_ = 64;
   char buf_[buf_size_];
   int buf_idx_ = 0;
   double euler_[3] = {0.0};  // [0]: roll, [1]: pitch, [2]: yaw

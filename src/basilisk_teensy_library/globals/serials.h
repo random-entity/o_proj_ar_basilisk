@@ -42,18 +42,35 @@ const bool serial_began = [] {
 }  // namespace g::serials
 #endif
 
+void HALT(const char* err_str = nullptr) {
+#if ENABLE_SERIAL
+  Pln("x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x");
+  if (err_str) Pln(err_str);
+  Pln("Halting program");
+#endif
+
+  while (1);
+}
+
 namespace g::serials {
 
 struct HardwareSerialWrapper {
   HardwareSerialWrapper(HardwareSerial& _ser, const uint32_t& _baudrate,
                         const char* name)
       : ser{_ser}, baudrate{_baudrate} {
-    while (!ser) {
-      ser.begin(baudrate);
+#if DEBUG_SETUP
+    P(name);
+    Pln(": Beginning HardwareSerial");
+#endif
+
+    ser.begin(baudrate);
+    delay(common_begin_wait_time);
+
+    if (!ser) {
       P(name);
-      Pln(": Beginning HardwareSerial");
-      delay(common_begin_wait_time);
+      HALT(": Serial begin failed");
     }
+
 #if DEBUG_SETUP
     P(name);
     Pln(": HardwareSerial began");
