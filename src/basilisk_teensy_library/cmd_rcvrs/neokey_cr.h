@@ -35,7 +35,7 @@ class NeokeyCommandReceiver {
 
   void Inject() {
     using C = Basilisk::Command;
-    using O = C::Oneshot;
+    using O = C::Oneshot::ByteRep;
     using M = C::Mode;
     static auto& c = b_.cmd_;
     static auto& m = c.mode;
@@ -51,7 +51,7 @@ class NeokeyCommandReceiver {
         m = M::Free;
       } break;
       case 3: {  // SetBaseYaw(0.0)
-        c.oneshot = O::SetBaseYaw;
+        c.oneshots.Add(O::SetBaseYaw);
         c.set_base_yaw.offset = 0.0;
       } break;
       case 4: {  // Left for debug purposes.

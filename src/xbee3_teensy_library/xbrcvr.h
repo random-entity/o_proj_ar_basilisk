@@ -35,7 +35,7 @@ struct ReceivePacket {
 class Receiver {
  public:
   Receiver(HardwareSerial& s,
-           const std::function<void(ReceivePacket&, int)>& callback)
+           const std::function<void(ReceivePacket&, uint16_t)>& callback)
       : s_{s}, callback_{callback} {
     // It is the client's responsibility to begin the HardwareSerial.
   }
@@ -159,9 +159,10 @@ class Receiver {
     uint8_t bytes[c::capacity::buffer];
     ReceivePacket packet;
   } buf_;
-  int idx_ = 0, size_ = 0;
+  uint8_t idx_ = 0;
+  uint16_t size_ = 0;
   uint8_t checksum_ = 0;
-  std::function<void(ReceivePacket& packet, int payload_size)> callback_;
+  std::function<void(ReceivePacket& packet, uint8_t payload_size)> callback_;
 
  public:
   void RawPrint() {  // Only for debug. Blocks everything.

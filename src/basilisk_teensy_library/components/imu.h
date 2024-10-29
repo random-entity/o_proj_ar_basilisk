@@ -16,11 +16,6 @@
 class Imu {
  public:
   Imu() {
-    if (!g::serials::imu) {  // .begin() already called at constructor call
-                             // for global definition
-      HALT("IMU: IMU Serial (Serial2) begin failed");
-    }
-
 #if DEBUG_SETUP
     Pln("IMU: Setup complete");
 #endif
@@ -29,20 +24,16 @@ class Imu {
   // Call continuously to immediately receive to incoming sensor data
   // and prevent Serial buffer overflow and correctly track revolutions.
   void Run() {
-    static HardwareSerial& serial = g::serials::imu;
-    static const int buf_size = 64;
-    static char buf[buf_size];
-    static int buf_idx = 0;
     static const auto increment_idx = [&] {
-      if (++buf_idx >= 64) buf_idx = 0;
+      if (++buf_idx_ >= 64) buf_idx_ = 0;
     };
 
-    const auto rbytes = serial.available();
+    const auto rbytes = ser_.available();
     for (int i = 0; i < rbytes; i++, increment_idx()) {
-      buf[buf_idx] = serial.read();
-      if (buf[buf_idx] == '\n') {
+      buf_[buf_idx_] = ser_.read();
+      if (buf_[buf_idx_] == '\n') {
         char* temp[3];
-        temp[0] = strtok(buf, ",");
+        temp[0] = strtok(buf_, ",");
         temp[1] = strtok(nullptr, ",");
         temp[2] = strtok(nullptr, ",");
         if ([&] {
@@ -64,8 +55,8 @@ class Imu {
           }
           since_update_ = 0;
         }
-      } else if (buf[buf_idx] == '*') {
-        buf_idx = -1;
+      } else if (buf_[buf_idx_] == '*') {
+        buf_idx_ = -1;
       }
     }
   }
@@ -83,6 +74,10 @@ class Imu {
     base_yaw_ = GetYaw(false) - offset;
   }
 
+  HardwareSerial& ser_ = g::serials::imu;
+  inline static constexpr uint32_t buf_size = 64;
+  char buf_[buf_size];
+  int buf_idx_ = 0;
   double euler_[3];  // [0]: roll, [1]: pitch, [2]: yaw
   int yaw_revs_ = 0;
   double base_yaw_ = 0.0;

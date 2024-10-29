@@ -15,7 +15,7 @@ class Sender {
 
   bool Send(const uint8_t* payload, const int& payload_size,
             const uint64_t& dest_addr = c::addr::broadcast) {
-    if (payload_size > c::capacity::payload) return false;
+    if (payload_size > c::capacity::tx_payload) return false;
 
     int idx = 1;
     uint8_t sum = 0;

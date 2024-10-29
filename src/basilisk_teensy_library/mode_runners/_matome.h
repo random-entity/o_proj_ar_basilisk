@@ -5,7 +5,6 @@
 #include "piv_spin.h"
 #include "pivot.h"
 #include "pivseq.h"
-#include "ppp.h"
 #include "random_mags.h"
 #include "set_mags.h"
 #include "set_phis.h"
@@ -13,6 +12,7 @@
 #include "walk.h"
 #include "walk_to_dir.h"
 
+// #include "ppp.h"
 // #include "bounce_walk.h"
 // #include "diamond.h"
 // #include "do_preset.h"

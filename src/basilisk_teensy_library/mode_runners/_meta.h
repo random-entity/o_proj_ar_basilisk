@@ -13,7 +13,6 @@ struct ModeRunners {
   ModeRunners(Basilisk& _b)
       : b{_b},  //
         wt{.c = c.wait},
-        pp{.c = c.ppp},
         mg{.c = c.set_mags},
         rm{.c = c.random_mags},
         ph{.c = c.set_phis},
@@ -26,7 +25,6 @@ struct ModeRunners {
   void Idle();
   void Wait();
   void Free();
-  void PPP();
   void SetMags();
   void RandomMags();
   void SetPhis();
@@ -41,7 +39,6 @@ struct ModeRunners {
       {M::Idle_Nop, [this] { Idle(); }},
       {M::Wait, [this] { Wait(); }},
       {M::Free, [this] { Free(); }},
-      {M::BPPP, [this] { PPP(); }},
       {M::SetMags_Init, [this] { SetMags(); }},
       {M::SetMags_Wait, [this] { SetMags(); }},
       {M::RandomMags_Init, [this] { RandomMags(); }},
@@ -64,11 +61,6 @@ struct ModeRunners {
   struct Wait {
     C::Wait& c;
   } wt;
-
-  struct PPP {
-    C::PPP& c;
-    static std::map<Range<uint16_t>, std::function<void()>> idx_range_to_runner;
-  } pp;
 
   struct SetMags {
     C::SetMags& c;

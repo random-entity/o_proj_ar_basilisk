@@ -1,38 +1,27 @@
 #pragma once
 
 #include "../basilisk.h"
+#include "../ppp/_meta.h"
 
-void Shoot(Basilisk& b) {
-  using O = Basilisk::Command::Oneshot;
-  auto& o = b.cmd_.oneshot;
+struct OneshotShooters {
+  using O = Basilisk::Command::Oneshot::ByteRep;
 
-  if (o == O::None) return;
+  OneshotShooters(Basilisk& _b) : b{_b} {}
 
-  switch (o) {
-    case O::CRMuxXbee: {
-      // Processed immediately at reception without setting oneshot value
-      // if sent to XbCR as B-PPP.
+  void Shoot() {
+    auto& o = b.cmd_.oneshots;
 
-      b.crmux_ = Basilisk::CRMux::Xbee;
-    } break;
-
-    case O::SetBaseYaw: {
+    if (o.Has(O::SetBaseYaw)) {
       b.imu_.SetBaseYaw(b.cmd_.set_base_yaw.offset);
-      b.cmd_.mode = b.cmd_.ppp.prev_mode;
-    } break;
+      o.Remove(O::SetBaseYaw);
+    }
 
-    case O::BroadcastedPoll: {
-      // Processed immediately at reception without setting oneshot value if
-      // sent to XbCR as Oneshot.
-      // Somosomo immediate processing at reception should work better for
-      // network timing related work unless synchronization with Executor is
-      // absolutely necessary.
-
-      b.cmd_.bpoll.since_us_ = 0;
-    } break;
-    default:
-      break;
+    if (o.Has(O::BPPP)) {
+      ppp.byterep_to_function.at(O::BPPP)();
+      o.Remove(O::BPPP);
+    }
   }
 
-  o = O::None;
-}
+  Basilisk& b;
+  PPP ppp{b};
+};

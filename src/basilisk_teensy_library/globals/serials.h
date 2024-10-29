@@ -5,38 +5,17 @@
 #include "debug.h"
 
 namespace g::serials {
-
 inline constexpr uint32_t common_begin_wait_time = 200;
+}
 
-struct HardwareSerialWrapper {
-  HardwareSerialWrapper(HardwareSerial& _s, const uint32_t& _baudrate)
-      : s{_s}, baudrate{_baudrate} {
-    s.begin(baudrate);
-    delay(common_begin_wait_time);
-  }
-
-  operator HardwareSerial&() { return s; }
-  operator bool() { return s; }
-
-  HardwareSerial& s;
-  const uint32_t baudrate;
-};
-
-/* IMU, LPS, XBee Serials are all initialized here already. */
-HardwareSerialWrapper imu{Serial2, 57600};
-HardwareSerialWrapper lps{Serial6, 9600};
-HardwareSerialWrapper xb{Serial4, 115200};
-
-}  // namespace g::serials
-
-#define ENABLE_SERIAL                                                \
-  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_SERVOS || DEBUG_FAILURE || \
-   DEBUG_SERIAL_RS || DEBUG_XBEE_TIMING || DEBUG_XBEE_RECEIVE ||     \
-   DEBUG_XBEE_SEND || DEBUG_NEOKEYCR)
+#define ENABLE_SERIAL                                             \
+  (DEBUG_SETUP || DEBUG_TEENSYID || DEBUG_SUID || DEBUG_SERVOS || \
+   DEBUG_FAILURE || DEBUG_SERIAL_RS || DEBUG_XBEE_TIMING ||       \
+   DEBUG_XBEE_RECEIVE || DEBUG_XBEE_SEND || DEBUG_NEOKEYCR)
 
 #if ENABLE_SERIAL
-#define P(str) (Serial.print(F(str)))
-#define Pln(str) (Serial.println(F(str)))
+void P(const char* str) { Serial.print(F(str)); }
+void Pln(const char* str) { Serial.println(F(str)); }
 
 // Just initialize once and ignore Serial.begin() failure.
 void InitSerial() {
@@ -62,3 +41,35 @@ const bool serial_began = [] {
 }();
 }  // namespace g::serials
 #endif
+
+namespace g::serials {
+
+struct HardwareSerialWrapper {
+  HardwareSerialWrapper(HardwareSerial& _ser, const uint32_t& _baudrate,
+                        const char* name)
+      : ser{_ser}, baudrate{_baudrate} {
+    while (!ser) {
+      ser.begin(baudrate);
+      P(name);
+      Pln(": Beginning HardwareSerial");
+      delay(common_begin_wait_time);
+    }
+#if DEBUG_SETUP
+    P(name);
+    Pln(": HardwareSerial began");
+#endif
+  }
+
+  operator HardwareSerial&() { return ser; }
+  operator bool() { return ser; }
+
+  HardwareSerial& ser;
+  const uint32_t baudrate;
+};
+
+/* IMU, LPS, XBee Serials are all initialized here already. */
+HardwareSerialWrapper imu{Serial2, 57600, "IMU"};
+HardwareSerialWrapper lps{Serial6, 9600, "LPS"};
+HardwareSerialWrapper xb{Serial4, 115200, "Xbee"};
+
+}  // namespace g::serials

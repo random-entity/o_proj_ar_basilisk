@@ -5,7 +5,7 @@
 void ModeRunners::WalkToDir() {
   switch (m) {
     case M::WalkToDir: {
-      wd.init_yaw = b.yaw();
+      wd.init_yaw = b.rpl_.yaw();
 
       m = M::Walk;
       wa.c.init_didimbal = wd.c.init_didimbal;

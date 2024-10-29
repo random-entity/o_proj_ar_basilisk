@@ -17,7 +17,7 @@ class Executer {
   // Query.
   void Run() {
     using M = Basilisk::Command::Mode;
-    static auto& m = b_.cmd_.mode;
+    auto& m = b_.cmd_.mode;
 
     if (!beat_.Hit()) return;
 
@@ -33,20 +33,20 @@ class Executer {
         }
       } break;
       case Basilisk::CRMux::Xbee: {
-        if (xbcr_.injection_.waiting) {
-          xbcr_.Inject();
-          xbcr_.injection_.waiting = false;
-        }
+        // Commands received by XbeeCR are processed in-place and do not require
+        // synchronized injection since they don't interfere with Modes.
       } break;
+      default:
+        break;
     }
 
     // Oneshot.
-    Shoot(b_);
+    os_.Shoot();
 
     // Handle failures right before Mode running.
-    if (b_.rpl_.heavenfall()) {
+    if (b_.rpl_.failure.heavenfall()) {
       P("Heavenfall ");
-      Serial.printf("0x%04X\n", b_.rpl_.heavenfall(), HEX);
+      Serial.printf("0x%04X\n", b_.rpl_.failure.heavenfall(), HEX);
       m = M::Idle_Init;
     }
     if (b_.l_.GetReply().torque > 0.4 || b_.r_.GetReply().torque > 0.4) {
@@ -61,6 +61,7 @@ class Executer {
  private:
   Basilisk& b_;
   ModeRunners mr_{b_};
+  OneshotShooters os_{b_};
   XbeeCommandReceiver& xbcr_;
   NeokeyCommandReceiver& nkcr_;
   Beat beat_;

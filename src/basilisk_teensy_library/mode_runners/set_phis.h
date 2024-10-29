@@ -29,7 +29,7 @@ void ModeRunners::SetPhis() {
                 tgt_rtracclim = NaN;
                 ph.fixing_cycles[f]++;
               } else {
-                const auto cur_outpos = b.phi(f);
+                const auto cur_outpos = b.rpl_.phi(f);
                 const auto tgt_delta_outpos = tgt_outpos - cur_outpos;
                 if (abs(tgt_delta_outpos) < ph.c.fix_thr) {
                   // Target phi is reached.

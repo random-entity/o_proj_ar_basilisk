@@ -17,14 +17,14 @@ void ModeRunners::PivSpin() {
         p.min_dur = sp.c.min_stepdur;
         p.max_dur = sp.c.max_stepdur;
         p.exit_condition = [this] {
-          return abs(b.yaw() - sp.c.dest_yaw) < sp.c.exit_thr;
+          return abs(b.rpl_.yaw() - sp.c.dest_yaw) < sp.c.exit_thr;
         };
         return p;
       };
       ps.c.intervals = [this](int) { return sp.c.interval; };
       ps.c.steps = sp.c.steps;
       ps.c.exit_condition = [this] {
-        return abs(b.yaw() - sp.c.dest_yaw) < sp.c.exit_thr;
+        return abs(b.rpl_.yaw() - sp.c.dest_yaw) < sp.c.exit_thr;
       };
       ps.c.exit_to_mode = M::Idle_Init;
     } break;

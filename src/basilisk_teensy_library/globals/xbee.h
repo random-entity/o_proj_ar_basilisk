@@ -4,10 +4,11 @@
 
 #include <map>
 
+#include "../helpers/range.h"
+
 namespace g::xb {
 
 namespace addr {
-
 /* 64-bit MAC address -> Node ID within XBee network */
 const std::map<uint64_t, int> to_nid{
     /////////////////////////////
@@ -43,8 +44,12 @@ const std::map<uint64_t, int> to_nid{
     /////////////////////////////
     {0x0013A20041C2A71B, 14},  // Kaktugi
 };
-
 }  // namespace addr
+
+namespace nid::range {
+const Range<int> followers{1, 13};
+const Range<int> commanders{50, 59};
+}  // namespace nid::range
 
 /* (all time in milliseconds for this section of comment)
  * Non-Poll Commands: 100M       (M = ?)

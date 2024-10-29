@@ -17,7 +17,7 @@ void ModeRunners::Pivot() {
       }
 
       pv.since_init = 0;
-      pv.didim_init_yaw = b.yaw();
+      pv.didim_init_yaw = b.rpl_.yaw();
 
       // Release didimbal, attach kickbal, set phi_didim.
       m = M::SetMags_Init;
@@ -56,8 +56,8 @@ void ModeRunners::Pivot() {
         return;
       }
 
-      pv.kick_init_yaw = b.yaw();
-      pv.kick_init_phi_didim = b.phi(pv.didim_idx);
+      pv.kick_init_yaw = b.rpl_.yaw();
+      pv.kick_init_phi_didim = b.rpl_.phi(pv.didim_idx);
 
       // Release kickbal, attach didimbal, set phis.
       m = M::SetMags_Init;

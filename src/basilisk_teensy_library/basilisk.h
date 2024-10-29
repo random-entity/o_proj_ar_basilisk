@@ -29,21 +29,27 @@ class Basilisk {
   const struct Configuration {
     int suid  // 1 <= ID of this Basilisk <= 13
         = [] {
-            int suid = 0xDEAD;
+            int result = 0xDEAD;
             const auto teensyid = GetTeensyId();
             const auto suid_it = g::teensyid::to_suid.find(teensyid);
             if (suid_it != g::teensyid::to_suid.end()) {
-              suid = suid_it->second;
+              result = suid_it->second;
             }
-#if DEBUG_TEENSYID
+#if DEBUG_SUID
             P("SUID -> ");
-            Serial.println(suid);
+            Serial.println(result);
 #endif
-            return suid;
+            return result;
           }();
-    int suidm1() const {  // 0 <= (SUID - 1) < 13
-      return suid - 1;
-    }
+    int suidm1  // 0 <= (SUID - 1) < 13
+        = [&] {
+            const auto result = suid - 1;
+#if DEBUG_SUID
+            P("SUIDM1 -> ");
+            Serial.println(result);
+#endif
+            return result;
+          }();
     struct {
       int id_l = 1, id_r = 2;
       int bus = 1;
@@ -94,8 +100,7 @@ class Basilisk {
         lego_{cfg.lego.pin_l, cfg.lego.pin_r, cfg.lego.run_interval},
         mags_{lego_,                             //
               cfg.mags.pin_la, cfg.mags.pin_lt,  //
-              cfg.mags.pin_ra, cfg.mags.pin_rt, cfg.mags.run_interval},
-        rpl_{.b = *this} {
+              cfg.mags.pin_ra, cfg.mags.pin_rt, cfg.mags.run_interval} {
     if (!(1 <= cfg_.suid && cfg_.suid <= 13)) {
       if (cfg_.suid == 14) {
         Pln("Welcome, Kaktugi");
@@ -125,8 +130,8 @@ class Basilisk {
     mags_.Run();
   }
 
-  //////////////////////////////
-  // Basilisk Command struct: //
+  /////////////////////////////////
+  // Basilisk Command interface: //
 
   enum class CRMux : bool { Xbee, Neokey } crmux_ = CRMux::Xbee;
 
@@ -162,32 +167,29 @@ class Basilisk {
                          // intended.
       };
 
-      uint8_t ToMask(ByteRep o) {
+      uint8_t ToMask(ByteRep o) const {
         return 1 << (static_cast<uint8_t>(o) -
                      Basilisk::Command::ByteRepRanges::oneshot.from);
       }
 
       void Add(ByteRep o) { matome |= ToMask(o); }
-
       void Remove(ByteRep o) { matome &= ~ToMask(o); }
+      bool Has(ByteRep o) const { return matome & ToMask(o); }
 
       uint8_t matome = 0;
-
-      struct SetBaseYaw {
-        double offset;
-      } set_base_yaw;
-
-      struct PPP {
-        uint16_t idx;
-      } ppp;
     } oneshots;
 
-    enum class Mode : uint8_t {
-      Min = 0,
-      Max = 199,
+    struct SetBaseYaw {
+      double offset;
+    } set_base_yaw;
 
-      /// A child Mode cannot be future-chained after its parent Mode.
-      /// No loop should be formed in a future-chain.
+    struct PPP {
+      uint16_t idx;
+    } ppp;
+
+    enum class Mode : uint8_t {
+      // A child Mode cannot be future-chained after its parent Mode.
+      // No loop should be formed in a future-chain.
 
       /* Idle: Kill everything. Relax.
        * - Stop both Servos, attach all magnets,
@@ -291,11 +293,14 @@ class Basilisk {
 
     struct SetMags {
       MagStren strengths[4];
-      bool expected_state[2];  // [0]: l, [1]: r
-                               // true: contact, false: detachment
+
+      // [0]: l, [1]: r
+      // true: contact, false: detachment
+      bool expected_state[2];
+
+      // Exit condition priority: max_dur > min_dur > lego_verification
       N64 verif_thr;
-      // Exit condition priority:
-      uint32_t min_dur, max_dur;  // max_dur > min_dur > lego_verification
+      uint32_t min_dur, max_dur;
       Mode exit_to_mode;
     } set_mags;
 
@@ -305,38 +310,36 @@ class Basilisk {
     } random_mags;
 
     struct SetPhis {
-      /// [0]: l, [1]: r
-      /// NaN means fix phi (speed, acclim ignored).
+      // [0]: l, [1]: r
+      // NaN means fix phi (speed, acclim ignored).
       std::function<Phi()> tgt_phi[2];
 
-      /// [0]: l, [1]: r
+      // [0]: l, [1]: r
       std::function<PhiSpeed()> tgt_phispeed[2];
 
-      /// [0]: l, [1]: r
+      // [0]: l, [1]: r
       std::function<PhiAccLim()> tgt_phiacclim[2];
 
       PhiThr damp_thr;
       PhiThr fix_thr;
-
       uint32_t fixing_cycles_thr;
       uint32_t min_dur, max_dur;
       std::function<bool()> exit_condition;
 
-      /// Exit condition priority:
-      /// (max_dur || exit_condition) > (min_dur && fixed_enough)
+      // Exit condition priority:
+      // (max_dur || exit_condition) > (min_dur && fixed_enough)
       Mode exit_to_mode;
     } set_phis;
 
     struct Pivot {
-      /// Foot to pivot about.
       LR didimbal;
 
-      /// NaN means yaw at Pivot_Init.
+      // NaN means yaw at Pivot_Init.
       std::function<double()> tgt_yaw;
 
-      /// Forward this much more from tgt_yaw. Negative value manifests as
-      /// walking backwards.
-      /// NaN means do NOT kick.
+      // Forward this much more from tgt_yaw. Negative value manifests as
+      // walking backwards.
+      // NaN means DON'T kick.
       std::function<double()> stride;
 
       // [0]: l, [1]: r
@@ -358,28 +361,29 @@ class Basilisk {
     } pivot;
 
     struct PivSeq {
-      /// exit_to_mode will be overwritten by PivSeq.
+      // .exit_to_mode will be overwritten by PivSeq to PivSeq_Step.
       std::function<Pivot(int step)> pivots;
 
       std::function<uint32_t(int step)> intervals;
 
-      /// Counting both feet.
-      /// Negative value means infinite steps.
+      // Total steps to take counting both feet.
+      // Negative value means infinity.
       int steps;
 
-      /// This is exit condition evaluated every interval between Pivots.
-      /// Exit condition while Pivoting should be set at Pivot::exit_condition.
+      // This is exit condition evaluated every interval between Pivots.
+      // Exit condition evaluated while Pivoting should be set at
+      // Pivot::exit_condition.
       std::function<bool()> exit_condition;
 
-      /// Exit condition priority:
-      /// exit_condition > steps
+      // Exit condition priority:
+      // exit_condition > steps
       Mode exit_to_mode;
     } pivseq;
 
     struct PivSpin {
       LR didimbal;
 
-      /// NaN means no destination (spin indefinitely).
+      // NaN means no destination (thus infinite spin).
       double dest_yaw;
 
       double exit_thr;
@@ -409,11 +413,11 @@ class Basilisk {
     struct WalkToDir {
       LR init_didimbal;
 
-      /// Set to true to make Basilisk to automatically walk backwards
-      /// if
+      // Set to true to make Basilisk to automatically walk backwards if target
+      // yaw is more than 90 degress away.
       bool auto_moonwalk;
 
-      /// NaN means yaw at WalkToDir initialization.
+      // NaN means yaw at WalkToDir initialization.
       std::function<double()> tgt_yaw;
 
       std::function<double()> stride;
@@ -421,13 +425,13 @@ class Basilisk {
       std::function<PhiSpeed()> speed;
       std::function<PhiAccLim()> acclim;
 
-      /// Minimum and maximum duration of all step pivots in milliseconds.
+      // Minimum and maximum duration of all step pivots in milliseconds.
       uint32_t min_stepdur, max_stepdur;
 
-      /// Time interval between steps in milliseconds.
+      // Time interval between steps in milliseconds.
       uint32_t interval;
 
-      /// Total steps counting both feet. Negative value means infinity.
+      // Total steps counting both feet. Negative value means infinity.
       int steps;
     } walk_to_dir;
 
@@ -506,48 +510,51 @@ class Basilisk {
     } gee;
   } cmd_;
 
-  double phi_l() { return l_.GetReply().abs_position; };
-  double phi_r() { return r_.GetReply().abs_position; }
-  double phi(int f) { return f % 2 == IDX_L ? phi_l() : phi_r(); }
-  double lpsx() { return lps_.x_; }
-  double lpsy() { return lps_.y_; }
-  uint32_t lps_since_raw_update() { return lps_.since_raw_update_; }
-  double yaw() { return imu_.GetYaw(true); }
+  ///////////////////////////////
+  // Basilisk Reply interface: //
 
+  // It is ReplySender's responsibility to type cast each item.
   struct Reply {
-    Basilisk& b;
-    const uint8_t suid;
-    uint8_t mode() { return static_cast<uint8_t>(b.cmd_.mode); }
-    float phi_l() { return static_cast<float>(b.phi_l()); }
-    float phi_r() { return static_cast<float>(b.phi_r()); };
-    float lpsx() { return static_cast<float>(b.lpsx()); }
-    float lpsy() { return static_cast<float>(b.lpsy()); }
-    float yaw() { return static_cast<float>(b.yaw()); }
+    Reply(Basilisk& _b) : b{_b}, failure{.b{_b}}, since_xbrx_us{.b{_b}} {}
 
-    uint8_t servo_l_failure() { return b.l_.failure_.Export(); }
-    uint8_t servo_r_failure() { return b.r_.failure_.Export(); }
-    uint8_t heavenfall() {
-      uint8_t result = 0;
-      for (int i = 0; i < 4; i++) {
-        if (b.mags_.heavenfall_[i]) result |= (1 << i);
-      }
-      return result;
-    }
+    Basilisk& b;
+    const int& suid{b.cfg_.suid};
+    uint8_t mode_byterep() { return static_cast<uint8_t>(b.cmd_.mode); }
+    double phi_l() { return b.l_.GetReply().abs_position; };
+    double phi_r() { return b.r_.GetReply().abs_position; }
+    double phi(int f) { return f % 2 == IDX_L ? phi_l() : phi_r(); }
+    double lpsx() { return b.lps_.x_; }
+    double lpsy() { return b.lps_.y_; }
+    uint32_t lps_since_raw_update() { return b.lps_.since_raw_update_; }
+    double yaw() { return b.imu_.GetYaw(true); }
 
     struct {
+      Basilisk& b;
+      uint8_t servo_l() { return b.l_.failure_.Export(); }
+      uint8_t servo_r() { return b.r_.failure_.Export(); }
+      uint8_t heavenfall() {
+        uint8_t result = 0;
+        for (int i = 0; i < 4; i++) {
+          if (b.mags_.heavenfall_[i]) result |= (1 << i);
+        }
+        return result;
+      }
+    } failure;
+
+    struct {
+      Basilisk& b;
       elapsedMicros bppp;
-      elapsedMicros bpoll;
+      const elapsedMicros& bpoll{b.cmd_.bpoll.since_us};
       const elapsedMicros& fellow_rpl(int suidm1) {
         return roster[suidm1].since_update_us;
       }
     } since_xbrx_us;
-  } rpl_;
+  } rpl_{*this};
 
   ///////////////////
   // Util methods: //
 
-  template <typename ServoCommand>
-  void CommandBoth(ServoCommand c) {
+  void CommandBoth(std::function<void(Servo&)> c) {
     for (auto& s : s_) c(s);
   }
 

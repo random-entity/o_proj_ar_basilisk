@@ -12,9 +12,10 @@ class XbeeReplySender {
   // Run continuously.
   void Run() {  // Time-slotted Reply to Broadcasted Poll
     const auto send_time_us = g::xb::Timing::mod13_to_send_time_us.at(
-        (b_.cfg_.suidm1() + b_.cmd_.bpoll.round_robin) % 13);
-    if (send_time_us <= b_.cmd_.bpoll.since_us_ &&
-        b_.cmd_.bpoll.since_us_ <= send_time_us + g::xb::Timing::send_timeout_us) {
+        (b_.cfg_.suidm1 + b_.cmd_.bpoll.round_robin) % 13);
+    if (send_time_us <= b_.cmd_.bpoll.since_us &&
+        b_.cmd_.bpoll.since_us <=
+            send_time_us + g::xb::Timing::send_timeout_us) {
       Send();
     }
   }
@@ -38,7 +39,7 @@ class XbeeReplySender {
       float lpsy;
       float yaw;
     } decoded;
-    uint8_t raw_bytes[xb::c::capacity::payload];
+    uint8_t raw_bytes[xb::c::capacity::tx_payload];
   } xb_rpl_;
 
   Basilisk& b_;

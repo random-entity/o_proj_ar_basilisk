@@ -70,7 +70,7 @@ void cmd_tick(t_xbsendtiming* x) {
     free(node);
   }
 
-  clock_delay(x->polls.clk, 20);  // Poll next turn.
+  clock_delay(x->polls.clk, 10);  // Poll next turn.
 }
 
 void poll_tick(t_xbsendtiming* x) {
@@ -89,7 +89,7 @@ void poll_tick(t_xbsendtiming* x) {
     free(node);
   }
 
-  clock_delay(x->cmds.clk, 80);  // Command next turn.
+  clock_delay(x->cmds.clk, 90);  // Command next turn.
 }
 
 // Method to initialize the clock and queue when the external is created

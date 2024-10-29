@@ -41,11 +41,6 @@ class Lps {
              .maxx = maxx,
              .miny = miny,
              .maxy = maxy} {
-    if (!ser_) {  // .begin() already called at constructor call for global
-                  // definition.
-      HALT("LPS: LPS Serial (Serial6) begin failed");
-    }
-
     for (auto& dist_sm : dists_sm_) dist_sm.begin(SMOOTHED_AVERAGE, 5);
 
 #if DEBUG_SETUP
