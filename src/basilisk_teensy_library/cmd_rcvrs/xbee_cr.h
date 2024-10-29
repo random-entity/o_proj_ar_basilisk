@@ -13,9 +13,9 @@
  *   <- Is iff (source is Commander) && payload[O/M] == M::BPPP.
  *   -> Set waiting injection flag to inject at next ExecutionCycle.
  *     * Waiting is for time synchronization with ModeRunners.
- * - Time-slotted Poll Commands:
+ * - Broadcasted Poll Commands:
  *   <- Is iff (source is Commander) && payload[O/M] == O::BroadcastedPoll.
- *   -> Reset poll clock for next ReplySend.
+ *   -> Reset bpoll clock for next ReplySend.
  * - Fellow Replies:
  *   <- Is iff (source is Fellow).
  *   -> Save to Roster immediately. */

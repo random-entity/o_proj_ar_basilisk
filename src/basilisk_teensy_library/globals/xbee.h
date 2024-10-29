@@ -47,9 +47,9 @@ const std::map<uint64_t, int> to_nid{
 }  // namespace addr
 
 /* (all time in milliseconds for this section of comment)
- * Non-Poll Commands : 100M       (M = ?)
- * Time Slotted Polls: 100N + 10  (N = span * (0, 1, 2, ...))
- * Replies           : 100N + (first ~ last, with gap)
+ * Non-Poll Commands: 100M       (M = ?)
+ * Broadcasted Polls: 100N + 10  (N = span * (0, 1, 2, ...))
+ * Replies          : 100N + (first ~ last, with gap)
  *
  * Time (ms)        : 0         100       200       300       400
  * Non-Poll Cmds    : ?         ?         ?         ?         ?

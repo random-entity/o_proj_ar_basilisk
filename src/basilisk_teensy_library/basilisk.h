@@ -135,6 +135,9 @@ class Basilisk {
     /// 0   <= Mode    <= 199
 
     enum class Oneshot : uint8_t {
+      Min = 200,
+      Max = 255,
+
       None = 200,
       CRMuxXbee = 201,
       SetBaseYaw = 202,
@@ -150,6 +153,9 @@ class Basilisk {
     } bpoll;
 
     enum class Mode : uint8_t {
+      Min = 0,
+      Max = 199,
+
       /// A child Mode cannot be future-chained after its parent Mode.
       /// No loop should be formed in a future-chain.
 
@@ -254,9 +260,6 @@ class Basilisk {
       Shear_Init = 100,
       Shear_Move = 101,
       Gee = 102,
-
-      /* Meta */
-      Max = 199
     } mode = Mode::Idle_Init;
 
     struct PPP {
