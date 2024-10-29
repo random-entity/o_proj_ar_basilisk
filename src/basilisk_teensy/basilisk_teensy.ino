@@ -21,13 +21,13 @@ Basilisk::Configuration cfg{
           return suid;
         }(),  //
     .servo{.id_l = 1, .id_r = 2, .bus = 1},
-    .lps{.c = 860.0,
-         .x_c = 430.0,
-         .y_c = 910.0,
-         .minx = 100.0,
-         .maxx = 760.0,
-         .miny = 100.0,
-         .maxy = 810.0},
+    .lps{.c = 900.0,
+         .x_c = 380.0,
+         .y_c = 470.0,
+         .minx = -50.0,
+         .maxx = 950.0,
+         .miny = -100.0,
+         .maxy = 420.0},
     .lego{.pin_l = 23, .pin_r = 29, .run_interval = 20},  //
     .mags{.pin_la = 3,
           .pin_lt = 4,

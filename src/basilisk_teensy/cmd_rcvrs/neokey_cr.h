@@ -61,7 +61,7 @@ class NeokeyCommandReceiver {
       case 4: {
         b_->crmux_ = Basilisk::CRMux::Xbee;
         tests::BounceWalk(b_);
-
+        // tests::WalkToDir(b_);
         // tests::Pivot(b_);
         // tests::Diamond(b_);
         // tests::WalkToPosInField(b_);

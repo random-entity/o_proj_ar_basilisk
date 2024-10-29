@@ -7,7 +7,7 @@ namespace globals {
 elapsedMicros poll_clk_us;
 
 namespace var {
-PhiSpeed speed = 0.1;
+PhiSpeed speed = 0.05;
 }
 
 namespace stdval {
