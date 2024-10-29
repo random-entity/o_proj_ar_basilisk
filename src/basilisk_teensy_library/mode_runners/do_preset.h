@@ -4,21 +4,6 @@
 #include "../rpl_sndrs/led_rs.h"
 #include "_meta.h"
 
-// * Meta
-// 50000 Idle
-// 50001 Free
-// 50002 CRMuxXbee
-// 50003 SetBaseYaw(0)
-// 50004 SetBaseYaw(-0.25)
-
-// * Specific
-// 1 ~ 4 Tibu foot
-// 5 ~ 12 Tibu individual magnet ###TODO###
-// 23 ~ 24 RandomTibutibu
-// 30 ~ 34 Change global SetPhis speed
-// 50 ~ 51 Diamond
-// 99 BounceWalk(tgt_yaw = random)
-
 // * PPP
 // ?? ~ ?? Set Base Yaw towards Center and counterclockwise ###TODO###
 // 60 ~ 69 Set Pivot Tadak interval ###TODO###
@@ -31,12 +16,7 @@
 // 101 ~ 108 WalkToDir relative to current yaw
 // 201 ~ 213 Find SUID
 // 701 ~ 713 WalkToPosInField to '0-13' circular arrangement
-// 1000 ~ 2999 Pivot
-// 3100 ~ 3299 PivSpin
-// 3300 ~ 3399 Sufi
-// 4000 ~ 4999 WalkToDir
 // 10000 ~ 19999 WalkToPos
-// 20000 ~ 29999 WalkToPosInField
 
 namespace ppp {
 

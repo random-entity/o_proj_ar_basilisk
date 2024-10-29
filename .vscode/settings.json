@@ -67,8 +67,8 @@
     "terminal.ansiGreen": "#47e15e"
   },
   "files.associations": {
-    "*.pde": "java",
     "unordered_set": "cpp",
-    "stdexcept": "cpp"
+    "stdexcept": "cpp",
+    "optional": "cpp"
   }
 }

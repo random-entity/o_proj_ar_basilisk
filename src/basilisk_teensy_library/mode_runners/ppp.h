@@ -8,7 +8,7 @@ void ModeRunners::PPP() {
 
   if (pp.c.idx == idx::crmux_xbee) {
   }  //...
-  else if (pp.c.idx == range::tibu) {
+  else if (pp.c.idx == range::tibu_foot) {
   } else if (pp.c.idx == range::pivot) {
   }  // ...
 }
