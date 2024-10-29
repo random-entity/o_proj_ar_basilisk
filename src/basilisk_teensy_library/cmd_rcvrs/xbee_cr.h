@@ -9,20 +9,19 @@
 #include "../roster.h"
 
 /* This class is capable of handling the following type of messages:
- * - Broadcasted parameterized-preset-protocol (B-PPP) Commands:
- *   <- Is iff (source is Commander) && payload[O/M] == M::BPPP.
+ * - Broadcasted parameterized-preset-protocol (B-PPP) Oneshots:
+ *   <- Is iff (source is Commander) && payload[O/M] == O::BPPP.
  *   -> Set waiting injection flag to inject at next ExecutionCycle.
- *     * Waiting is for time synchronization with ModeRunners.
- * - Broadcasted Poll Commands:
+ *     * Injecting at ExecutionCycle is for muxing CommandReceivers, and
+ *       synchronization with ModeRunner.
+ * - Broadcasted Poll Oneshots:
  *   <- Is iff (source is Commander) && payload[O/M] == O::BroadcastedPoll.
- *   -> Reset bpoll clock for next ReplySend.
+ *   -> Immediately reset bpoll clock for next ReplySend.
  * - Fellow Replies:
  *   <- Is iff (source is Fellow).
- *   -> Save to Roster immediately. */
+ *   -> Immediately save to Roster. */
 class XbeeCommandReceiver {
-  using C = Basilisk::Command;
-  using M = C::Mode;
-  using O = C::Oneshot;
+  using O = Basilisk::Command::Oneshot;
 
  public:
   XbeeCommandReceiver(Basilisk& b)
@@ -64,18 +63,18 @@ class XbeeCommandReceiver {
 
       ///////////////////
       // B-PPP Command //
-      if (om == static_cast<uint8_t>(M::BPPP)) {
+      if (om == static_cast<uint8_t>(O::BPPP)) {
         Payload msg{};
         memcpy(msg.bytes, packet.payload, payload_size);
 
         const auto suidm1 = b_.cfg_.suidm1();
         const auto ppp_idx = msg.cmd.u.bppp.idx[suidm1];
+
         switch (ppp_idx) {
           // Handle special indices that should be processed or ignored
-          // immediately. PPP Command that requests Oneshot should be prevented
-          // from changing the Mode of Basilisk.
+          // immediately.
           case 0:
-            return;
+            return;  // Ignore PPP index 0.
           case g::ppp::idx::crmux_xbee:
             b_.crmux_ = Basilisk::CRMux::Xbee;
             return;
@@ -91,7 +90,7 @@ class XbeeCommandReceiver {
       /////////////////////
       // BroadcastedPoll //
       else if (om == static_cast<uint8_t>(O::BroadcastedPoll)) {
-        b_.since_bpoll_us_ = 0;
+        b_.cmd_.bpoll.since_us_ = 0;
         Payload msg{};
         memcpy(msg.bytes, packet.payload, payload_size);
         b_.cmd_.bpoll.round_robin = msg.cmd.u.bpoll.round_robin;
@@ -105,9 +104,8 @@ class XbeeCommandReceiver {
   }
 
   void Inject() {
-    b_.cmd_.mode = M::BPPP;
+    b_.cmd_.oneshot = O::BPPP;
     b_.cmd_.ppp.idx = injection_.ppp.idx;
-    b_.cmd_.ppp.prev_mode = b_.cmd_.mode;
   }
 
   union Payload {

@@ -11,6 +11,18 @@
 
 namespace g::ppp {
 namespace idx {
+using O = Basilisk::Command::Oneshot;
+
+// Oneshots
+inline constexpr uint16_t crmux_xbee = 50002;
+inline constexpr uint16_t set_base_yaw_0 = 50003;
+inline constexpr uint16_t set_base_yaw_m025 = 50004;
+
+const std::map<uint16_t, O> shots = {
+    {crmux_xbee, [](Basilisk& b) {}},
+};
+
+inline constexpr uint16_t om_boundary = 50002;
 
 void TibuByFoot(uint16_t idx) {}
 
@@ -22,10 +34,6 @@ using M = Basilisk::Command::Mode;
 inline constexpr uint16_t idle = 50000;
 inline constexpr uint16_t free = 50001;
 
-// Oneshots
-inline constexpr uint16_t crmux_xbee = 50002;
-inline constexpr uint16_t set_base_yaw_0 = 50003;
-inline constexpr uint16_t set_base_yaw_m025 = 50004;
 }  // namespace idx
 
 namespace range {

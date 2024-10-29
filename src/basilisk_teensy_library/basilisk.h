@@ -15,6 +15,7 @@
 #include "globals/serials.h"
 #include "globals/teensyid.h"
 #include "helpers/beat.h"
+#include "helpers/range.h"
 #include "helpers/utils.h"
 #include "roster.h"
 
@@ -76,7 +77,6 @@ class Basilisk {
   Imu imu_;
   LegoBlocks lego_;
   Magnets mags_;
-  elapsedMicros since_bpoll_us_ = static_cast<uint32_t>(1e9);
 
   //////////////////
   // Constructor: //
@@ -131,26 +131,56 @@ class Basilisk {
   enum class CRMux : bool { Xbee, Neokey } crmux_ = CRMux::Xbee;
 
   struct Command {
-    /// 200 <= Oneshot <= 255
-    /// 0   <= Mode    <= 199
-
-    enum class Oneshot : uint8_t {
-      Min = 200,
-      Max = 255,
-
-      None = 200,
-      CRMuxXbee = 201,
-      SetBaseYaw = 202,
-      BroadcastedPoll = 203,
-    } oneshot = Oneshot::None;
-
-    struct SetBaseYaw {
-      double offset;
-    } set_base_yaw;
+    // Byte representation ranges.
+    struct ByteRepRanges {
+      inline static const Range<uint8_t> mode{0, 199};
+      inline static const Range<uint8_t> oneshot{200, 207};
+      inline static const Range<uint8_t> bpoll{232, 232};
+    };
 
     struct BroadcastedPoll {
+      elapsedMicros since_us = static_cast<uint32_t>(1e9);
       uint8_t round_robin = 0;
     } bpoll;
+
+    struct Oneshot {
+      // Byte representation (200 + n) corresponds to n-th bit (1 << n)
+      // of matome value.
+      enum class ByteRep : uint8_t {
+        CRMuxXbee = 200,
+        SetBaseYaw = 201,
+
+        /* PPP: Parameterized-preset-protocol. */
+        BPPP = 202,      // PPP Command received by broadcast with payload being
+                         // array of PPP indices for all Basilisks in a single
+                         // packet.
+        /* XPPP = n, */  // There may be additional PPP CR protocols, and PPP
+                         // Oneshots corresponding to it, effectively acting as
+                         // equivalent Oneshot.  Distinction in Oneshot value is
+                         // explicitly exposed in order to let Basilisk know
+                         // what payload parse logic the CommandSender has
+                         // intended.
+      };
+
+      uint8_t ToMask(ByteRep o) {
+        return 1 << (static_cast<uint8_t>(o) -
+                     Basilisk::Command::ByteRepRanges::oneshot.from);
+      }
+
+      void Add(ByteRep o) { matome |= ToMask(o); }
+
+      void Remove(ByteRep o) { matome &= ~ToMask(o); }
+
+      uint8_t matome = 0;
+
+      struct SetBaseYaw {
+        double offset;
+      } set_base_yaw;
+
+      struct PPP {
+        uint16_t idx;
+      } ppp;
+    } oneshots;
 
     enum class Mode : uint8_t {
       Min = 0,
@@ -178,15 +208,6 @@ class Basilisk {
        * - then wait 3 seconds,
        * - then exit to Idle Mode. */
       Free = 3,  // -> Wait -> Idle
-
-      /* PPP: Parameterized-preset-protocol. */
-      BPPP = 4,  // PPP Command received by broadcast with payload of array of
-                 // indices for all Basilisks in a single packet.
-      /* XPPP = n, // There may be additional PPP CR protocols, and PPP Modes
-                      corresponding to it, acting as same Modes.
-                      Distinction in Mode index is exposed in order to let
-                      Basilisk know what payload parse logic the
-                      Command sender has intended. */
 
       /* SetMags: Control magnets.
        *          Future-chain-able.
@@ -261,11 +282,6 @@ class Basilisk {
       Shear_Move = 101,
       Gee = 102,
     } mode = Mode::Idle_Init;
-
-    struct PPP {
-      uint16_t idx;
-      Mode prev_mode;
-    } ppp;
 
     struct Wait {
       elapsedMillis since_init;

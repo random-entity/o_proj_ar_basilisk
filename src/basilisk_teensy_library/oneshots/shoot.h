@@ -28,7 +28,7 @@ void Shoot(Basilisk& b) {
       // network timing related work unless synchronization with Executor is
       // absolutely necessary.
 
-      b.since_bpoll_us_ = 0;
+      b.cmd_.bpoll.since_us_ = 0;
     } break;
     default:
       break;

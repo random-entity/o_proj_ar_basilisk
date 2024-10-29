@@ -13,8 +13,8 @@ class XbeeReplySender {
   void Run() {  // Time-slotted Reply to Broadcasted Poll
     const auto send_time_us = g::xb::Timing::mod13_to_send_time_us.at(
         (b_.cfg_.suidm1() + b_.cmd_.bpoll.round_robin) % 13);
-    if (send_time_us <= b_.since_bpoll_us_ &&
-        b_.since_bpoll_us_ <= send_time_us + g::xb::Timing::send_timeout_us) {
+    if (send_time_us <= b_.cmd_.bpoll.since_us_ &&
+        b_.cmd_.bpoll.since_us_ <= send_time_us + g::xb::Timing::send_timeout_us) {
       Send();
     }
   }

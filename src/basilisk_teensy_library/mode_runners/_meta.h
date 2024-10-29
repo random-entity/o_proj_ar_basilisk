@@ -4,6 +4,7 @@
 #include <map>
 
 #include "../basilisk.h"
+#include "../helpers/range.h"
 
 struct ModeRunners {
   using C = Basilisk::Command;
@@ -66,6 +67,7 @@ struct ModeRunners {
 
   struct PPP {
     C::PPP& c;
+    static std::map<Range<uint16_t>, std::function<void()>> idx_range_to_runner;
   } pp;
 
   struct SetMags {
