@@ -58,27 +58,17 @@ struct HardwareSerialWrapper {
   HardwareSerialWrapper(HardwareSerial& _ser, const uint32_t& _baudrate,
                         const char* name)
       : ser{_ser}, baudrate{_baudrate} {
-#if DEBUG_SETUP
-    P(name);
-    Pln(": Beginning HardwareSerial");
-#endif
-
     ser.begin(baudrate);
     delay(common_begin_wait_time);
 
-    if (!ser) {
-      P(name);
-      HALT(": Serial begin failed");
-    }
-
 #if DEBUG_SETUP
     P(name);
-    Pln(": HardwareSerial began");
+    Pln(": HardwareSerial began"
+        "(operator bool() always returns true for HardwareSerialIMXRT's)");
 #endif
   }
 
   operator HardwareSerial&() { return ser; }
-  operator bool() { return ser; }
 
   HardwareSerial& ser;
   const uint32_t baudrate;
