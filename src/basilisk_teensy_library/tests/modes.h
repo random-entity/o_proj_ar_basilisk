@@ -17,45 +17,45 @@ void SetPhis(Basilisk& b) {
   });
 }
 
-void Pivot(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.pivot;
+void Pivot(Basilisk& b) {
+  auto& m = b.cmd_.mode;
+  auto& pv = b.cmd_.pivot;
 
   m = M::Pivot_Init;
-  c.didimbal = BOOL_L;
-  c.tgt_yaw = [](Basilisk*) { return NaN; };
-  c.stride = 0.125;
-  c.bend[IDX_L] = 0.0;
-  c.bend[IDX_R] = -0.125;
-  c.speed = g::c::speed::fast;
-  c.acclim = g::c::acclim::standard;
-  c.min_dur = 2000;
-  c.max_dur = -1;
-  c.exit_to_mode = M::Idle_Init;
+  pv.didimbal = BOOL_L;
+  pv.tgt_yaw = [] { return NaN; };
+  pv.stride = [] { return 0.125; };
+  pv.bend[IDX_L] = 0.0;
+  pv.bend[IDX_R] = -0.125;
+  pv.speed = [] { return g::c::speed::fast; };
+  pv.acclim = [] { return g::c::acclim::standard; };
+  pv.min_dur = 2000;
+  pv.max_dur = -1;
+  pv.exit_to_mode = M::Idle_Init;
 }
 
-void PivSpin(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.piv_spin;
+void PivSpin(Basilisk& b) {
+  auto& m = b.cmd_.mode;
+  auto& sp = b.cmd_.piv_spin;
 
   m = M::PivSpin;
-  c.didimbal = BOOL_L;
-  c.dest_yaw = NaN;
-  c.exit_thr = NaN;
-  c.stride = 0.125;
-  c.bend[IDX_L] = 0.0;
-  c.bend[IDX_R] = 0.0;
-  c.speed = g::c::speed::normal;
-  c.acclim = g::c::acclim::standard;
-  c.min_stepdur = 0;
-  c.max_stepdur = -1;
-  c.interval = 0;
-  c.steps = -1;
+  sp.didimbal = BOOL_L;
+  sp.dest_yaw = NaN;
+  sp.exit_thr = NaN;
+  sp.stride = 0.125;
+  sp.bend[IDX_L] = 0.0;
+  sp.bend[IDX_R] = 0.0;
+  sp.speed = [] { return g::c::speed::normal; };
+  sp.acclim = [] { return g::c::acclim::standard; };
+  sp.min_stepdur = 0;
+  sp.max_stepdur = -1;
+  sp.interval = 0;
+  sp.steps = -1;
 }
 
-void Diamond(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.diamond;
+void Diamond(Basilisk& b) {
+  auto& m = b.cmd_.mode;
+  auto& c = b.cmd_.diamond;
 
   m = M::Diamond;
   c.init_didimbal = BOOL_L;
@@ -68,22 +68,22 @@ void Diamond(Basilisk* b) {
   c.steps = -1;
 }
 
-void WalkToDir(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.walk_to_dir;
+void WalkToDir(Basilisk& b) {
+  auto& m = b.cmd_.mode;
+  auto& wd = b.cmd_.walk_to_dir;
 
   m = M::WalkToDir;
-  c.init_didimbal = BOOL_L;
-  c.tgt_yaw = 0.0;
-  c.stride = 0.125;
-  c.bend[IDX_L] = 0.0;
-  c.bend[IDX_R] = 0.0;
-  c.speed = g::c::speed::normal;
-  c.acclim = g::c::acclim::standard;
-  c.min_stepdur = 1000;
-  c.max_stepdur = 3000;
-  c.interval = 0;
-  c.steps = -1;
+  wd.init_didimbal = BOOL_L;
+  wd.tgt_yaw = [] { return 0.0; };
+  wd.stride = [] { return 0.125; };
+  wd.bend[IDX_L] = 0.0;
+  wd.bend[IDX_R] = 0.0;
+  wd.speed = [] { return g::c::speed::normal; };
+  wd.acclim = [] { return g::c::acclim::standard; };
+  wd.min_stepdur = 1000;
+  wd.max_stepdur = 3000;
+  wd.interval = 0;
+  wd.steps = -1;
 }
 
 void WalkToPos(Basilisk* b) {
