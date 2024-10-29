@@ -146,8 +146,12 @@ class Servo : public Moteus {
     Serial.print(rpl.temperature);
     P(" | flt ");
     Serial.print(rpl.fault);
-    P(" | ver ");
-    Serial.print(GetExtraValue(rpl, kControlVelocityError), 4);
+    // P(" | cmt ");
+    // Serial.print(GetExtraValue(rpl, kCommandPositionMaxTorque), 4);
+    // P(" | cvl ");
+    // Serial.print(GetExtraValue(rpl, kControlVelocity), 4);
+    // P(" | ver ");
+    // Serial.print(GetExtraValue(rpl, kControlVelocityError), 4);
     P(" | a2v ");
     Serial.print(GetExtraValue(rpl, kEncoder1Velocity), 4);
     P(" | evl ");

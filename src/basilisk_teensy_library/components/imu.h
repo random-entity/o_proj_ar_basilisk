@@ -25,11 +25,19 @@ class Imu {
   // and prevent Serial buffer overflow and correctly track revolutions.
   void Run() {
     static const auto increment_idx = [&] {
-      if (++buf_idx_ >= 64) buf_idx_ = 0;
+      if (++buf_idx_ >= buf_size_) buf_idx_ = 0;
     };
 
     const auto rbytes = ser_.available();
+    if (rbytes <= 0) {
+      Serial.print(rbytes);
+      // Pln("NO");
+      return;
+    }
     for (int i = 0; i < rbytes; i++, increment_idx()) {
+      Serial.print(ser_.read());
+      continue;
+
       buf_[buf_idx_] = ser_.read();
       if (buf_[buf_idx_] == '\n') {
         char* temp[3];
@@ -75,10 +83,10 @@ class Imu {
   }
 
   HardwareSerial& ser_ = g::serials::imu;
-  inline static constexpr uint32_t buf_size = 64;
-  char buf_[buf_size];
+  inline static constexpr uint32_t buf_size_ = 64;
+  char buf_[buf_size_];
   int buf_idx_ = 0;
-  double euler_[3];  // [0]: roll, [1]: pitch, [2]: yaw
+  double euler_[3] = {0.0};  // [0]: roll, [1]: pitch, [2]: yaw
   int yaw_revs_ = 0;
   double base_yaw_ = 0.0;
   elapsedMillis since_update_;

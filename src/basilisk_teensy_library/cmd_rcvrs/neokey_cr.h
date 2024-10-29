@@ -55,6 +55,15 @@ class NeokeyCommandReceiver {
         c.set_base_yaw.offset = 0.0;
       } break;
       case 4: {  // Left for debug purposes.
+        b_.CommandBoth([](Servo& s) {
+          s.SetPosition([] {
+            auto cmd = g::moteus_fmt::pm_cmd_template;
+            cmd.position = NaN;
+            cmd.velocity = 0.1;
+            cmd.watchdog_timeout = NaN;
+            return cmd;
+          }());
+        });
       } break;
       default: {
       } break;
