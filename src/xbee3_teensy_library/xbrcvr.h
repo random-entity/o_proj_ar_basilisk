@@ -162,7 +162,7 @@ class Receiver {
   uint8_t idx_ = 0;
   uint16_t size_ = 0;
   uint8_t checksum_ = 0;
-  std::function<void(ReceivePacket& packet, uint8_t payload_size)> callback_;
+  std::function<void(ReceivePacket& packet, uint16_t payload_size)> callback_;
 
  public:
   void RawPrint() {  // Only for debug. Blocks everything.
