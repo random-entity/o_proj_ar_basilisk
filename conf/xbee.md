@@ -1,6 +1,6 @@
 * Firmware = DigiMesh
 
-**TODO** Check CSMA/CD-related parameters
+**TODO** Check CSMA/CD-related parameters -> NN
 
 | Parameter                  | Argument (HEX)          | Parameter description                                                            | Argument description            |
 | -------------------------- | ----------------------- | -------------------------------------------------------------------------------- | ------------------------------- |

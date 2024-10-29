@@ -254,6 +254,9 @@ class Basilisk {
       Shear_Init = 100,
       Shear_Move = 101,
       Gee = 102,
+
+      /* Meta */
+      Max = 199
     } mode = Mode::Idle_Init;
 
     struct PPP {

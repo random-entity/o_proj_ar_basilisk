@@ -77,6 +77,6 @@ void InitializeCanFdDriver(const int& bus) {
 #if DEBUG_SETUP
   P("CanFdDriverInitializer: CAN FD driver on bus ");
   Serial.print(bus);
-  Pln(" started");
+  Pln(" started. Setup complete");
 #endif
 }
