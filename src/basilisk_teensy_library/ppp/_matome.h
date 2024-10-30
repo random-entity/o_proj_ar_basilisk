@@ -8,4 +8,4 @@
 #include "pivot.h"
 #include "set_g_var.h"
 #include "sufi.h"
-#include "walk_to_pos_in_field.h"
+#include "walks.h"

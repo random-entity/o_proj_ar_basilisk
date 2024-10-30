@@ -24,6 +24,6 @@ void PPPShooter::LookRelativeToCenter(int senw) {
   c.acclim = [] { return g::c::acclim::standard; };
   c.min_stepdur = 0;
   c.max_stepdur = g::c::maxdur::safe;
-  c.interval = 100;
+  c.interval = 300;
   c.steps = -1;
 }

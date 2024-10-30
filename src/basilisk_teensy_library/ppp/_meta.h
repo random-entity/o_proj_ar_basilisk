@@ -36,12 +36,16 @@ struct PPPShooter {
   void SetGlobalVarSpeed(int level);
   void SetGlobalVarSpeedFiner(int level);
 
+  // look.h
   void LookRelativeToCenter(int);
 
   void Pivot(uint16_t);
   void Sufi(uint16_t);
   void PivSpin(uint16_t);
-  void WalkToPosInField(int);
+
+  // walks.h
+  void WalkToDir(int last_3_digits);
+  void WalkToPosInField(int last_4_digits);
 
   void Shoot() {
     if (idx == ppp::idx::idle) {
@@ -101,12 +105,16 @@ struct PPPShooter {
       Pivot(idx);
     }
 
+    else if (idx == ppp::range::piv_spin) {
+      PivSpin(idx);
+    }
+
     else if (idx == ppp::range::sufi) {
       Sufi(idx);
     }
 
-    else if (idx == ppp::range::piv_spin) {
-      PivSpin(idx);
+    else if (idx == ppp::range::walk_to_dir) {
+      WalkToDir(static_cast<int>(idx) % 1000);
     }
 
     else if (idx == ppp::range::walk_to_pos) {

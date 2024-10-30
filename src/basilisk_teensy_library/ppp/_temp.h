@@ -48,43 +48,6 @@ void ModeRunners::BPPP(Basilisk* b) {
 
   switch (m) {
     case M::BPPP: {
-      if (4000 <= idx && idx <= 4999) {  // PPP WalkToDir range
-                                         // Decimal 4ABC
-                                         // A = tgt_yaw = 0 ~ 8
-                                         //       == 0     -> NaN
-                                         //       == 1 ~ 8 -> NSEW
-                                         // B = stride = 0 ~ 9
-                                         //       == 0     -> 45 deg
-                                         //       == 1 ~ 9 -> * 10 deg
-                                         // C = steps
-                                         //       == 0     -> 10
-                                         //       == 1 ~ 9 -> =
-        uint8_t digits[3];
-        for (uint8_t i = 0; i < 3; i++) {
-          digits[i] = idx % 10;
-          idx /= 10;
-        }
-
-        m = M::WalkToDir;
-        auto& c = b->cmd_.walk_to_dir;
-        c.init_didimbal = BOOL_L;
-        c.tgt_yaw = digits[2] == 0 ? NaN
-                                   : nearest_pmn(b->imu_.GetYaw(true),
-                                                 (digits[2] - 3) * 0.125);
-        c.stride = digits[1] == 0 ? 0.125 : digits[1] / 36.0;
-        if (abs(c.tgt_yaw - b->imu_.GetYaw(true)) > 0.25) {
-          c.tgt_yaw = nearest_pmn(b->imu_.GetYaw(true), c.tgt_yaw + 0.5);
-          c.stride *= -1.0;
-        }
-        for (uint8_t f : IDX_LR) c.bend[f] = 0.0;
-        c.speed = g::c::speed::normal;
-        c.min_stepdur = 0;
-        c.max_stepdur = g::c::maxdur::safe;
-        c.steps = digits[0] == 0 ? 10 : digits[0];
-
-        return;
-      }
-
       if (10000 <= idx && idx <= 19999) {  // PPP WalkToPos range
                                            // Decimal 1ABCD
                                            // (AB) = tgt_pos_x
