@@ -54,7 +54,7 @@ const Range<int> commanders{50, 59};
 
 /* (all time in milliseconds for this section of comment)
  * Non-Poll Commands: 100M       (M = ?)
- * Broadcasted Polls: 100N + 20  (N = span * (0, 1, 2, ...))
+ * Broadcasted Polls: 100N + 10  (N = span * (0, 1, 2, ...))
  * Replies          : 100N + (first ~ last, with gap)
  *
  * Time (ms)        : 0         100       200       300       400
@@ -63,10 +63,10 @@ const Range<int> commanders{50, 59};
  * Replies          : | 1234567 | 89ABCD  | D123456 | 789ABC  | CD1...
  *                    <-----span == 2----->                           */
 struct Timing {
-  inline static constexpr uint32_t first_us = 25 * 1000;
-  inline static constexpr uint32_t last_us = 85 * 1000;
-  inline static constexpr uint32_t gap_us = 10 * 1000;
-  inline static constexpr uint32_t send_timeout_us = gap_us * 3 / 4;
+  inline static constexpr uint32_t first_us = 20 * 1000;
+  inline static constexpr uint32_t last_us = 80 * 1000;
+  inline static constexpr uint32_t gap_us = 15 * 1000;
+  inline static constexpr uint32_t send_timeout_us = gap_us * 4 / 5;
 
   inline static int span;
 
