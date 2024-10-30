@@ -78,7 +78,7 @@ class Imu {
     base_yaw_ = GetYaw(false) - offset;
   }
 
-  HardwareSerial& ser_ = Serial2;  // g::serials::imu;
+  HardwareSerial& ser_ = g::serials::imu;
   inline static constexpr int buf_size_ = 64;
   char buf_[buf_size_];
   int buf_idx_ = 0;
