@@ -55,7 +55,12 @@ class Executer {
     /* TODO: Develop */
 
     // Run Mode.
-    mr_.mode_runners.at(m)();
+    auto mode_runner_it = mr_.mode_runners.find(m);
+    if (mode_runner_it != mr_.mode_runners.end()) {
+      mr_.mode_runners.at(m)();
+    } else {
+      Pln("Mode NOT registered to ModeRunner map");
+    }
   }
 
  private:

@@ -39,7 +39,7 @@ struct ModeRunners {
   void Sufi();
   void WalkToDir();
   void BounceWalk();
-  void WalkToPosInField();
+  // void WalkToPosInField();
 
   const std::map<M, std::function<void()>> mode_runners = {
       {M::Idle_Init, [this] { Idle(); }},
@@ -62,8 +62,8 @@ struct ModeRunners {
       {M::WalkToDir, [this] { WalkToDir(); }},
       {M::BounceWalk_Init, [this] { BounceWalk(); }},
       {M::BounceWalk_Reinit, [this] { BounceWalk(); }},
-      {M::WalkToPosInField_Init, [this] { WalkToPosInField(); }},
-      {M::WalkToPosInField_Reinit, [this] { WalkToPosInField(); }},
+      // {M::WalkToPosInField_Init, [this] { WalkToPosInField(); }},
+      // {M::WalkToPosInField_Reinit, [this] { WalkToPosInField(); }},
   };
 
   Basilisk& b;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../basilisk.h"
-#include "../ppp/_meta.h"
+#include "../ppp/_matome.h"
 
 struct OneshotShooters {
   using O = Basilisk::Command::Oneshots::ByteRep;
@@ -17,11 +17,11 @@ struct OneshotShooters {
     }
 
     if (o.Has(O::BPPP)) {
-      ppp.byterep_to_function.at(O::BPPP)();
+      ppp.Shoot();
       o.Remove(O::BPPP);
     }
   }
 
   Basilisk& b;
-  PPP ppp{b};
+  ppp::PPP ppp{b};
 };
