@@ -7,6 +7,7 @@
 
 #include "../basilisk.h"
 #include "../globals/ppp.h"
+#include "../globals/vars.h"
 
 // * PPP
 // ?? ~ ?? Set Base Yaw towards Center and counterclockwise ###TODO###
@@ -31,6 +32,7 @@ struct PPP {
 
   PPP(Basilisk& _b) : b{_b} {}
 
+  void SetGlobalVarSpeed(int level);
   void Pivot(uint16_t);
   void Sufi(uint16_t);
   void PivSpin(uint16_t);
@@ -51,6 +53,11 @@ struct PPP {
     }
 
     else if (idx == g::ppp::range::tibu_foot) {
+    } else if (idx == g::ppp::range::set_g_var_speed) {
+      SetGlobalVarSpeed(idx - 30);
+    } else if (idx == g::ppp::range::bounce_walk) {
+      m = M::BounceWalk_Init;
+      b.cmd_.bounce_walk.init_tgt_yaw = random(360) / 360.0;
     } else if (idx == g::ppp::range::pivot) {
       Pivot(idx);
     } else if (idx == g::ppp::range::sufi) {

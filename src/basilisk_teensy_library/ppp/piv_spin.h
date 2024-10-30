@@ -4,10 +4,6 @@
 
 namespace ppp {
 
-namespace piv_spin {
-PhiSpeed speed = g::c::speed::normal;
-}  // namespace piv_spin
-
 void PPP::PivSpin(uint16_t idx) {
   // PPP PivSpin range
   // Decimal 3ABC
@@ -42,7 +38,7 @@ void PPP::PivSpin(uint16_t idx) {
     }
   }
   for (uint8_t f : IDX_LR) c.bend[f] = 0.0;
-  c.speed = [] { return ppp::piv_spin::speed; };
+  c.speed = [] { return g::vars::speed; };
   c.acclim = [] { return g::c::acclim::standard; };
   c.min_stepdur = 0;
   c.max_stepdur = g::c::maxdur::safe;

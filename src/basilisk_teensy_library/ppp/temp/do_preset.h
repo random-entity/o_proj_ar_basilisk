@@ -4,11 +4,6 @@
 #include "../rpl_sndrs/led_rs.h"
 #include "_meta.h"
 
-namespace ppp {
-
-
-}  // namespace ppp
-
 void ModeRunners::BPPP(Basilisk* b) {
   auto& m = b->cmd_.mode;
   auto idx = b->cmd_.ppp.idx;  // Copy, not reference.

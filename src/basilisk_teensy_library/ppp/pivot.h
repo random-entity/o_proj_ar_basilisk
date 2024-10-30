@@ -6,7 +6,6 @@ namespace ppp {
 
 namespace pivot {
 double tgt_yaw;
-PhiSpeed speed = g::c::speed::normal;
 }  // namespace pivot
 
 void PPP::Pivot(uint16_t idx) {
@@ -59,7 +58,7 @@ void PPP::Pivot(uint16_t idx) {
                   : digits[0] == 4 ? -0.25
                   : digits[0] == 5 ? 0.25
                                    : 0.0;
-  c.speed = [] { return ppp::pivot::speed; };
+  c.speed = [] { return g::vars::speed; };
   c.acclim = [] { return g::c::acclim::standard; };
   c.min_dur = 0;
   c.max_dur = g::c::maxdur::safe;

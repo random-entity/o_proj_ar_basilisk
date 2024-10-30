@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../cmd_rcvrs/xbee_cr.h"
 #include "../basilisk.h"
+#include "../cmd_rcvrs/xbee_cr.h"
 
 namespace presets::globalvar {
 PhiSpeed speed;
@@ -31,13 +31,6 @@ struct Presets {
     c.interval = 0;
     c.steps = -1;
   }
-  inline static void RandomBounceWalk(Basilisk* b) {
-    auto& m = b->cmd_.mode;
-    auto& c = b->cmd_.bounce_walk;
-
-    m = M::BounceWalk_Init;
-    c.init_tgt_yaw = random(360) / 360.0;
-  }
 
   inline static const std::map<uint16_t, void (*)(Basilisk*)> presets = {
       // Specific
@@ -47,13 +40,7 @@ struct Presets {
       {4, &LMagAtt},
       {23, &RandomMagsWeak},
       {24, &RandomMagsStrong},
-      {30, [](Basilisk* b) { SetGlobalSetPhisSpeed(b, 0); }},
-      {31, [](Basilisk* b) { SetGlobalSetPhisSpeed(b, 1); }},
-      {32, [](Basilisk* b) { SetGlobalSetPhisSpeed(b, 2); }},
-      {33, [](Basilisk* b) { SetGlobalSetPhisSpeed(b, 3); }},
-      {34, [](Basilisk* b) { SetGlobalSetPhisSpeed(b, 4); }},
       {50, [](Basilisk* b) { Diamond(b, BOOL_L); }},
       {51, [](Basilisk* b) { Diamond(b, BOOL_R); }},
-      {99, &RandomBounceWalk},
   };
 };

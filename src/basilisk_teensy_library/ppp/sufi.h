@@ -4,10 +4,6 @@
 
 namespace ppp {
 
-namespace sufi {
-PhiSpeed speed = g::c::speed::normal;
-}  // namespace sufi
-
 void PPP::Sufi(uint16_t idx) {
   // PPP Sufi range
   // Decimal 33AB
@@ -38,7 +34,7 @@ void PPP::Sufi(uint16_t idx) {
     }
   }
   for (const auto f : IDX_LR) c.bend[f] = 0.0;
-  c.speed = [] { return ppp::sufi::speed; };
+  c.speed = [] { return g::vars::speed; };
   c.acclim = [] { return g::c::acclim::standard; };
   c.min_stepdur = 0;
   c.max_stepdur = g::c::maxdur::safe;
