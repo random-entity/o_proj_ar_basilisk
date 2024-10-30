@@ -13,27 +13,7 @@
 class LedReplySender {
  public:
   LedReplySender(Basilisk& b, Neokey& nk, const uint32_t run_interval = 1)
-      : b_{b}, nk_{nk}, beat_{run_interval} {
-    // [0]: The heart.
-    heart_.set = [this] {
-      const auto suid = b_.cfg_.suid;
-      const auto suidm1 = b_.cfg_.suidm1;
-      const int num_hearts = suid >= 13 ? 4 : suidm1 / 3 + 1;
-      const uint32_t color = suid >= 13        ? 0x202020
-                             : suidm1 % 3 == 0 ? 0x400000
-                             : suidm1 % 3 == 1 ? 0x004000
-                                               : 0x000040;
-      static Beat heartbeat{250};
-      static bool high = false;
-
-      if (!heartbeat.Hit()) return;
-
-      high = !high;
-      for (int i = 0; i < num_hearts; i++) {
-        heart_.ca.a[i].u.matome = high ? color : 0;
-      }
-    };
-  }
+      : b_{b}, nk_{nk}, beat_{run_interval} {}
 
   struct Color {
     Color() { u.matome = 0; }
@@ -73,26 +53,49 @@ class LedReplySender {
   void Run() {
     if (!beat_.Hit()) return;
 
-    for (const auto& form : forms_) form.set();
+    for (const auto* form : forms_) form->set();
 
     ColorArray result;
     for (int i = 0; i < num_forms_; i++) {
-      result += forms_[i].ca;
+      result += forms_[i]->ca;
     }
     Show(result);
   }
 
-  inline static constexpr int num_forms_ = 1;
-
   struct Form {
     ColorArray ca;
     std::function<void()> set;
-  } forms_[num_forms_];
+  };
 
-  Form& heart_ = forms_[0];
+  struct Heartbeat : Form {
+    Heartbeat(LedReplySender& p) : heartbeat{250} {
+      set = [&p, this] {
+        const int num_hearts = p.suid_ >= 13 ? 4 : p.suidm1_ / 3 + 1;
+        const uint32_t color = p.suid_ >= 13        ? 0x202020
+                               : p.suidm1_ % 3 == 0 ? 0x400000
+                               : p.suidm1_ % 3 == 1 ? 0x004000
+                                                    : 0x000040;
+        static bool high = false;
 
- private:
+        if (!heartbeat.Hit()) return;
+
+        high = !high;
+        for (int i = 0; i < num_hearts; i++) {
+          ca.a[i].u.matome = high ? color : 0;
+        }
+      };
+    }
+
+    Beat heartbeat;
+  } heartbeat_{*this};
+
+  inline static constexpr int num_forms_ = 1;
+
+  Form* forms_[num_forms_] = {&heartbeat_};
+
   Basilisk& b_;
+  const int& suid_{b_.cfg_.suid};
+  const int& suidm1_{b_.cfg_.suidm1};
   Neokey& nk_;
   Beat beat_;
 };
