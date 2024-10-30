@@ -17,5 +17,8 @@
 - Extra Query 3개부터는 안 된다?
 - Tweak with motor_position.sources.[X].pll_filter_hz config
 
+### Misc
+- Don't function-ify acclim
+
 ## Ponder
 - Awareness function

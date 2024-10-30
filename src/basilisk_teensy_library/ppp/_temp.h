@@ -4,6 +4,41 @@
 #include "../rpl_sndrs/led_rs.h"
 #include "_meta.h"
 
+#pragma once
+
+#include "../basilisk.h"
+#include "../cmd_rcvrs/xbee_cr.h"
+
+namespace presets::globalvar {
+PhiSpeed speed;
+}
+
+struct Presets {
+  using M = Basilisk::Command::Mode;
+
+  inline static void Diamond(Basilisk* b, LR init_didimbal) {
+    auto& m = b->cmd_.mode;
+    auto& c = b->cmd_.diamond;
+
+    m = M::Diamond;
+    c.init_didimbal = init_didimbal;
+    c.init_stride = 0.3;
+    c.speed = globals::stdval::speed::normal;
+    c.acclim = globals::stdval::acclim::standard;
+    c.min_stepdur = 0;
+    c.max_stepdur = -1;
+    c.interval = 0;
+    c.steps = -1;
+  }
+
+  inline static const std::map<uint16_t, void (*)(Basilisk*)> presets = {
+      // Specific
+      {50, [](Basilisk* b) { Diamond(b, BOOL_L); }},
+      {51, [](Basilisk* b) { Diamond(b, BOOL_R); }},
+  };
+};
+
+
 void ModeRunners::BPPP(Basilisk* b) {
   auto& m = b->cmd_.mode;
   auto idx = b->cmd_.ppp.idx;  // Copy, not reference.
@@ -223,42 +258,6 @@ void ModeRunners::BPPP(Basilisk* b) {
         } else {
           c.tgt_pos = center;
         }
-
-        return;
-      }
-
-      if (91 <= idx && idx <= 98) {
-        uint8_t digits[4];
-        for (uint8_t i = 0; i < 4; i++) {
-          digits[i] = idx % 10;
-          idx /= 10;
-        }
-
-        m = M::Sufi;
-        auto& c = b->cmd_.sufi;
-
-        static const auto center =
-            Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
-                 (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
-
-        c.init_didimbal = BOOL_L;
-        c.dest_yaw = nearest_pmn(
-            b->imu_.GetYaw(true),
-            (center - b->lps_.GetPos()).arg() + ((digits[0] - 1) / 8.0));
-        c.exit_thr = 0.01;
-        c.stride = 30.0 / 360.0;
-        bool dest_is_greater = c.dest_yaw > b->imu_.GetYaw(true);
-        if (!dest_is_greater) {
-          c.stride *= -1.0;
-        }
-        c.bend[IDX_L] = 0.0;
-        c.bend[IDX_L] = 0.0;
-        c.speed = g::c::speed::normal;
-        c.acclim = g::c::acclim::standard;
-        c.min_stepdur = 0;
-        c.max_stepdur = g::c::maxdur::safe;
-        c.interval = 100;
-        c.steps = -1;
 
         return;
       }

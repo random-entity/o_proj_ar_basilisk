@@ -17,7 +17,6 @@
 // 72 WalkToPosInField to solo-chorus arrangement
 // 73 Sufi to look at solo
 // 81 ~ 88 WalkToPosInField to '1-4-8' circular arrangement
-// 91 ~ 98 Sufi to target yaw relative to center
 // 101 ~ 108 WalkToDir relative to current yaw
 // 201 ~ 213 Find SUID
 // 701 ~ 713 WalkToPosInField to '0-13' circular arrangement
@@ -32,7 +31,10 @@ struct PPP {
 
   PPP(Basilisk& _b) : b{_b} {}
 
+  void TibuFoot();
+  void RandomTibutibu();
   void SetGlobalVarSpeed(int level);
+  void LookRelativeToCenter(int);
   void Pivot(uint16_t);
   void Sufi(uint16_t);
   void PivSpin(uint16_t);
@@ -53,8 +55,13 @@ struct PPP {
     }
 
     else if (idx == g::ppp::range::tibu_foot) {
+      TibuFoot();
+    } else if (idx == g::ppp::range::random_tibutibu) {
+      RandomTibutibu();
     } else if (idx == g::ppp::range::set_g_var_speed) {
       SetGlobalVarSpeed(idx - 30);
+    } else if (idx == g::ppp::range::look_rel_to_center) {
+      LookRelativeToCenter(idx % 10);
     } else if (idx == g::ppp::range::bounce_walk) {
       m = M::BounceWalk_Init;
       b.cmd_.bounce_walk.init_tgt_yaw = random(360) / 360.0;
