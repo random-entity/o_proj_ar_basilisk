@@ -6,7 +6,7 @@
 #include "../globals/moteus_fmt.h"
 #include "../globals/serials.h"
 #include "../helpers/clamped.h"
-#include "../helpers/rpl_extra.h"
+#include "../helpers/query_extra.h"
 #include "../helpers/using_moteus.h"
 #include "canfd_drivers.h"
 
