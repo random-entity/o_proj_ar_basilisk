@@ -523,7 +523,7 @@ class Basilisk {
 
     Basilisk& b;
     const int& suid{b.cfg_.suid};
-    uint8_t mode_byterep() { return static_cast<uint8_t>(b.cmd_.mode); }
+    uint8_t mode() { return static_cast<uint8_t>(b.cmd_.mode); }
     double phi_l() { return b.l_.GetReply().abs_position; };
     double phi_r() { return b.r_.GetReply().abs_position; }
     double phi(int f) { return f % 2 == IDX_L ? phi_l() : phi_r(); }
