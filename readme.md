@@ -16,6 +16,7 @@
 - [X] XBee 통신 모니터링을 위한 LedRS 활용법
 - Extra Query 3개부터는 안 된다?
 - Tweak with motor_position.sources.[X].pll_filter_hz config
+- LocalOrbit + NearestArrangement
 
 ### Misc
 - Don't function-ify acclim
