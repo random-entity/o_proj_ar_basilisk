@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 uint32_t HsvToRgb(float h, float s, float v) {
-  float r, g, b;
+  float r = 0, g = 0, b = 0;
 
   int i = int(h * 6.0);   // sector 0 to 5
   float f = h * 6.0 - i;  // fractional part of h

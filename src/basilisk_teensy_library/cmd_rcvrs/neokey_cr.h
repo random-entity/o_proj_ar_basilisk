@@ -55,7 +55,8 @@ class NeokeyCommandReceiver {
         c.set_base_yaw.offset = 0.0;
       } break;
       case 4: {  // Left for debug purposes.
-        tests::SetPhis(b_);
+        // tests::SetPhis(b_);
+        tests::BounceWalk(b_);
       } break;
       default: {
       } break;

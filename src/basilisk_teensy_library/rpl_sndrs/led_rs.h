@@ -102,7 +102,7 @@ class LedReplySender {
         /* B-Poll */ {
           double brightness =
               1.0 -
-              static_cast<double>(p.b_.rpl_.since_xbrx_us.bpoll) / (100e3);
+              static_cast<double>(p.b_.rpl_.since_xbrx_us.bpoll) / (50e3);
           brightness = max(0.0, brightness);
           brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
           ca.a[3].b = static_cast<uint8_t>(brightness);
