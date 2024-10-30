@@ -6,7 +6,7 @@ void ModeRunners::PivSpin() {
   switch (m) {
     case M::PivSpin: {
       m = M::PivSeq_Init;
-      ps.c.pivots = [this](int) {
+      ps.c.pivots = [this](uint32_t) {
         Basilisk::Command::Pivot p;
         p.didimbal = sp.c.didimbal;
         p.tgt_yaw = [] { return NaN; };
@@ -21,7 +21,7 @@ void ModeRunners::PivSpin() {
         };
         return p;
       };
-      ps.c.intervals = [this](int) { return sp.c.interval; };
+      ps.c.intervals = [this](uint32_t) { return sp.c.interval; };
       ps.c.steps = sp.c.steps;
       ps.c.exit_condition = [this] {
         return abs(b.rpl_.yaw() - sp.c.dest_yaw) < sp.c.exit_thr;
