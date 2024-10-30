@@ -31,7 +31,7 @@ constexpr uint32_t beche = 8000;
 
 namespace phithr {
 namespace fix {
-constexpr double standard = 0.01;
+constexpr double standard = 0.005;
 }  // namespace fix
 namespace damp {
 constexpr double standard = 0.05;
