@@ -2,6 +2,8 @@
 
 #include <functional>
 #include <map>
+#include <tuple>
+#include <vector>
 
 #include "../basilisk.h"
 #include "../globals/vars.h"
@@ -140,9 +142,13 @@ struct ModeRunners {
 
   struct WalkToPosInField {
     C::WalkToPosInField& c;
-    bool reinit;
+
+    std::vector<std::pair<Vec2, elapsedMillis>> exit_forces;
+
     double cur_tgt_yaw;
-    bool moonwalk;
+
+    // bool reinit;
+    // bool moonwalk;
   } wf;
 
   // static void WalkToPos(Basilisk*);
