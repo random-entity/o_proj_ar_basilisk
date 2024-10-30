@@ -56,7 +56,7 @@ class XbeeCommandReceiver {
     if (srcnid == g::xb::nid::range::followers) {  // Source is a Fellow.
       if (srcnid == b_.cfg_.suid) return;
 #if DEBUG_XBEE
-        Pln("XbCR: Received FellowReply");
+      Pln("XbCR: Received FellowReply");
 #endif
 
       Payload msg{};
@@ -64,8 +64,8 @@ class XbeeCommandReceiver {
 
       const auto other_suidm1 = srcnid - 1;
       auto& other = roster[other_suidm1];
-      other.x = static_cast<double>(msg.fellow_rpl.x);
-      other.y = static_cast<double>(msg.fellow_rpl.y);
+      other.x = static_cast<double>(msg.fellow_rpl.lpsx);
+      other.y = static_cast<double>(msg.fellow_rpl.lpsy);
       other.yaw = static_cast<double>(msg.fellow_rpl.yaw);
       other.since_update_us = 0;
 
@@ -132,7 +132,7 @@ class XbeeCommandReceiver {
   union Payload {
     uint8_t bytes[xb::c::capacity::tx_payload];
     struct __attribute__((packed)) FellowReply {
-      float x, y, yaw;
+      float phi_l, phi_r, lpsx, lpsy, yaw;
     } fellow_rpl;
     struct __attribute__((packed)) Command {
       uint8_t mob;
