@@ -301,9 +301,11 @@ class Basilisk {
       // true: contact, false: detachment
       bool expected_state[2];
 
-      // Exit condition priority: max_dur > min_dur > lego_verification
       N64 verif_thr;
       uint32_t min_dur, max_dur;
+
+      // Exit condition priority:
+      // max_dur > min_dur > lego_verification
       Mode exit_to_mode;
     } set_mags;
 
@@ -314,7 +316,7 @@ class Basilisk {
 
     struct SetPhis {
       // [0]: l, [1]: r
-      // NaN means fix phi (speed, acclim ignored).
+      // NaN means fix phi (speed, acclim ignored to achieve immediate fix).
       std::function<Phi()> tgt_phi[2];
 
       // [0]: l, [1]: r
