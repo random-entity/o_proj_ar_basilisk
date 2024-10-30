@@ -57,6 +57,7 @@ struct ModeRunners {
       {M::SetPhis_Move, [this] { SetPhis(); }},
       {M::Pivot_Init, [this] { Pivot(); }},
       {M::Pivot_Kick, [this] { Pivot(); }},
+      {M::Pivot_Ta, [this] { Pivot(); }},
       {M::PivSeq_Init, [this] { PivSeq(); }},
       {M::PivSeq_Step, [this] { PivSeq(); }},
       {M::PivSpin, [this] { PivSpin(); }},
@@ -102,6 +103,7 @@ struct ModeRunners {
     double didim_init_yaw;
     double kick_init_yaw;
     double kick_init_phi_didim;
+    elapsedMillis since_ta = 1e9;
   } pv;
 
   struct PivSeq {

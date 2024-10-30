@@ -258,6 +258,7 @@ class Basilisk {
        * - Phi and duration will be clamped throughout. */
       Pivot_Init = 9,   // -> SetMags -> SetPhis -> Pivot_Kick
       Pivot_Kick = 10,  // -> SetMags -> SetPhis -> Exit
+      Pivot_Ta = 40,
 
       /* PivSeq: Perform a series of Pivots with time intervals.
        *         Future-chain-able. */

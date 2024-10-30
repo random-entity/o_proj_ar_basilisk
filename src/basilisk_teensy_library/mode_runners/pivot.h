@@ -100,7 +100,23 @@ void ModeRunners::Pivot() {
       ph.c.max_dur =
           pv.c.max_dur > pv.since_init ? pv.c.max_dur - pv.since_init : 0;
       ph.c.exit_condition = pv.c.exit_condition;
-      ph.c.exit_to_mode = pv.c.exit_to_mode;
+      if (g::vars::pivot_tadak == 0) {
+        ph.c.exit_to_mode = pv.c.exit_to_mode;
+      } else {
+        pv.since_ta = 0;
+        ph.c.exit_to_mode = M::Pivot_Ta;
+      }
+    } break;
+    case M::Pivot_Ta: {
+      if (pv.since_ta > g::vars::pivot_tadak) {
+        m = pv.c.exit_to_mode;
+      }
+
+      if (pv.kick_idx == IDX_L) {
+        b.mags_.SetStrength(0, MagStren::Max);
+      } else {
+        b.mags_.SetStrength(2, MagStren::Max);
+      }
     } break;
     default:
       break;
