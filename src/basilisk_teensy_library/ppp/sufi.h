@@ -36,6 +36,6 @@ void PPPShooter::Sufi(uint16_t idx) {
   c.acclim = [] { return g::c::acclim::standard; };
   c.min_stepdur = 0;
   c.max_stepdur = g::c::maxdur::safe;
-  c.interval = 100;
+  c.interval = g::vars::speed >= 0.2 ? 300 : 100;
   c.steps = -1;
 }
