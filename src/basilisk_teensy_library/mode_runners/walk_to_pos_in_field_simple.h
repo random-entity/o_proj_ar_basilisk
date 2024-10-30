@@ -5,6 +5,8 @@
 void ModeRunners::WalkToPosInField() {
   switch (m) {
     case M::WalkToPosInField_Init: {
+      wf.reinit = false;
+
       m = M::WalkToDir;
       wd.c.init_didimbal = BOOL_L;
       wd.c.auto_moonwalk = true;
@@ -41,28 +43,11 @@ void ModeRunners::WalkToPosInField() {
           result_vec += force;
         }
 
-        // constexpr uint32_t curve_time = 30000;
-        // auto curve = [=](uint32_t cur_time) {
-        //   return map(static_cast<double>(cur_time - 1000),  //
-        //              0.0, static_cast<double>(curve_time), 0.0, 0.5);
-        // };
-        // auto& vec = wf.exit_forces;
-        // vec.erase(
-        //     std::remove_if(vec.begin(), vec.end(),
-        //                    [](const std::pair<Vec2, elapsedMillis>& element)
-        //                    {
-        //                      return element.second > 1000 + curve_time;
-        //                    }),
-        //     vec.end());
-        // for (const std::pair<Vec2, elapsedMillis>& eforce : wf.exit_forces) {
-        //   result_vec += eforce.first.rotate(curve(eforce.second));
-        // }
-
-        if (wf.exit_force.second < 6000) {
+        if (wf.exit_force.second < 5000) {
           result_vec += wf.exit_force.first;
-        } else if (wf.exit_force.second < 11000) {
+        } else if (wf.exit_force.second < 10000) {
           result_vec += wf.exit_force.first.rotate(0.125);
-        } else if (wf.exit_force.second < 16000) {
+        } else if (wf.exit_force.second < 15000) {
           result_vec += wf.exit_force.first.rotate(0.375);
         }
 
@@ -88,9 +73,11 @@ void ModeRunners::WalkToPosInField() {
       wd.c.steps = -1;
       wd.c.exit_condition = [this] {
         if (b.lps_.GetPos().dist(wf.c.tgt_pos) < 25.0) {
-          b.cmd_.pivseq.exit_to_mode = M::Idle_Init;
+          ps.c.exit_to_mode = M::Idle_Init;
           return true;
         }
+
+        if (wf.reinit) return true;
 
         if (b.l_.failure_.stuck || b.r_.failure_.stuck) {
 #if DEBUG_FAILURE
@@ -112,8 +99,8 @@ void ModeRunners::WalkToPosInField() {
           ps.c.exit_to_mode = M::Wait;
           wt.c.since_init = 0;
           wt.c.exit_condition = [this]() { return wt.c.since_init >= 1000; };
-          wt.c.exit_to_mode = M::WalkToPosInField_Init;
-          wf.exit_force = {1e9 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{0}};
+          wt.c.exit_to_mode = M::WalkToPosInField_Reinit;
+          wf.reinit = true;
           return true;
         }
 
@@ -122,6 +109,9 @@ void ModeRunners::WalkToPosInField() {
       wd.c.exit_to_mode = M::Idle_Init;
     } break;
     case M::WalkToPosInField_Reinit: {
+      wf.reinit = false;
+      wf.exit_force = {1e9 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{0}};
+      m = M::WalkToPosInField_Init;
     } break;
     default:
       break;
