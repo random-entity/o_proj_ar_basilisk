@@ -26,7 +26,7 @@ void ModeRunners::WalkToDir() {
       }
       wa.c.steps = wd.c.steps;
       wa.c.exit_condition = [this] {
-        return !(b.lps_.Bound()) || !!(b.BoundaryCollision());
+        return !b.lps_.Bound() || b.BoundaryCollision();
       };
       wa.c.exit_to_mode = M::Idle_Init;
     } break;
