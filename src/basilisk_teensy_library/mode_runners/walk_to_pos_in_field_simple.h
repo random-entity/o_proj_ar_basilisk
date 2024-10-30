@@ -54,16 +54,23 @@ void ModeRunners::WalkToPosInField() {
           result_vec += force;
         }
 
+        constexpr uint32_t curve_time = 15000;
+
+        auto curve = [=](uint32_t cur_time) {
+          return map(static_cast<double>(cur_time - 1000),  //
+                     0.0, static_cast<double>(curve_time), 0.0, 0.25);
+        };
+
         auto& vec = wf.exit_forces;
         vec.erase(
             std::remove_if(vec.begin(), vec.end(),
                            [](const std::pair<Vec2, elapsedMillis>& element) {
-                             return element.second > 3000;
+                             return element.second > 1000 + curve_time;
                            }),
             vec.end());
 
         for (const std::pair<Vec2, elapsedMillis>& eforce : wf.exit_forces) {
-          result_vec += eforce.first;
+          result_vec += eforce.first.rotate(curve(eforce.second));
         }
 
         if (!b.lps_.BoundMinX())
@@ -115,6 +122,8 @@ void ModeRunners::WalkToPosInField() {
               {1e3 * Vec2{wd.c.tgt_yaw() + 0.5}, elapsedMillis{}});
           return true;
         }
+
+        return false;
       };
       wd.c.exit_to_mode = M::Idle_Init;
     } break;

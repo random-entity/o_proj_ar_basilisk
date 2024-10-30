@@ -73,5 +73,12 @@ struct Vec2 {
     return *this / m;
   }
 
+  Vec2 rotate(const double& add) const {
+    const auto r = mag();
+    const auto theta = arg();
+    const auto new_theta = theta + add;
+    return r * Vec2{new_theta};
+  }
+
   double argsub(const Vec2& other) const { return arg() - other.arg(); }
 };

@@ -159,7 +159,7 @@ void WalkToPosInField(Basilisk& b) {
   auto& c = b.cmd_.walk_to_pos_in_field;
 
   m = M::WalkToPosInField_Init;
-  c.tgt_pos = Vec2{500.0, 500.0};
+  c.tgt_pos = Vec2{550.0, 180.0};
 }
 
 }  // namespace tests
