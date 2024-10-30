@@ -97,13 +97,19 @@ class LedReplySender {
         brightness = map(brightness, 0.0, 1.0, 0, 255);
         ca.a[3].r = brightness;
         ca.a[3].b = brightness;
+
+        ca.a[3].r = 255;
+        ca.a[3].g = 255;
+        ca.a[3].b = 255;
+
+        ca.a[3].u.matome = 0xFFFFFF;
       };
     }
   } bppp_blip{*this};
 
-  inline static constexpr int num_forms_ = 1;
+  inline static constexpr int num_forms_ = 2;
 
-  Form* forms_[num_forms_] = {&heartbeat_};
+  Form* forms_[num_forms_] = {&heartbeat_, &bppp_blip};
 
   Basilisk& b_;
   const int& suid_{b_.cfg_.suid};

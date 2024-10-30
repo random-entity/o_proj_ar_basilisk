@@ -42,10 +42,22 @@ class XbeeCommandReceiver {
     if (srcnid_it == g::xb::addr::to_nid.end()) return;
     const auto srcnid = srcnid_it->second;
 
+#if DEBUG_XBEE
+    P("XbCR: RX payload -> ");
+    for (auto i = 0; i < payload_size; i++) {
+      Serial.print(packet.payload[i]);
+      P(", ");
+    }
+    Serial.println();
+#endif
+
     //////////////////
     // Fellow Reply //
     if (srcnid == g::xb::nid::range::followers) {  // Source is a Fellow.
       if (srcnid == b_.cfg_.suid) return;
+#if DEBUG_XBEE
+        Pln("XbCR: Received FellowReply");
+#endif
 
       Payload msg{};
       memcpy(msg.bytes, packet.payload, payload_size);
@@ -67,6 +79,10 @@ class XbeeCommandReceiver {
       /////////////////////
       // BroadcastedPoll //
       if (mob == Basilisk::Command::ByteRepRanges::bpoll) {
+#if DEBUG_XBEE
+        Pln("XbCR: Received BPoll");
+#endif
+
         b_.cmd_.bpoll.since_us = 0;
         Payload msg{};
         memcpy(msg.bytes, packet.payload, payload_size);
@@ -77,6 +93,10 @@ class XbeeCommandReceiver {
       ///////////////////
       // B-PPP Oneshot //
       if (mob == static_cast<uint8_t>(O::BPPP)) {
+#if DEBUG_XBEE
+        Pln("XbCR: Received BPPP");
+#endif
+
         Payload msg{};
         memcpy(msg.bytes, packet.payload, payload_size);
 

@@ -57,7 +57,7 @@ void main(const Basilisk::Configuration& cfg) {
     b.Run();
     exec.Run();
 #if DEBUG_SERIALRS
-    serrs.Run();
+    // serrs.Run();
 #endif
     ledrs.Run();
     xbrs.Run();
