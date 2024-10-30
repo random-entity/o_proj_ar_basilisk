@@ -138,9 +138,7 @@ struct ModeRunners {
   // static void Diamond(Basilisk*);
   // static void WalkToPosInField(Basilisk*);
   // static void Shear(Basilisk*);
-
   // inline static const std::map<M, void (*)(Basilisk*)> mode_runners = {
-  //     {M::WalkToDir, &WalkToDir},
   //     {M::WalkToPos, &WalkToPos},
   //     {M::Orbit, &Orbit},
   //     {M::Diamond, &Diamond},
