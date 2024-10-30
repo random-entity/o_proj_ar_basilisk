@@ -18,7 +18,7 @@ struct ReceivePacket {
   uint8_t payload[c::capacity::buffer - 13];
 
   uint64_t src_addr() {
-    static const auto& r = src_addr_reversed;
+    const auto& r = src_addr_reversed;
     return                                                         //
         (static_cast<uint64_t>(r & 0xFFULL) << 56) |               //
         (static_cast<uint64_t>(r & 0xFF00ULL) << 40) |             //
@@ -136,21 +136,20 @@ class Receiver {
 
  private:
   bool Put(uint8_t val, bool sum = false) {
-    static bool esc = false;
     if (idx_ >= c::capacity::buffer) {
       return false;
     }
 
     // It is guaranteed that the escape character does not come consecutively.
     if (val == c::escape) {
-      esc = true;
+      esc_ = true;
       return true;
     }
 
-    val = esc ? val ^ c::xor_with : val;
+    val = esc_ ? val ^ c::xor_with : val;
     buf_.bytes[idx_++] = val;
     if (sum) checksum_ += val;
-    esc = false;
+    esc_ = false;
     return true;
   }
 
@@ -162,6 +161,7 @@ class Receiver {
   uint8_t idx_ = 0;
   uint16_t size_ = 0;
   uint8_t checksum_ = 0;
+  bool esc_ = false;
   std::function<void(ReceivePacket& packet, uint16_t payload_size)> callback_;
 
  public:

@@ -16,13 +16,13 @@ class LedReplySender {
       : b_{b}, nk_{nk}, beat_{run_interval} {
     // [0]: The heart.
     heart_.set = [this] {
-      static const auto suid = b_.cfg_.suid;
-      static const auto suidm1 = b_.cfg_.suidm1;
-      static const int num_hearts = suid >= 13 ? 4 : suidm1 / 3 + 1;
-      static const uint32_t color = suid >= 13        ? 0x202020
-                                    : suidm1 % 3 == 0 ? 0x400000
-                                    : suidm1 % 3 == 1 ? 0x004000
-                                                      : 0x000040;
+      const auto suid = b_.cfg_.suid;
+      const auto suidm1 = b_.cfg_.suidm1;
+      const int num_hearts = suid >= 13 ? 4 : suidm1 / 3 + 1;
+      const uint32_t color = suid >= 13        ? 0x202020
+                             : suidm1 % 3 == 0 ? 0x400000
+                             : suidm1 % 3 == 1 ? 0x004000
+                                               : 0x000040;
       static Beat heartbeat{250};
       static bool high = false;
 
