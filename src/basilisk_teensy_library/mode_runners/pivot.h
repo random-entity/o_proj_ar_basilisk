@@ -10,14 +10,14 @@ void ModeRunners::Pivot() {
 
   switch (m) {
     case M::Pivot_Init: {
+      pv.since_init = 0;
+      pv.didim_init_yaw = b.rpl_.yaw();
+
       // Check if we need to set didimbal.
       if (pv.c.bend[pv.didim_idx].isnan()) {
         m = M::Pivot_Kick;
         return;
       }
-
-      pv.since_init = 0;
-      pv.didim_init_yaw = b.rpl_.yaw();
 
       // Release didimbal, attach kickbal, set phi_didim.
       m = M::SetMags_Init;
