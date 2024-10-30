@@ -415,6 +415,19 @@ class Basilisk {
       Mode exit_to_mode;
     } walk;
 
+    struct Sufi {
+      LR init_didimbal;
+      double dest_yaw;  // NaN means no destination.
+      double exit_thr;
+      double stride;
+      Phi bend[2];
+      std::function<PhiSpeed()> speed;
+      std::function<PhiAccLim()> acclim;
+      uint32_t min_stepdur, max_stepdur;
+      uint32_t interval;
+      int steps;
+    } sufi;
+
     struct WalkToDir {
       LR init_didimbal;
 
@@ -459,19 +472,6 @@ class Basilisk {
       uint32_t interval;
       uint8_t steps;
     } walk_to_pos;
-
-    struct Sufi {
-      LR init_didimbal;
-      double dest_yaw;  // NaN means no destination.
-      double exit_thr;
-      double stride;
-      Phi bend[2];
-      PhiSpeed speed;
-      PhiAccLim acclim;
-      uint32_t min_stepdur, max_stepdur;
-      uint32_t interval;
-      uint8_t steps;
-    } sufi;
 
     struct Orbit {
       Vec2 center;

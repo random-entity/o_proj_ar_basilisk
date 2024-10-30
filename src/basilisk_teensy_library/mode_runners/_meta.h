@@ -20,6 +20,7 @@ struct ModeRunners {
         ps{.c = c.pivseq},
         sp{.c = c.piv_spin},
         wa{.c = c.walk},
+        sf{.c = c.sufi},
         wd{.c = c.walk_to_dir},
         wp{.c = c.walk_to_pos},
         bw{.c = c.bounce_walk} {}
@@ -34,6 +35,7 @@ struct ModeRunners {
   void PivSeq();
   void PivSpin();
   void Walk();
+  void Sufi();
   void WalkToDir();
   void BounceWalk();
 
@@ -54,6 +56,7 @@ struct ModeRunners {
       {M::PivSeq_Step, [this] { PivSeq(); }},
       {M::PivSpin, [this] { PivSpin(); }},
       {M::Walk, [this] { Walk(); }},
+      {M::Sufi, [this] { Sufi(); }},
       {M::WalkToDir, [this] { WalkToDir(); }},
       {M::BounceWalk_Init, [this] { BounceWalk(); }},
       {M::BounceWalk_Reinit, [this] { BounceWalk(); }},
@@ -107,6 +110,10 @@ struct ModeRunners {
     C::Walk& c;
   } wa;
 
+  struct Sufi {
+    C::Sufi& c;
+  } sf;
+
   struct WalkToDir {
     C::WalkToDir& c;
     double init_yaw;
@@ -127,16 +134,14 @@ struct ModeRunners {
   } bw;
 
   // static void WalkToPos(Basilisk*);
-  // static void Sufi(Basilisk*);
   // static void Orbit(Basilisk*);
   // static void Diamond(Basilisk*);
   // static void WalkToPosInField(Basilisk*);
   // static void Shear(Basilisk*);
+
   // inline static const std::map<M, void (*)(Basilisk*)> mode_runners = {
-  //
   //     {M::WalkToDir, &WalkToDir},
   //     {M::WalkToPos, &WalkToPos},
-  //     {M::Sufi, &Sufi},
   //     {M::Orbit, &Orbit},
   //     {M::Diamond, &Diamond},
   //     {M::WalkToPosInField_Init, &WalkToPosInField},

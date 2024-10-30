@@ -2,38 +2,27 @@
 
 #include "_meta.h"
 
-void ModeRunners::Sufi(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.sufi;
-  auto& w = b->cmd_.walk;
-
+void ModeRunners::Sufi() {
   switch (m) {
     case M::Sufi: {
       m = M::Walk;
-      w.init_didimbal = c.init_didimbal;
+      wa.c.init_didimbal = sf.c.init_didimbal;
       for (uint8_t f : IDX_LR) {
-        w.tgt_yaw[f] = [](Basilisk* b) { return NaN; };
-        w.bend[f] = c.bend[f];
-        w.speed[f] = c.speed;
-        w.acclim[f] = c.acclim;
-        w.min_stepdur[f] = c.min_stepdur;
-        w.max_stepdur[f] = c.max_stepdur;
-        w.interval[f] = c.interval;
+        wa.c.tgt_yaw[f] = [] { return NaN; };
+        wa.c.bend[f] = sf.c.bend[f];
+        wa.c.speed[f] = sf.c.speed;
+        wa.c.acclim[f] = sf.c.acclim;
+        wa.c.min_stepdur[f] = sf.c.min_stepdur;
+        wa.c.max_stepdur[f] = sf.c.max_stepdur;
+        wa.c.interval[f] = sf.c.interval;
       }
-      w.stride[IDX_L] = [](Basilisk* b) {
-        auto& c = b->cmd_.sufi;
-        return c.stride;
+      wa.c.stride[IDX_L] = [this] { return sf.c.stride; };
+      wa.c.stride[IDX_R] = [this] { return -sf.c.stride; };
+      wa.c.steps = sf.c.steps;
+      wa.c.exit_condition = [this] {
+        return abs(b.rpl_.yaw() - sf.c.dest_yaw) < sf.c.exit_thr;
       };
-      w.stride[IDX_R] = [](Basilisk* b) {
-        auto& c = b->cmd_.sufi;
-        return -c.stride;
-      };
-      w.steps = c.steps;
-      w.exit_condition = [](Basilisk* b) {
-        auto& c = b->cmd_.sufi;
-        return abs(b->imu_.GetYaw(true) - c.dest_yaw) < c.exit_thr;
-      };
-      w.exit_to_mode = M::Idle_Init;
+      wa.c.exit_to_mode = M::Idle_Init;
     } break;
     default:
       break;
