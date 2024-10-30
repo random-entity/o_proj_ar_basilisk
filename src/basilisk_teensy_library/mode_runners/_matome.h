@@ -12,7 +12,6 @@
 #include "walk.h"
 #include "walk_to_dir.h"
 
-// #include "ppp.h"
 // #include "bounce_walk.h"
 // #include "diamond.h"
 // #include "do_preset.h"
