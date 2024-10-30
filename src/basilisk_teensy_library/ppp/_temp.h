@@ -3,9 +3,6 @@
 #include "../presets/_matome.h"
 #include "../rpl_sndrs/led_rs.h"
 #include "_meta.h"
-
-#pragma once
-
 #include "../basilisk.h"
 #include "../cmd_rcvrs/xbee_cr.h"
 
@@ -17,8 +14,8 @@ struct Presets {
   using M = Basilisk::Command::Mode;
 
   inline static void Diamond(Basilisk* b, LR init_didimbal) {
-    auto& m = b->cmd_.mode;
-    auto& c = b->cmd_.diamond;
+    auto& m = b.cmd_.mode;
+    auto& c = b.cmd_.diamond;
 
     m = M::Diamond;
     c.init_didimbal = init_didimbal;
@@ -40,8 +37,8 @@ struct Presets {
 
 
 void ModeRunners::BPPP(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto idx = b->cmd_.ppp.idx;  // Copy, not reference.
+  auto& m = b.cmd_.mode;
+  auto idx = b.cmd_.ppp.idx;  // Copy, not reference.
 
   P("Entered BPPP Mode, Preset idx ");
   Serial.println(idx);
@@ -61,7 +58,7 @@ void ModeRunners::BPPP(Basilisk* b) {
         }
 
         m = M::WalkToPos;
-        auto& c = b->cmd_.walk_to_pos;
+        auto& c = b.cmd_.walk_to_pos;
         c.init_didimbal = BOOL_L;
         double x = (10 * digits[3] + digits[2]) * 10.0;
         double y = (10 * digits[1] + digits[0]) * 10.0;
@@ -82,19 +79,19 @@ void ModeRunners::BPPP(Basilisk* b) {
       if (idx == 70) {  // 9   10   11   12   13
                         // 5      6     7      8
                         // 1      2     3      4
-        static const auto& suid = b->cfg_.suid;
+        static const auto& suid = b.cfg_.suid;
 
         m = M::WalkToPosInField_Init;
-        auto& c = b->cmd_.walk_to_pos_in_field;
+        auto& c = b.cmd_.walk_to_pos_in_field;
 
         static const uint8_t row = suid <= 4 ? 0 : suid <= 8 ? 1 : 2;
         static const uint8_t col = suid <= 12 ? (suid - 1) % 4 : 4;
         static double x =
             row < 2
-                ? (b->cfg_.lps.minx * (3 - col) + b->cfg_.lps.maxx * col) / 3.0
-                : (b->cfg_.lps.minx * (4 - col) + b->cfg_.lps.maxx * col) / 4.0;
+                ? (b.cfg_.lps.minx * (3 - col) + b.cfg_.lps.maxx * col) / 3.0
+                : (b.cfg_.lps.minx * (4 - col) + b.cfg_.lps.maxx * col) / 4.0;
         static double y =
-            (b->cfg_.lps.miny * (2 - row) + b->cfg_.lps.maxy * row) / 2.0;
+            (b.cfg_.lps.miny * (2 - row) + b.cfg_.lps.maxy * row) / 2.0;
         c.tgt_pos = Vec2{x, y};
 
         return;
@@ -104,10 +101,10 @@ void ModeRunners::BPPP(Basilisk* b) {
                         //    12  11   9   10
                         //      8    5    2
                         //           1
-        static const auto& suid = b->cfg_.suid;
+        static const auto& suid = b.cfg_.suid;
 
         m = M::WalkToPosInField_Init;
-        auto& c = b->cmd_.walk_to_pos_in_field;
+        auto& c = b.cmd_.walk_to_pos_in_field;
 
         c.tgt_pos = suid == 1    ? Vec2{400, 150}
                     : suid == 8  ? Vec2{250, 300}
@@ -130,9 +127,9 @@ void ModeRunners::BPPP(Basilisk* b) {
       if (idx == 72) {  // 7 8  9 10 12
                         // 3 4      5 6
                         // 1    11    2
-        static const auto& suid = b->cfg_.suid;
+        static const auto& suid = b.cfg_.suid;
         m = M::WalkToPosInField_Init;
-        auto& c = b->cmd_.walk_to_pos_in_field;
+        auto& c = b.cmd_.walk_to_pos_in_field;
         c.tgt_pos = suid == 1    ? Vec2{150, 250}
                     : suid == 2  ? Vec2{750, 250}
                     : suid == 3  ? Vec2{150, 500}
@@ -152,16 +149,16 @@ void ModeRunners::BPPP(Basilisk* b) {
 
       if (idx == 73) {
         m = M::Sufi;
-        auto& c = b->cmd_.sufi;
+        auto& c = b.cmd_.sufi;
 
         static const auto solo = Vec2{420, 125};
 
         c.init_didimbal = BOOL_L;
         c.dest_yaw =
-            nearest_pmn(b->imu_.GetYaw(true), (solo - b->lps_.GetPos()).arg());
+            nearest_pmn(b.imu_.GetYaw(true), (solo - b.lps_.GetPos()).arg());
         c.exit_thr = 0.01;
         c.stride = 30.0 / 360.0;
-        bool dest_is_greater = c.dest_yaw > b->imu_.GetYaw(true);
+        bool dest_is_greater = c.dest_yaw > b.imu_.GetYaw(true);
         if (!dest_is_greater) {
           c.stride *= -1.0;
         }
@@ -185,17 +182,17 @@ void ModeRunners::BPPP(Basilisk* b) {
         }
 
         m = M::WalkToPosInField_Init;
-        auto& c = b->cmd_.walk_to_pos_in_field;
+        auto& c = b.cmd_.walk_to_pos_in_field;
 
         static const auto center =
-            Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
-                 (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
+            Vec2{(b.cfg_.lps.minx + b.cfg_.lps.maxx) * 0.5,
+                 (b.cfg_.lps.miny + b.cfg_.lps.maxy) * 0.5};
 
-        if (b->cfg_.suid <= 8) {
-          double arg = (digits[0] + b->cfg_.suid - 4) * 0.125;
+        if (b.cfg_.suid <= 8) {
+          double arg = (digits[0] + b.cfg_.suid - 4) * 0.125;
           c.tgt_pos = center + 320.0 * Vec2{arg};
-        } else if (b->cfg_.suid <= 12) {
-          double arg = (digits[0] + b->cfg_.suid * 2 - 21) * 0.125;
+        } else if (b.cfg_.suid <= 12) {
+          double arg = (digits[0] + b.cfg_.suid * 2 - 21) * 0.125;
           c.tgt_pos = center + 160.0 * Vec2{arg};
         } else {
           c.tgt_pos = center;
@@ -212,13 +209,13 @@ void ModeRunners::BPPP(Basilisk* b) {
         }
 
         m = M::WalkToDir;
-        auto& c = b->cmd_.walk_to_dir;
+        auto& c = b.cmd_.walk_to_dir;
 
         static const auto center =
-            Vec2{(b->cfg_.lps.minx + b->cfg_.lps.maxx) * 0.5,
-                 (b->cfg_.lps.miny + b->cfg_.lps.maxy) * 0.5};
+            Vec2{(b.cfg_.lps.minx + b.cfg_.lps.maxx) * 0.5,
+                 (b.cfg_.lps.miny + b.cfg_.lps.maxy) * 0.5};
 
-        const auto cur_yaw = b->imu_.GetYaw(true);
+        const auto cur_yaw = b.imu_.GetYaw(true);
         c.init_didimbal = BOOL_L;
         c.tgt_yaw = nearest_pmn(cur_yaw, cur_yaw + ((digits[0] - 1) / 8.0));
         c.stride = 30.0 / 360.0;
@@ -240,12 +237,12 @@ void ModeRunners::BPPP(Basilisk* b) {
 
       if (201 <= idx && idx <= 213) {
         const auto finding_suid = idx - 200;
-        if (b->cfg_.suid == finding_suid) {
+        if (b.cfg_.suid == finding_suid) {
           led_rs::finding_me = true;
         }
 
-        m = b->cmd_.ppp.prev_mode;
-        b->cmd_.ppp.idx = 0;
+        m = b.cmd_.ppp.prev_mode;
+        b.cmd_.ppp.idx = 0;
 
         return;
       }
@@ -259,15 +256,15 @@ void ModeRunners::BPPP(Basilisk* b) {
         Pln("Unregistered Preset index");
         // m = M::SetMags_Init;
         // for (uint8_t i = 0; i < 4; i++) {
-        //   b->cmd_.set_mags.strengths[i] = MagStren::Min;
+        //   b.cmd_.set_mags.strengths[i] = MagStren::Min;
         // }
         // for (uint8_t i = 0; i < 2; i++) {
-        //   b->cmd_.set_mags.expected_state[i] = BOOL_RELEASE;
+        //   b.cmd_.set_mags.expected_state[i] = BOOL_RELEASE;
         // }
-        // b->cmd_.set_mags.verif_thr = 1;
-        // b->cmd_.set_mags.min_dur = 0;
-        // b->cmd_.set_mags.max_dur = 100;
-        // b->cmd_.set_mags.exit_to_mode = M::Idle_Init;
+        // b.cmd_.set_mags.verif_thr = 1;
+        // b.cmd_.set_mags.min_dur = 0;
+        // b.cmd_.set_mags.max_dur = 100;
+        // b.cmd_.set_mags.exit_to_mode = M::Idle_Init;
       }
     } break;
     default:

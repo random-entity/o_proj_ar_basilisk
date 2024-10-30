@@ -23,8 +23,7 @@ inline constexpr uint16_t set_base_yaw_m025 = 50004;
 
 }  // namespace idx
 
-namespace range {
-//                                                            Impl Test
+namespace range {                                          // Impl Test
 const Range<uint16_t> tibu_foot{1, 4};                     // O    O
 const Range<uint16_t> tibu_individual{5, 12};              // O    O
 const Range<uint16_t> random_tibutibu{23, 24};             // O    O

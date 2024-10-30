@@ -2,19 +2,6 @@
 
 #include "_meta.h"
 
-namespace walk_to_pos_in_field {
-Vec2 force[13] = {Vec2{0.0, 0.0}, Vec2{0.0, 0.0}, Vec2{0.0, 0.0},
-                  Vec2{0.0, 0.0}, Vec2{0.0, 0.0}, Vec2{0.0, 0.0},
-                  Vec2{0.0, 0.0}, Vec2{0.0, 0.0}, Vec2{0.0, 0.0},
-                  Vec2{0.0, 0.0}, Vec2{0.0, 0.0}, Vec2{0.0, 0.0},
-                  Vec2{0.0, 0.0}};
-Vec2 emergency_force = Vec2{0.0, 0.0};
-bool trying_overlap_exit[13] = {false};
-double cur_tgt_yaw;
-bool moonwalk;
-bool reinit;
-}  // namespace walk_to_pos_in_field
-
 void ModeRunners::WalkToPosInField() {
   switch (m) {
     case M::WalkToPosInField_Init: {
@@ -72,8 +59,10 @@ void ModeRunners::WalkToPosInField() {
         // }
 
         if (wf.exit_force.second < 6000) {
+          result_vec += wf.exit_force.first;
+        } else if (wf.exit_force.second < 11000) {
           result_vec += wf.exit_force.first.rotate(0.125);
-        } else if (wf.exit_force.second < 12000) {
+        } else if (wf.exit_force.second < 16000) {
           result_vec += wf.exit_force.first.rotate(0.375);
         }
 
@@ -124,9 +113,7 @@ void ModeRunners::WalkToPosInField() {
           wt.c.since_init = 0;
           wt.c.exit_condition = [this]() { return wt.c.since_init >= 1000; };
           wt.c.exit_to_mode = M::WalkToPosInField_Init;
-          // wf.exit_forces.push_back(
-          //     {1e3 * Vec2{wd.c.tgt_yaw() + 0.5}, elapsedMillis{}});
-          wf.exit_force = {1e9 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{}};
+          wf.exit_force = {1e9 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{0}};
           return true;
         }
 
