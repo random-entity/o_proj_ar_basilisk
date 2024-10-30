@@ -31,12 +31,13 @@ const Range<uint16_t> random_tibutibu{23, 24};
 const Range<uint16_t> set_g_var_speed{30, 34};
 const Range<uint16_t> diamond{50, 51};
 const Range<uint16_t> look_rel_to_center{91, 98};
-const Range<uint16_t> bounce_walk{99, 99};
+const Range<uint16_t> bounce_walk_random{99, 99};
 const Range<uint16_t> set_g_var_speed_finer{300, 319};
 const Range<uint16_t> pivot{1000, 2999};
 const Range<uint16_t> piv_spin{3100, 3299};
 const Range<uint16_t> sufi{3300, 3399};
 const Range<uint16_t> walk_to_dir{4000, 4999};
+const Range<uint16_t> walk_to_pos{10000, 19999};
 const Range<uint16_t> walk_to_pos_in_field{20000, 29999};
 
 }  // namespace range

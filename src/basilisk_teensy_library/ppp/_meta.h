@@ -20,8 +20,6 @@
 // 101 ~ 108 WalkToDir relative to current yaw
 // 201 ~ 213 Find SUID
 // 701 ~ 713 WalkToPosInField to '0-13' circular arrangement
-// 10000 ~ 19999 WalkToPos
-// 20000 ~ 29999 WalkToPosInField
 
 struct PPPShooter {
   using M = Basilisk::Command::Mode;
@@ -94,7 +92,7 @@ struct PPPShooter {
       LookRelativeToCenter(idx % 10);
     }
 
-    else if (idx == ppp::range::bounce_walk) {
+    else if (idx == ppp::range::bounce_walk_random) {
       m = M::BounceWalk_Init;
       b.cmd_.bounce_walk.init_tgt_yaw = random(360) / 360.0;
     }
@@ -111,10 +109,14 @@ struct PPPShooter {
       PivSpin(idx);
     }
 
-    else if (idx == ppp::range::walk_to_pos_in_field ||
-             (10000 <= idx && idx <= 19999)) {
+    else if (idx == ppp::range::walk_to_pos) {
       WalkToPosInField(static_cast<int>(idx) % 10000);
     }
+
+    else if (idx == ppp::range::walk_to_pos_in_field) {
+      WalkToPosInField(static_cast<int>(idx) % 10000);
+    }
+
     // ...
   }
 
