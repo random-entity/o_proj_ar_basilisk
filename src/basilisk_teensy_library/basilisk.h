@@ -367,9 +367,9 @@ class Basilisk {
 
     struct PivSeq {
       // .exit_to_mode will be overwritten by PivSeq to PivSeq_Step.
-      std::function<Pivot(int step)> pivots;
+      std::function<Pivot(uint32_t step)> pivots;
 
-      std::function<uint32_t(int step)> intervals;
+      std::function<uint32_t(uint32_t step)> intervals;
 
       // Total steps to take counting both feet.
       // Negative value means infinity.

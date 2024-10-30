@@ -91,7 +91,7 @@ struct ModeRunners {
 
   struct PivSeq {
     C::PivSeq& c;
-    int cur_step;
+    uint32_t cur_step;
   } ps;
 
   struct PivSpin {

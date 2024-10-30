@@ -10,7 +10,8 @@ void ModeRunners::PivSeq() {
     } break;
     case M::PivSeq_Step: {
       if (ps.c.exit_condition() ||
-          (ps.c.steps >= 0 && ps.cur_step >= ps.c.steps)) {
+          (ps.c.steps >= 0 &&
+           ps.cur_step >= static_cast<uint32_t>(ps.c.steps))) {
         m = ps.c.exit_to_mode;
         return;
       }
