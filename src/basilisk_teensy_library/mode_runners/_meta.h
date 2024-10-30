@@ -4,6 +4,7 @@
 #include <map>
 
 #include "../basilisk.h"
+#include "../globals/vars.h"
 #include "../helpers/range.h"
 
 struct ModeRunners {

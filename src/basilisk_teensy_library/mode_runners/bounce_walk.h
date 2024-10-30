@@ -18,7 +18,7 @@ void ModeRunners::BounceWalk() {
       for (const auto f : IDX_LR) {
         wd.c.bend[f] = 0.0;
       }
-      wd.c.speed = [] { return g::c::speed::normal; };
+      wd.c.speed = [] { return g::vars::speed; };
       wd.c.acclim = [] { return g::c::acclim::standard; };
       wd.c.min_stepdur = 0;
       wd.c.max_stepdur = g::c::maxdur::safe;
