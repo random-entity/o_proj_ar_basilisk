@@ -60,7 +60,8 @@ class XbeeCommandReceiver {
 #endif
 
       Payload msg{};
-      memcpy(msg.bytes, packet.payload, payload_size);
+      memcpy(msg.bytes, packet.payload,
+             min(xb::c::capacity::tx_payload, payload_size));
 
       const auto other_suidm1 = srcnid - 1;
       auto& other = roster[other_suidm1];
@@ -85,7 +86,8 @@ class XbeeCommandReceiver {
 
         b_.cmd_.bpoll.since_us = 0;
         Payload msg{};
-        memcpy(msg.bytes, packet.payload, payload_size);
+        memcpy(msg.bytes, packet.payload,
+               min(xb::c::capacity::tx_payload, payload_size));
         b_.cmd_.bpoll.round_robin = msg.cmd.u.bpoll.round_robin;
         return;
       }
@@ -98,7 +100,8 @@ class XbeeCommandReceiver {
 #endif
 
         Payload msg{};
-        memcpy(msg.bytes, packet.payload, payload_size);
+        memcpy(msg.bytes, packet.payload,
+               min(xb::c::capacity::tx_payload, payload_size));
 
         const auto& suidm1 = b_.cfg_.suidm1;
         const auto& ppp_idx = msg.cmd.u.bppp.idx[suidm1];
