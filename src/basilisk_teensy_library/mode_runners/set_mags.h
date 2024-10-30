@@ -8,8 +8,8 @@ void ModeRunners::SetMags() {
   switch (m) {
     case M::SetMags_Init: {
       b.CommandBoth([](Servo& s) { s.SetStop(); });
-      for (int id = 0; id < 4; id++) {
-        b.mags_.SetStrength(id, mg.c.strengths[id]);
+      for (int mid = 0; mid < 4; mid++) {
+        b.mags_.SetStrength(mid, mg.c.strengths[mid]);
       }
       mg.since_init = 0;
       m = M::SetMags_Wait;
