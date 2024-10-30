@@ -40,7 +40,7 @@ class Executer {
         break;
     }
 
-    // Oneshot.
+    // Oneshots.
     os_.Shoot();
 
     // Handle failures right before Mode running.

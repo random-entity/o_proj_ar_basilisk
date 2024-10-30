@@ -8,7 +8,7 @@
 #include "../basilisk.h"
 
 struct PPP {
-  using O = Basilisk::Command::Oneshot::ByteRep;
+  using O = Basilisk::Command::Oneshots::ByteRep;
 
   PPP(Basilisk& _b) : b{_b} {}
 

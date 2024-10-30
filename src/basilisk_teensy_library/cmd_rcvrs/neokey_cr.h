@@ -35,7 +35,7 @@ class NeokeyCommandReceiver {
 
   void Inject() {
     using C = Basilisk::Command;
-    using O = C::Oneshot::ByteRep;
+    using O = C::Oneshots::ByteRep;
     using M = C::Mode;
     static auto& c = b_.cmd_;
     static auto& m = c.mode;

@@ -152,7 +152,7 @@ class Basilisk {
       uint8_t round_robin = 0;
     } bpoll;
 
-    struct Oneshot {
+    struct Oneshots {
       // Byte representation (200 + n) corresponds to n-th bit (1 << n)
       // of matome value.
       enum class ByteRep : uint8_t {
@@ -165,8 +165,8 @@ class Basilisk {
                          // packet.
         /* XPPP = n, */  // There may be additional PPP CR protocols, and PPP
                          // Oneshots corresponding to it, effectively acting as
-                         // equivalent Oneshot.  Distinction in Oneshot value is
-                         // explicitly exposed in order to let Basilisk know
+                         // equivalent Oneshot.  Distinction in Oneshot byterep
+                         // is explicitly exposed in order to let Basilisk know
                          // what payload parse logic the CommandSender has
                          // intended.
       };
@@ -175,7 +175,6 @@ class Basilisk {
         return 1 << (static_cast<uint8_t>(o) -
                      Basilisk::Command::ByteRepRanges::oneshot.from);
       }
-
       void Add(ByteRep o) { matome |= ToMask(o); }
       void Remove(ByteRep o) { matome &= ~ToMask(o); }
       bool Has(ByteRep o) const { return matome & ToMask(o); }

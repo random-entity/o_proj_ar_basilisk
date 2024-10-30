@@ -4,7 +4,7 @@
 #include "../ppp/_meta.h"
 
 struct OneshotShooters {
-  using O = Basilisk::Command::Oneshot::ByteRep;
+  using O = Basilisk::Command::Oneshots::ByteRep;
 
   OneshotShooters(Basilisk& _b) : b{_b} {}
 

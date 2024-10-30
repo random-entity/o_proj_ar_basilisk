@@ -20,7 +20,7 @@
  *   <- Is iff (source is Fellow).
  *   -> Immediately save to Roster. */
 class XbeeCommandReceiver {
-  using O = Basilisk::Command::Oneshot::ByteRep;
+  using O = Basilisk::Command::Oneshots::ByteRep;
 
  public:
   XbeeCommandReceiver(Basilisk& b)
