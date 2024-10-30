@@ -14,7 +14,6 @@ class Executer {
            const uint32_t& run_interval = 10)
       : b_{b}, xbcr_{xbcr}, nkcr_{nkcr}, beat_{run_interval} {}
 
-  // Query.
   void Run() {
     using M = Basilisk::Command::Mode;
     auto& m = b_.cmd_.mode;
@@ -47,9 +46,6 @@ class Executer {
     if (b_.rpl_.failure.heavenfall()) {
       P("Heavenfall ");
       Serial.printf("0x%04X\n", b_.rpl_.failure.heavenfall(), HEX);
-      m = M::Idle_Init;
-    }
-    if (b_.l_.GetReply().torque > 0.4 || b_.r_.GetReply().torque > 0.4) {
       m = M::Idle_Init;
     }
     /* TODO: Develop */
