@@ -105,21 +105,22 @@ class LedReplySender {
               static_cast<double>(p.b_.rpl_.since_xbrx_us.bpoll) / (100e3);
           brightness = max(0.0, brightness);
           brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
-          ca.a[2].g = static_cast<uint8_t>(brightness);
+          ca.a[3].b = static_cast<uint8_t>(brightness);
         }
 
         /* FellowReply */ {
+          ca.a[2].u.matome = 0;
           for (int fellow_suidm1 = 0; fellow_suidm1 < 13; fellow_suidm1++) {
             if (fellow_suidm1 == p.suidm1_) continue;
 
             double brightness =
                 1.0 - static_cast<double>(
                           p.b_.rpl_.since_xbrx_us.fellow_rpl(fellow_suidm1)) /
-                          (10e3);
+                          (50e3);
             brightness = max(0.0, brightness);
-            brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
+            brightness = map(brightness, 0.0, 1.0, 0.0, 50.0);
             double hue = static_cast<double>(fellow_suidm1) / 13.0;
-            ca.a[1].u.matome += HsvToRgb(hue, 1.0, brightness);
+            ca.a[2].u.matome += HsvToRgb(hue, 1.0, brightness);
           }
         }
       };
