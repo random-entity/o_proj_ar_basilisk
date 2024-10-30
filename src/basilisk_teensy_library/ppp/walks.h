@@ -73,9 +73,6 @@ void PPPShooter::WalkToDirRelToCurYaw(int senw) {
   m = M::WalkToDir;
   auto& c = b.cmd_.walk_to_dir;
 
-  static const auto center = Vec2{(b.cfg_.lps.minx + b.cfg_.lps.maxx) * 0.5,
-                                  (b.cfg_.lps.miny + b.cfg_.lps.maxy) * 0.5};
-
   const auto cur_yaw = b.imu_.GetYaw(true);
   c.init_didimbal = BOOL_L;
   c.auto_moonwalk = true;
