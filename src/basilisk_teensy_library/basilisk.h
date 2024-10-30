@@ -522,6 +522,7 @@ class Basilisk {
 
     Basilisk& b;
     const int& suid{b.cfg_.suid};
+    const int& suidm1{b.cfg_.suidm1};
     uint8_t mode() { return static_cast<uint8_t>(b.cmd_.mode); }
     double phi_l() { return b.l_.GetReply().abs_position; };
     double phi_r() { return b.r_.GetReply().abs_position; }
@@ -530,6 +531,7 @@ class Basilisk {
     double lpsy() { return b.lps_.y_; }
     uint32_t lps_since_raw_update() { return b.lps_.since_raw_update_; }
     double yaw() { return b.imu_.GetYaw(true); }
+    uint32_t imu_since_update() { return b.imu_.since_update_; }
 
     struct {
       Basilisk& b;

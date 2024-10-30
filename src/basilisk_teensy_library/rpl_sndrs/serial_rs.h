@@ -7,7 +7,7 @@
 class SerialReplySender {
  public:
   SerialReplySender(Basilisk& b, const uint32_t& run_interval = 1000)
-      : b_{b}, beat_{run_interval} {}
+      : b_{b}, r_{b.rpl_}, beat_{run_interval} {}
 
   void Run() {
     if (!beat_.Hit()) return;
@@ -20,22 +20,22 @@ class SerialReplySender {
     b_.CommandBoth([](Servo& s) { s.Print(); });
 
     Pln("***** Mode *****");
-    Serial.println(static_cast<uint8_t>(b_.cmd_.mode));
+    Serial.println(r_.mode());
 
     Pln("***** Phis *****");
-    P("phil:");
-    Serial.print(b_.l_.GetReply().abs_position, 4);
+    P("phi_l:");
+    Serial.print(r_.phi_l(), 4);
     P(",");
     P("phir:");
-    Serial.print(b_.r_.GetReply().abs_position, 4);
+    Serial.print(r_.phi_r(), 4);
     Serial.println();
 
     Pln("***** LPS *****");
     P("lpsx:");
-    Serial.print(b_.lps_.x_);
+    Serial.print(r_.lpsx());
     P(",");
     P("lpsy:");
-    Serial.print(b_.lps_.y_);
+    Serial.print(r_.lpsy());
     Serial.println();
 
     P("raw -> ");
@@ -54,6 +54,10 @@ class SerialReplySender {
     Serial.print(b_.lps_.error_.bytes[2]);
     Serial.println();
 
+    P("since raw update -> ");
+    Serial.print(r_.lps_since_raw_update() * 1e-3, 3);
+    Serial.println();
+
     Pln("***** IMU *****");
     P("roll:");
     Serial.print(b_.imu_.euler_[0], 3);
@@ -62,7 +66,11 @@ class SerialReplySender {
     Serial.print(b_.imu_.euler_[1], 3);
     P(",");
     P("yaw:");
-    Serial.print(b_.imu_.GetYaw(true), 4);
+    Serial.print(r_.yaw(), 4);
+    Serial.println();
+
+    P("since update -> ");
+    Serial.print(r_.imu_since_update() * 1e-3, 3);
     Serial.println();
 
     Pln("***** Lego *****");
@@ -84,10 +92,10 @@ class SerialReplySender {
     Serial.println();
 
     Pln("***** Roster *****");
-    for (uint8_t suid = 1; suid <= 13; suid++) {
+    for (int suid = 1; suid <= 13; suid++) {
       Serial.print(suid);
       P(" -> ");
-      if (suid == b_.cfg_.suid) {
+      if (suid == r_.suid) {
         P("self");
       } else {
         Serial.print(roster[suid - 1].x);
@@ -106,5 +114,6 @@ class SerialReplySender {
 
  private:
   Basilisk& b_;
+  Basilisk::Reply& r_;
   Beat beat_;
 };
