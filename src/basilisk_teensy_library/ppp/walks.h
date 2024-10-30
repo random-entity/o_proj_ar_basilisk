@@ -68,3 +68,31 @@ void PPPShooter::WalkToDir(int last_3_digits) {
   };
   c.exit_to_mode = M::Idle_Init;
 }
+
+void PPPShooter::WalkToDirRelToCurYaw(int senw) {
+  m = M::WalkToDir;
+  auto& c = b.cmd_.walk_to_dir;
+
+  static const auto center = Vec2{(b.cfg_.lps.minx + b.cfg_.lps.maxx) * 0.5,
+                                  (b.cfg_.lps.miny + b.cfg_.lps.maxy) * 0.5};
+
+  const auto cur_yaw = b.imu_.GetYaw(true);
+  c.init_didimbal = BOOL_L;
+  c.auto_moonwalk = true;
+  c.tgt_yaw = [=] {
+    return nearest_pmn(cur_yaw, cur_yaw + ((senw - 1) / 8.0));
+  };
+  c.stride = [] { return 30.0 / 360.0; };
+  c.bend[IDX_L] = 0.0;
+  c.bend[IDX_L] = 0.0;
+  c.speed = [] { return g::vars::speed; };
+  c.acclim = [] { return g::c::acclim::standard; };
+  c.min_stepdur = 0;
+  c.max_stepdur = g::c::maxdur::safe;
+  c.interval = 100;
+  c.steps = -1;
+  c.exit_condition = [this] {
+    return b.l_.failure_.stuck || b.r_.failure_.stuck;
+  };
+  c.exit_to_mode = M::Idle_Init;
+}

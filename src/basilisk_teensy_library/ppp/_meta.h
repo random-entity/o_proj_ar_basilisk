@@ -9,17 +9,9 @@
 #include "../globals/vars.h"
 #include "_index.h"
 
-// * PPP
-// ?? ~ ?? Set Base Yaw towards Center and counterclockwise ###TODO###
-// 60 ~ 69 Set Pivot Tadak interval ###TODO###
-// 70 WalkToPosInField to grid arrangement
-// 71 WalkToPosInField to pyramid arrangement
-// 72 WalkToPosInField to solo-chorus arrangement
-// 73 Sufi to look at solo
-// 81 ~ 88 WalkToPosInField to '1-4-8' circular arrangement
-// 101 ~ 108 WalkToDir relative to current yaw
-// 201 ~ 213 Find SUID
-// 701 ~ 713 WalkToPosInField to '0-13' circular arrangement
+// NOT added to ppp::range
+// ?? ~ ?? Set Base Yaw towards Center and counterclockwise  ###TODO###
+// 60 ~ 69 Set Pivot Tadak interval                          ###TODO###
 
 struct PPPShooter {
   using M = Basilisk::Command::Mode;
@@ -36,7 +28,15 @@ struct PPPShooter {
   void SetGlobalVarSpeed(int level);
   void SetGlobalVarSpeedFiner(int level);
 
+  // arrange.h
+  void ArrangeToGrid();
+  void ArrangeToPyramid();
+  void ArrangeToSoloNChorus();
+  void ArrangeToCircle148(int senw);
+  void ArrangeToCircle013(int robin);
+
   // look.h
+  void LookSolo();
   void LookRelativeToCenter(int);
 
   void Pivot(uint16_t);
@@ -44,6 +44,7 @@ struct PPPShooter {
   void PivSpin(uint16_t);
 
   // walks.h
+  void WalkToDirRelToCurYaw(int senw);
   void WalkToDir(int last_3_digits);
   void WalkToPosInField(int last_4_digits);
 
@@ -88,8 +89,28 @@ struct PPPShooter {
       SetGlobalVarSpeed(idx - 30);
     }
 
-    else if (idx == ppp::range::set_g_var_speed_finer) {
-      SetGlobalVarSpeed(idx - 300);
+    else if (idx == ppp::range::diamond) {
+      // Not implemented.
+    }
+
+    else if (idx == ppp::range::arrange_to_grid) {
+      ArrangeToGrid();
+    }
+
+    else if (idx == ppp::range::arrange_to_pyramid) {
+      ArrangeToPyramid();
+    }
+
+    else if (idx == ppp::range::arrange_to_solo_n_chorus) {
+      ArrangeToSoloNChorus();
+    }
+
+    else if (idx == ppp::range::look_solo) {
+      LookSolo();
+    }
+
+    else if (idx == ppp::range::arrange_to_circle_1_4_8) {
+      ArrangeToCircle148(idx % 10);
     }
 
     else if (idx == ppp::range::look_rel_to_center) {
@@ -99,6 +120,28 @@ struct PPPShooter {
     else if (idx == ppp::range::bounce_walk_random) {
       m = M::BounceWalk_Init;
       b.cmd_.bounce_walk.init_tgt_yaw = random(360) / 360.0;
+    }
+
+    else if (idx == ppp::range::walk_to_dir_relto_curyaw) {
+      WalkToDirRelToCurYaw(idx % 10);
+    }
+
+    else if (idx == ppp::range::bounce_walk_nesw) {
+      m = M::BounceWalk_Init;
+      int nesw = idx % 10;
+      b.cmd_.bounce_walk.init_tgt_yaw = (nesw - 3) * 0.125;
+    }
+
+    else if (idx == ppp::range::find_suid) {
+      // Not implemented.
+    }
+
+    else if (idx == ppp::range::set_g_var_speed_finer) {
+      SetGlobalVarSpeed(idx - 300);
+    }
+
+    else if (idx == ppp::range::arrange_to_circle_0_13) {
+      ArrangeToCircle013(idx - 700);
     }
 
     else if (idx == ppp::range::pivot) {
