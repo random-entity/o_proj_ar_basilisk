@@ -6,7 +6,7 @@ void ModeRunners::Walk() {
   switch (m) {
     case M::Walk: {
       m = M::PivSeq_Init;
-      ps.c.pivots = [this](int step) {
+      ps.c.pivots = [this](uint32_t step) {
         Basilisk::Command::Pivot p;
         p.didimbal = step % 2 == 0 ? wa.c.init_didimbal : !wa.c.init_didimbal;
         const auto didim_idx = p.didimbal == BOOL_L ? IDX_L : IDX_R;
@@ -26,7 +26,7 @@ void ModeRunners::Walk() {
         p.exit_condition = wa.c.exit_condition;
         return p;
       };
-      ps.c.intervals = [this](int step) {
+      ps.c.intervals = [this](uint32_t step) {
         const LR didimbal =
             step % 2 == 0 ? wa.c.init_didimbal : !wa.c.init_didimbal;
         const auto didim_idx = didimbal == BOOL_L ? IDX_L : IDX_R;
