@@ -127,24 +127,24 @@ void WalkToPos(Basilisk* b) {
   c.steps = -1;
 }
 
-void Sufi(Basilisk* b) {
-  auto& m = b->cmd_.mode;
-  auto& c = b->cmd_.sufi;
+// void Sufi(Basilisk* b) {
+//   auto& m = b->cmd_.mode;
+//   auto& c = b->cmd_.sufi;
 
-  m = M::Sufi;
-  c.init_didimbal = BOOL_L;
-  c.dest_yaw = NaN;
-  c.exit_thr = NaN;
-  c.stride = 0.125;
-  c.bend[IDX_L] = 0.0;
-  c.bend[IDX_R] = 0.0;
-  c.speed = g::c::speed::normal;
-  c.acclim = g::c::acclim::standard;
-  c.min_stepdur = 1000;
-  c.max_stepdur = 3000;
-  c.interval = 0;
-  c.steps = -1;
-}
+//   m = M::Sufi;
+//   c.init_didimbal = BOOL_L;
+//   c.dest_yaw = NaN;
+//   c.exit_thr = NaN;
+//   c.stride = 0.125;
+//   c.bend[IDX_L] = 0.0;
+//   c.bend[IDX_R] = 0.0;
+//   c.speed = g::c::speed::normal;
+//   c.acclim = g::c::acclim::standard;
+//   c.min_stepdur = 1000;
+//   c.max_stepdur = 3000;
+//   c.interval = 0;
+//   c.steps = -1;
+// }
 
 void BounceWalk(Basilisk* b) {
   auto& m = b->cmd_.mode;

@@ -31,7 +31,7 @@ struct Vec2 {
 
   Vec2& operator+=(const Vec2& other) {
     x += other.x;
-    y + other.y;
+    y += other.y;
     return *this;
   }
 
