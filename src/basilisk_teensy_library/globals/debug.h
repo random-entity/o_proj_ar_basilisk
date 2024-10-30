@@ -29,7 +29,7 @@ void HALT(const char* err_str = nullptr) {
   while (1);
 }
 
-#define KAKTUGI_14_SUID (13)
+#define KAKTUGI_14_SUID (12)
 
 #define MOCK_AUX2 (1)
 #define MOCK_LPS (1)
