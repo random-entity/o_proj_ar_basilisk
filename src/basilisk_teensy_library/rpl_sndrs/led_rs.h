@@ -8,7 +8,7 @@
 #include "../basilisk.h"
 #include "../components/neokey.h"
 #include "../helpers/beat.h"
-// #include "../cmd_rcvrs/xbee_cr.h"
+#include "../helpers/color.h"
 
 class LedReplySender {
  public:
@@ -53,11 +53,10 @@ class LedReplySender {
   void Run() {
     if (!beat_.Hit()) return;
 
-    for (const auto* form : forms_) form->set();
-
     ColorArray result;
-    for (int i = 0; i < num_forms_; i++) {
-      result += forms_[i]->ca;
+    for (const auto* form : forms_) {
+      form->set();
+      result += form->ca;
     }
     Show(result);
   }
@@ -89,27 +88,47 @@ class LedReplySender {
     Beat heartbeat;
   } heartbeat_{*this};
 
-  struct BPPPBlip : Form {
-    BPPPBlip(LedReplySender& p) {
+  struct XbRxBlips : Form {
+    XbRxBlips(LedReplySender& p) : heartbeat{125} {
       set = [&p, this] {
-        double brightness = (0.5e6 - p.b_.rpl_.since_xbrx_us.bppp) / (0.5e6);
-        brightness = min(0.0, brightness);
-        brightness = map(brightness, 0.0, 1.0, 0, 255);
-        ca.a[3].r = brightness;
-        ca.a[3].b = brightness;
+        /* B-PPP */ {
+          double brightness =
+              1.0 - static_cast<double>(p.b_.rpl_.since_xbrx_us.bppp) / (100e3);
+          brightness = max(0.0, brightness);
+          brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
+          ca.a[3].g = static_cast<uint8_t>(brightness);
+        }
 
-        ca.a[3].r = 255;
-        ca.a[3].g = 255;
-        ca.a[3].b = 255;
+        /* B-Poll */ {
+          double brightness =
+              1.0 -
+              static_cast<double>(p.b_.rpl_.since_xbrx_us.bpoll) / (100e3);
+          brightness = max(0.0, brightness);
+          brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
+          ca.a[2].g = static_cast<uint8_t>(brightness);
+        }
 
-        ca.a[3].u.matome = 0xFFFFFF;
+        /* FellowReply */ {
+          for (int fellow_suidm1 = 0; fellow_suidm1 < 13; fellow_suidm1++) {
+            if (fellow_suidm1 == p.suidm1_) continue;
+
+            double brightness =
+                1.0 - static_cast<double>(
+                          p.b_.rpl_.since_xbrx_us.fellow_rpl(fellow_suidm1)) /
+                          (10e3);
+            brightness = max(0.0, brightness);
+            brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
+            double hue = static_cast<double>(fellow_suidm1) / 13.0;
+            ca.a[1].u.matome += HsvToRgb(hue, 1.0, brightness);
+          }
+        }
       };
     }
-  } bppp_blip{*this};
 
-  inline static constexpr int num_forms_ = 2;
+    Beat heartbeat;
+  } xbrx_blips{*this};
 
-  Form* forms_[num_forms_] = {&heartbeat_, &bppp_blip};
+  Form* forms_[2] = {&heartbeat_, &xbrx_blips};
 
   Basilisk& b_;
   const int& suid_{b_.cfg_.suid};
