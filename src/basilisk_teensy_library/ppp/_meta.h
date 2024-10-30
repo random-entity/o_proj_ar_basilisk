@@ -32,6 +32,7 @@ struct Shooter {
   Shooter(Basilisk& _b) : b{_b} {}
 
   void TibuFoot();
+  void TibuIndividual(int mid, AttRel ar);
   void RandomTibutibu();
   void SetGlobalVarSpeed(int level);
   void LookRelativeToCenter(int);
@@ -56,6 +57,10 @@ struct Shooter {
 
     else if (idx == ppp::range::tibu_foot) {
       TibuFoot();
+    } else if (idx == ppp::range::tibu_indiv) {
+      int mid = (idx - 5) / 2;
+      AttRel ar = idx % 2 ? BOOL_RELEASE : BOOL_ATTACH;
+      TibuIndividual(mid, ar);
     } else if (idx == ppp::range::random_tibutibu) {
       RandomTibutibu();
     } else if (idx == ppp::range::set_g_var_speed) {

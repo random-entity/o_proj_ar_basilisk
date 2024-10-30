@@ -28,6 +28,12 @@ void Shooter::TibuFoot() {
   }
 }
 
+void Shooter::TibuIndividual(int mid, AttRel ar) {
+  b.CommandBoth([](Servo& s) { s.SetStop(); });
+  b.cmd_.mode = M::Idle_Nop;
+  b.mags_.SetStrength(mid, Bool2MS(ar));
+}
+
 void Shooter::RandomTibutibu() {
   if (idx == 23) {
     b.cmd_.mode = M::RandomMags_Init;
