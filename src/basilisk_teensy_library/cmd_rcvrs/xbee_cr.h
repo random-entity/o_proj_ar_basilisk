@@ -111,7 +111,7 @@ class XbeeCommandReceiver {
           case 0:
             // Ignore PPP index 0.
             return;
-          case g::ppp::idx::crmux_xbee:
+          case ppp::idx::crmux_xbee:
             b_.crmux_ = Basilisk::CRMux::Xbee;
             return;
 

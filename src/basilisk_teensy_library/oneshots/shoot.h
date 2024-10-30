@@ -23,5 +23,5 @@ struct OneshotShooters {
   }
 
   Basilisk& b;
-  ppp::PPP ppp{b};
+  ppp::Shooter ppp{b};
 };

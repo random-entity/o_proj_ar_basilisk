@@ -3,7 +3,7 @@
 #include "_meta.h"
 
 namespace ppp {
-void PPP::SetGlobalVarSpeed(int level) {
+void Shooter::SetGlobalVarSpeed(int level) {
   g::vars::speed = level == 0   ? g::c::speed::slower
                    : level == 1 ? g::c::speed::slow
                    : level == 2 ? g::c::speed::normal

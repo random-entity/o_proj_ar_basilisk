@@ -25,11 +25,11 @@
 
 namespace ppp {
 
-struct PPP {
+struct Shooter {
   using M = Basilisk::Command::Mode;
   using O = Basilisk::Command::Oneshots::ByteRep;
 
-  PPP(Basilisk& _b) : b{_b} {}
+  Shooter(Basilisk& _b) : b{_b} {}
 
   void TibuFoot();
   void RandomTibutibu();
@@ -40,36 +40,36 @@ struct PPP {
   void PivSpin(uint16_t);
 
   void Shoot() {
-    if (idx == g::ppp::idx::idle) {
+    if (idx == ppp::idx::idle) {
       m = M::Idle_Init;
-    } else if (idx == g::ppp::idx::free) {
+    } else if (idx == ppp::idx::free) {
       m = M::Free;
-    } else if (idx == g::ppp::idx::crmux_xbee) {
+    } else if (idx == ppp::idx::crmux_xbee) {
       // Processed at XbCR.
-    } else if (idx == g::ppp::idx::set_base_yaw_0) {
+    } else if (idx == ppp::idx::set_base_yaw_0) {
       b.cmd_.oneshots.Add(O::SetBaseYaw);
       b.cmd_.set_base_yaw.offset = 0.0;
-    } else if (idx == g::ppp::idx::set_base_yaw_m025) {
+    } else if (idx == ppp::idx::set_base_yaw_m025) {
       b.cmd_.oneshots.Add(O::SetBaseYaw);
       b.cmd_.set_base_yaw.offset = -0.25;
     }
 
-    else if (idx == g::ppp::range::tibu_foot) {
+    else if (idx == ppp::range::tibu_foot) {
       TibuFoot();
-    } else if (idx == g::ppp::range::random_tibutibu) {
+    } else if (idx == ppp::range::random_tibutibu) {
       RandomTibutibu();
-    } else if (idx == g::ppp::range::set_g_var_speed) {
+    } else if (idx == ppp::range::set_g_var_speed) {
       SetGlobalVarSpeed(idx - 30);
-    } else if (idx == g::ppp::range::look_rel_to_center) {
+    } else if (idx == ppp::range::look_rel_to_center) {
       LookRelativeToCenter(idx % 10);
-    } else if (idx == g::ppp::range::bounce_walk) {
+    } else if (idx == ppp::range::bounce_walk) {
       m = M::BounceWalk_Init;
       b.cmd_.bounce_walk.init_tgt_yaw = random(360) / 360.0;
-    } else if (idx == g::ppp::range::pivot) {
+    } else if (idx == ppp::range::pivot) {
       Pivot(idx);
-    } else if (idx == g::ppp::range::sufi) {
+    } else if (idx == ppp::range::sufi) {
       Sufi(idx);
-    } else if (idx == g::ppp::range::piv_spin) {
+    } else if (idx == ppp::range::piv_spin) {
       PivSpin(idx);
     }
 
@@ -80,4 +80,5 @@ struct PPP {
   const uint16_t& idx{b.cmd_.ppp.idx};
   M& m{b.cmd_.mode};
 };
+
 }  // namespace ppp

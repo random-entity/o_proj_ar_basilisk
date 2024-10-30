@@ -8,7 +8,7 @@ namespace pivot {
 double tgt_yaw;
 }  // namespace pivot
 
-void PPP::Pivot(uint16_t idx) {
+void Shooter::Pivot(uint16_t idx) {
   // PPP Pivot range
   // Decimal ABCD
   // A = didim = 1 ~ 2

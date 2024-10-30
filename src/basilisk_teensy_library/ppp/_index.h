@@ -9,7 +9,7 @@
 #include "../basilisk.h"
 #include "../helpers/range.h"
 
-namespace g::ppp {
+namespace ppp {
 
 namespace idx {
 
@@ -41,4 +41,4 @@ const Range<uint16_t> walk_to_pos_in_field{20000, 29999};
 
 }  // namespace range
 
-}  // namespace g::ppp
+}  // namespace ppp

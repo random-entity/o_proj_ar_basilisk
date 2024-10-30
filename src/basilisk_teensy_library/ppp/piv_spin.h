@@ -4,7 +4,7 @@
 
 namespace ppp {
 
-void PPP::PivSpin(uint16_t idx) {
+void Shooter::PivSpin(uint16_t idx) {
   // PPP PivSpin range
   // Decimal 3ABC
   // A = didim = 1 ~ 2

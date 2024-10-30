@@ -4,7 +4,7 @@
 
 namespace ppp {
 
-void PPP::LookRelativeToCenter(int senw) {
+void Shooter::LookRelativeToCenter(int senw) {
   m = M::Sufi;
   auto& c = b.cmd_.sufi;
 

@@ -4,7 +4,7 @@
 
 namespace ppp {
 
-void PPP::Sufi(uint16_t idx) {
+void Shooter::Sufi(uint16_t idx) {
   // PPP Sufi range
   // Decimal 33AB
   // A = dest_yaw = 0 ~ 8

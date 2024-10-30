@@ -4,7 +4,7 @@
 
 namespace ppp {
 
-void PPP::TibuFoot() {
+void Shooter::TibuFoot() {
   if (idx == 1) {
     b.CommandBoth([](Servo& s) { s.SetStop(); });
     b.cmd_.mode = M::Idle_Nop;
@@ -28,7 +28,7 @@ void PPP::TibuFoot() {
   }
 }
 
-void PPP::RandomTibutibu() {
+void Shooter::RandomTibutibu() {
   if (idx == 23) {
     b.cmd_.mode = M::RandomMags_Init;
     b.cmd_.random_mags.min_phase_dur = 1000;
