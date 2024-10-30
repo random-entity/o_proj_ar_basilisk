@@ -6,7 +6,7 @@
 #include "../components/neokey.h"
 #include "../globals/debug.h"
 #include "../helpers/beat.h"
-// #include "../tests/modes.h"
+#include "../tests/modes.h"
 
 class NeokeyCommandReceiver {
  public:
@@ -55,16 +55,7 @@ class NeokeyCommandReceiver {
         c.set_base_yaw.offset = 0.0;
       } break;
       case 4: {  // Left for debug purposes.
-        b_.CommandBoth([](Servo& s) {
-          s.SetPosition([] {
-            auto cmd = g::moteus_fmt::pm_cmd_template;
-            cmd.position = NaN;
-            cmd.velocity = 0.2;
-            cmd.maximum_torque = 0.02;
-            cmd.watchdog_timeout = NaN;
-            return cmd;
-          }());
-        });
+        tests::SetPhis(b_);
       } break;
       default: {
       } break;

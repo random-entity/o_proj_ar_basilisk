@@ -5,16 +5,37 @@
 namespace tests {
 using M = Basilisk::Command::Mode;
 
-void SetPhis(Basilisk& b) {
-  b.CommandBoth([](Servo& s) {
+void Temp1(Basilisk& b_) {
+  b_.CommandBoth([](Servo& s) {
     s.SetPosition([] {
-      PmCmd cmd = g::moteus_fmt::pm_cmd_template;
-      cmd.position = 0.0;
-      cmd.velocity = NaN;
+      auto cmd = g::moteus_fmt::pm_cmd_template;
+      cmd.position = NaN;
+      cmd.velocity = 0.2;
+      // cmd.maximum_torque = 0.02;
       cmd.watchdog_timeout = NaN;
       return cmd;
     }());
   });
+}
+
+void SetPhis(Basilisk& b) {
+  auto& m = b.cmd_.mode;
+  auto& ph = b.cmd_.set_phis;
+
+  m = M::SetPhis_Init;
+  ph.tgt_phi[IDX_L] = [] { return 0.0; };
+  ph.tgt_phi[IDX_R] = [] { return 0.0; };
+  ph.tgt_phispeed[IDX_L] = [] { return 0.1; };
+  ph.tgt_phispeed[IDX_R] = [] { return 0.1; };
+  ph.tgt_phiacclim[IDX_L] = [] { return g::c::acclim::standard; };
+  ph.tgt_phiacclim[IDX_R] = [] { return g::c::acclim::standard; };
+  ph.damp_thr = 0.05;
+  ph.fix_thr = 0.01;
+  ph.fixing_cycles_thr = 1;
+  ph.min_dur = 0;
+  ph.max_dur = -1;
+  ph.exit_condition = [] { return false; };
+  ph.exit_to_mode = M::Idle_Init;
 }
 
 void Pivot(Basilisk& b) {
