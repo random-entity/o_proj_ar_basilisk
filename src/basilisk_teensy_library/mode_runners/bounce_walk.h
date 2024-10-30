@@ -14,7 +14,7 @@ void ModeRunners::BounceWalk() {
       wd.c.init_didimbal = BOOL_L;
       wd.c.auto_moonwalk = true;
       wd.c.tgt_yaw = [this] { return bw.c.init_tgt_yaw; };
-      wd.c.stride = [] { return 0.25; };
+      wd.c.stride = [] { return 0.125; };
       for (const auto f : IDX_LR) {
         wd.c.bend[f] = 0.0;
       }

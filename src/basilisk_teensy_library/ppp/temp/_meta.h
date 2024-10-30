@@ -10,25 +10,6 @@ PhiSpeed speed;
 struct Presets {
   using M = Basilisk::Command::Mode;
 
-  inline static void Idle(Basilisk* b) { b->cmd_.mode = M::Idle_Init; }
-  inline static void Free(Basilisk* b) { b->cmd_.mode = M::Free; }
-  inline static void CRMuxXbee(Basilisk* b) {
-    // Executer handles the CRMux switching.
-    XbeeCommandReceiver::xb_cmd_.decoded.mode =
-        static_cast<uint8_t>(b->cmd_.ppp.prev_mode);
-    b->cmd_.mode = b->cmd_.ppp.prev_mode;
-  }
-  inline static void SetBaseYawZero(Basilisk* b) {
-    b->cmd_.oneshot |= (1 << 1);
-    b->cmd_.set_base_yaw.offset = 0.0;
-    b->cmd_.mode = b->cmd_.ppp.prev_mode;
-  }
-  inline static void SetBaseYawM025(Basilisk* b) {
-    b->cmd_.oneshot |= (1 << 1);
-    b->cmd_.set_base_yaw.offset = -0.25;
-    b->cmd_.mode = b->cmd_.ppp.prev_mode;
-  }
-
   static void RMagRls(Basilisk*);
   static void RMagAtt(Basilisk*);
   static void LMagRls(Basilisk*);
@@ -59,13 +40,6 @@ struct Presets {
   }
 
   inline static const std::map<uint16_t, void (*)(Basilisk*)> presets = {
-      // Meta
-      {50000, &Idle},
-      {50001, &Free},
-      {50002, &CRMuxXbee},
-      {50003, &SetBaseYawZero},
-      {50004, &SetBaseYawM025},
-
       // Specific
       {1, &RMagRls},
       {2, &RMagAtt},

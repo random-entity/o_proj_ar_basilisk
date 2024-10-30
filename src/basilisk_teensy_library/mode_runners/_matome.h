@@ -13,9 +13,9 @@
 #include "wait.h"
 #include "walk.h"
 #include "walk_to_dir.h"
+#include "walk_to_pos_in_field.h"
 
 // #include "diamond.h"
 // #include "orbit.h"
 // #include "shear.h"
 // #include "walk_to_pos.h"
-// #include "walk_to_pos_in_field.h"
