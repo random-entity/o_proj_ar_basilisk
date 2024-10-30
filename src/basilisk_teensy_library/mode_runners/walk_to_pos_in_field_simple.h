@@ -54,13 +54,11 @@ void ModeRunners::WalkToPosInField() {
           result_vec += force;
         }
 
-        constexpr uint32_t curve_time = 30000;
-
-        auto curve = [=](uint32_t cur_time) {
-          return map(static_cast<double>(cur_time - 1000),  //
-                     0.0, static_cast<double>(curve_time), 0.0, 0.5);
-        };
-
+        // constexpr uint32_t curve_time = 30000;
+        // auto curve = [=](uint32_t cur_time) {
+        //   return map(static_cast<double>(cur_time - 1000),  //
+        //              0.0, static_cast<double>(curve_time), 0.0, 0.5);
+        // };
         // auto& vec = wf.exit_forces;
         // vec.erase(
         //     std::remove_if(vec.begin(), vec.end(),
@@ -91,6 +89,7 @@ void ModeRunners::WalkToPosInField() {
         wf.cur_tgt_yaw = result_vec.arg();
         return result_vec.arg();
       };
+      wd.c.tgt_yaw();  // Update aforehead.
       wd.c.stride = [] { return 0.125; };
       wd.c.speed = [] { return g::vars::speed; };
       wd.c.acclim = [] { return g::c::acclim::standard; };
@@ -106,7 +105,7 @@ void ModeRunners::WalkToPosInField() {
 
         if (b.l_.failure_.stuck || b.r_.failure_.stuck) {
 #if DEBUG_FAILURE
-          Pln("WTPIF: Stuck");
+          Pln("WTPIF: 32");
 #endif
 
           // Release kickbal and Stop.
@@ -127,7 +126,7 @@ void ModeRunners::WalkToPosInField() {
           wt.c.exit_to_mode = M::WalkToPosInField_Init;
           // wf.exit_forces.push_back(
           //     {1e3 * Vec2{wd.c.tgt_yaw() + 0.5}, elapsedMillis{}});
-          wf.exit_force = {1e3 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{}};
+          wf.exit_force = {1e9 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{}};
           return true;
         }
 
