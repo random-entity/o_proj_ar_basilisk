@@ -20,7 +20,8 @@ struct ModeRunners {
         ps{.c = c.pivseq},
         sp{.c = c.piv_spin},
         wa{.c = c.walk},
-        wd{.c = c.walk_to_dir} {}
+        wd{.c = c.walk_to_dir},
+        wp{.c = c.walk_to_pos} {}
 
   void Idle();
   void Wait();
@@ -106,7 +107,14 @@ struct ModeRunners {
     C::WalkToDir& c;
     double init_yaw;
     bool moonwalk;
+
+    // Real target yaw considering moonwalk and nearest_pmn.
+    double real_tgt_yaw;
   } wd;
+
+  struct WalkToPos {
+    C::WalkToPos& c;
+  } wp;
 
   // static void WalkToPos(Basilisk*);
   // static void Sufi(Basilisk*);

@@ -419,9 +419,11 @@ class Basilisk {
       LR init_didimbal;
 
       // Set to true to make Basilisk to automatically walk backwards if target
-      // yaw is more than 90 degress away.
+      // yaw is more than 0.25 revolution away from current yaw.  Current
+      // implementation of auto moonwalk will only work for 0 < stride < 0.25.
       bool auto_moonwalk;
 
+      // The direction Basilisk to move to, regardless of moonwalk.
       // NaN means yaw at WalkToDir initialization.
       std::function<double()> tgt_yaw;
 
@@ -438,6 +440,9 @@ class Basilisk {
 
       // Total steps counting both feet. Negative value means infinity.
       int steps;
+
+      std::function<bool()> exit_condition;
+      Mode exit_to_mode;
     } walk_to_dir;
 
     struct WalkToPos {
