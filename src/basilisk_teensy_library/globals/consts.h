@@ -29,4 +29,13 @@ constexpr uint32_t yoyuu = 5000;
 constexpr uint32_t beche = 8000;
 }  // namespace maxdur
 
+namespace phithr {
+namespace fix {
+constexpr double standard = 0.01;
+}  // namespace fix
+namespace damp {
+constexpr double standard = 0.05;
+}  // namespace damp
+}  // namespace phithr
+
 }  // namespace g::c

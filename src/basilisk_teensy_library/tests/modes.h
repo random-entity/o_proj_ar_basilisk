@@ -29,8 +29,8 @@ void SetPhis(Basilisk& b) {
   ph.tgt_phispeed[IDX_R] = [] { return 0.1; };
   ph.tgt_phiacclim[IDX_L] = [] { return g::c::acclim::standard; };
   ph.tgt_phiacclim[IDX_R] = [] { return g::c::acclim::standard; };
-  ph.damp_thr = 0.05;
-  ph.fix_thr = 0.01;
+  ph.damp_thr = g::c::phithr::damp::standard;
+  ph.fix_thr = g::c::phithr::fix::standard;
   ph.fixing_cycles_thr = 1;
   ph.min_dur = 0;
   ph.max_dur = -1;
