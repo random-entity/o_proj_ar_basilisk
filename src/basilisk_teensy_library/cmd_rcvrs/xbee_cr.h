@@ -83,6 +83,8 @@ class XbeeCommandReceiver {
         const auto& suidm1 = b_.cfg_.suidm1;
         const auto& ppp_idx = msg.cmd.u.bppp.idx[suidm1];
 
+        b_.rpl_.since_xbrx_us.bppp = 0;
+
         switch (ppp_idx) {
           // Handle special indices that should be processed or ignored
           // immediately.

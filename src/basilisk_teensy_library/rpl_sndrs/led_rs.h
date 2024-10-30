@@ -89,6 +89,18 @@ class LedReplySender {
     Beat heartbeat;
   } heartbeat_{*this};
 
+  struct BPPPBlip : Form {
+    BPPPBlip(LedReplySender& p) {
+      set = [&p, this] {
+        double brightness = (0.5e6 - p.b_.rpl_.since_xbrx_us.bppp) / (0.5e6);
+        brightness = min(0.0, brightness);
+        brightness = map(brightness, 0.0, 1.0, 0, 255);
+        ca.a[3].r = brightness;
+        ca.a[3].b = brightness;
+      };
+    }
+  } bppp_blip{*this};
+
   inline static constexpr int num_forms_ = 1;
 
   Form* forms_[num_forms_] = {&heartbeat_};
