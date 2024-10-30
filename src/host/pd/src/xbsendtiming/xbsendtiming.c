@@ -33,7 +33,7 @@ void xbsendtiming_listin(t_xbsendtiming* x, t_symbol* s,  //
   memcpy(new_node->list, argv, argc * sizeof(t_atom));
   new_node->next = NULL;
 
-  if (fabs(atom_getfloat(&argv[6]) - 8.0) < 0.1) {
+  if (fabs(atom_getfloat(&argv[0]) - 232.0) < 0.1) {
     // This is a Poll.
     if (x->polls.tail == NULL) {
       x->polls.head = new_node;

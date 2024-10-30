@@ -25,6 +25,17 @@
             ]
         },
         {
+            "name": "Linux-Pd",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/x86_64-linux-gnu/",
+                "~/apps/pd-0.55/include/**"
+            ],
+            "cppStandard": "c++17",
+            "cStandard": "c17",
+            "defines": []
+        },
+        {
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
