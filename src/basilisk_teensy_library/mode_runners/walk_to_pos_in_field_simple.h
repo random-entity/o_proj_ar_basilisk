@@ -54,23 +54,30 @@ void ModeRunners::WalkToPosInField() {
           result_vec += force;
         }
 
-        constexpr uint32_t curve_time = 15000;
+        constexpr uint32_t curve_time = 30000;
 
         auto curve = [=](uint32_t cur_time) {
           return map(static_cast<double>(cur_time - 1000),  //
-                     0.0, static_cast<double>(curve_time), 0.0, 0.25);
+                     0.0, static_cast<double>(curve_time), 0.0, 0.5);
         };
 
-        auto& vec = wf.exit_forces;
-        vec.erase(
-            std::remove_if(vec.begin(), vec.end(),
-                           [](const std::pair<Vec2, elapsedMillis>& element) {
-                             return element.second > 1000 + curve_time;
-                           }),
-            vec.end());
+        // auto& vec = wf.exit_forces;
+        // vec.erase(
+        //     std::remove_if(vec.begin(), vec.end(),
+        //                    [](const std::pair<Vec2, elapsedMillis>& element)
+        //                    {
+        //                      return element.second > 1000 + curve_time;
+        //                    }),
+        //     vec.end());
 
-        for (const std::pair<Vec2, elapsedMillis>& eforce : wf.exit_forces) {
-          result_vec += eforce.first.rotate(curve(eforce.second));
+        // for (const std::pair<Vec2, elapsedMillis>& eforce : wf.exit_forces) {
+        //   result_vec += eforce.first.rotate(curve(eforce.second));
+        // }
+
+        if (wf.exit_force.second < 6000) {
+          result_vec += wf.exit_force.first.rotate(0.125);
+        } else if (wf.exit_force.second < 12000) {
+          result_vec += wf.exit_force.first.rotate(0.375);
         }
 
         if (!b.lps_.BoundMinX())
@@ -82,6 +89,7 @@ void ModeRunners::WalkToPosInField() {
         else if (!b.lps_.BoundMaxY())
           result_vec += Vec2{-0.25};
 
+        wf.cur_tgt_yaw = result_vec.arg();
         return result_vec.arg();
       };
       wd.c.stride = [] { return 0.125; };
@@ -118,8 +126,9 @@ void ModeRunners::WalkToPosInField() {
           wt.c.since_init = 0;
           wt.c.exit_condition = [this]() { return wt.c.since_init >= 1000; };
           wt.c.exit_to_mode = M::WalkToPosInField_Init;
-          wf.exit_forces.push_back(
-              {1e3 * Vec2{wd.c.tgt_yaw() + 0.5}, elapsedMillis{}});
+          // wf.exit_forces.push_back(
+          //     {1e3 * Vec2{wd.c.tgt_yaw() + 0.5}, elapsedMillis{}});
+          wf.exit_force = {1e3 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{}};
           return true;
         }
 
