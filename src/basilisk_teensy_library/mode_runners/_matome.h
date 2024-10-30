@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bounce_walk.h"
 #include "free.h"
 #include "idle.h"
 #include "piv_spin.h"
@@ -12,7 +13,6 @@
 #include "walk.h"
 #include "walk_to_dir.h"
 
-// #include "bounce_walk.h"
 // #include "diamond.h"
 // #include "do_preset.h"
 // #include "orbit.h"

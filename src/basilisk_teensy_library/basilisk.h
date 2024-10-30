@@ -67,8 +67,8 @@ class Basilisk {
       uint32_t run_interval = 100;
     } mags;
     double gr = 21.0;  // delta_rotor = delta_output * gr
-    double collision_thr = 100.0;
-    double overlap_thr = 50.0;
+    double boundary_collision_thr = 100.0;
+    double overlapping_collision_thr = 25.0;
   } cfg_;
 
   const PmCmd* const pm_cmd_template_;
@@ -427,7 +427,9 @@ class Basilisk {
       // NaN means yaw at WalkToDir initialization.
       std::function<double()> tgt_yaw;
 
+      // Use 0 < stride < 0.25 for now due to auto-moonwalk implementation.
       std::function<double()> stride;
+
       Phi bend[2];
       std::function<PhiSpeed()> speed;
       std::function<PhiAccLim()> acclim;
@@ -581,7 +583,7 @@ class Basilisk {
       const auto& other = roster[other_suid - 1];
       const auto other_pos = Vec2{other.x, other.y};
 
-      if ((other_pos - my_pos).mag() < cfg_.collision_thr) {
+      if ((other_pos - my_pos).mag() < cfg_.boundary_collision_thr) {
         collision |= (1 << (other_suid - 1));
       }
     }

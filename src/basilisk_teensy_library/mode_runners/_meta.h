@@ -21,7 +21,8 @@ struct ModeRunners {
         sp{.c = c.piv_spin},
         wa{.c = c.walk},
         wd{.c = c.walk_to_dir},
-        wp{.c = c.walk_to_pos} {}
+        wp{.c = c.walk_to_pos},
+        bw{.c = c.bounce_walk} {}
 
   void Idle();
   void Wait();
@@ -34,6 +35,7 @@ struct ModeRunners {
   void PivSpin();
   void Walk();
   void WalkToDir();
+  void BounceWalk();
 
   const std::map<M, std::function<void()>> mode_runners = {
       {M::Idle_Init, [this] { Idle(); }},
@@ -53,6 +55,8 @@ struct ModeRunners {
       {M::PivSpin, [this] { PivSpin(); }},
       {M::Walk, [this] { Walk(); }},
       {M::WalkToDir, [this] { WalkToDir(); }},
+      {M::BounceWalk_Init, [this] { BounceWalk(); }},
+      {M::BounceWalk_Reinit, [this] { BounceWalk(); }},
   };
 
   Basilisk& b;
@@ -116,11 +120,16 @@ struct ModeRunners {
     C::WalkToPos& c;
   } wp;
 
+  struct BounceWalk {
+    C::BounceWalk& c;
+    bool reinit;
+    bool trying_overlap_exit[13] = {false};
+  } bw;
+
   // static void WalkToPos(Basilisk*);
   // static void Sufi(Basilisk*);
   // static void Orbit(Basilisk*);
   // static void Diamond(Basilisk*);
-  // static void BounceWalk(Basilisk*);
   // static void WalkToPosInField(Basilisk*);
   // static void Shear(Basilisk*);
   // inline static const std::map<M, void (*)(Basilisk*)> mode_runners = {
@@ -130,8 +139,6 @@ struct ModeRunners {
   //     {M::Sufi, &Sufi},
   //     {M::Orbit, &Orbit},
   //     {M::Diamond, &Diamond},
-  //     {M::BounceWalk_Init, &BounceWalk},
-  //     {M::BounceWalk_Reinit, &BounceWalk},
   //     {M::WalkToPosInField_Init, &WalkToPosInField},
   //     {M::WalkToPosInField_Reinit, &WalkToPosInField},
   //     {M::Shear_Init, &Shear},

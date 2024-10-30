@@ -15,6 +15,8 @@ struct Vec2 {
 
   Vec2(const double& arg) : x{cos(TWO_PI * arg)}, y{sin(TWO_PI * arg)} {}
 
+  bool isnan() const { return ::isnan(x) || ::isnan(y); }
+
   double mag() const { return sqrt(sq(x) + sq(y)); }
 
   double arg() const { return atan2(y, x) / TWO_PI; }
@@ -25,6 +27,12 @@ struct Vec2 {
 
   Vec2 operator+(const Vec2& other) const {
     return Vec2{x + other.x, y + other.y};
+  }
+
+  Vec2& operator+=(const Vec2& other) {
+    x += other.x;
+    y + other.y;
+    return *this;
   }
 
   Vec2 operator-(const Vec2& other) const {
@@ -61,7 +69,7 @@ struct Vec2 {
 
   Vec2 normalize() const {
     const auto m = mag();
-    if (m == 0.0 || isnan(m)) return Vec2{1.0, 0.0};
+    if (m == 0.0 || ::isnan(m)) return Vec2{1.0, 0.0};
     return *this / m;
   }
 
