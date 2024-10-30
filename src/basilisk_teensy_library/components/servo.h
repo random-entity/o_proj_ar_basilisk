@@ -105,11 +105,10 @@ class Servo : public Moteus {
     }
 
     uint8_t Export() const {
-      static uint8_t result = 0;
+      uint8_t result = 0;
       for (int i = 0; i < num_items; i++) {
         if (items[i]) result |= (1 << i);
       }
-
       return result;
     }
   } failure_;
