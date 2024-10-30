@@ -3,9 +3,9 @@
 #include <Xbee3.h>
 
 #include "../basilisk.h"
-#include "../globals/ppp.h"
 #include "../globals/serials.h"
 #include "../globals/xbee.h"
+#include "../ppp/_index.h"
 #include "../roster.h"
 
 /* This class is capable of handling the following type of messages:
