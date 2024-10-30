@@ -72,7 +72,6 @@ struct Shooter {
     } else if (idx == ppp::range::piv_spin) {
       PivSpin(idx);
     }
-
     // ...
   }
 
