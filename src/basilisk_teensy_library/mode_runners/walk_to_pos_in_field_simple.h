@@ -69,7 +69,6 @@ void ModeRunners::WalkToPosInField() {
         //                      return element.second > 1000 + curve_time;
         //                    }),
         //     vec.end());
-
         // for (const std::pair<Vec2, elapsedMillis>& eforce : wf.exit_forces) {
         //   result_vec += eforce.first.rotate(curve(eforce.second));
         // }

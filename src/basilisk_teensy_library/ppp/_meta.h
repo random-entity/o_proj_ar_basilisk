@@ -39,6 +39,7 @@ struct Shooter {
   void Pivot(uint16_t);
   void Sufi(uint16_t);
   void PivSpin(uint16_t);
+  void WalkToPosInField(int);
 
   void Shoot() {
     if (idx == ppp::idx::idle) {
@@ -76,6 +77,9 @@ struct Shooter {
       Sufi(idx);
     } else if (idx == ppp::range::piv_spin) {
       PivSpin(idx);
+    } else if (idx == ppp::range::walk_to_pos_in_field ||
+               10000 <= idx <= 19999) {
+      WalkToPosInField(static_cast<int>(idx) % 10000);
     }
     // ...
   }
