@@ -2,9 +2,7 @@
 
 #include "_meta.h"
 
-namespace ppp {
-
-void Shooter::Sufi(uint16_t idx) {
+void PPPShooter::Sufi(uint16_t idx) {
   // PPP Sufi range
   // Decimal 33AB
   // A = dest_yaw = 0 ~ 8
@@ -41,5 +39,3 @@ void Shooter::Sufi(uint16_t idx) {
   c.interval = 100;
   c.steps = -1;
 }
-
-}  // namespace ppp

@@ -2,9 +2,7 @@
 
 #include "_meta.h"
 
-namespace ppp {
-
-void Shooter::TibuFoot() {
+void PPPShooter::TibuFoot() {
   if (idx == 1) {
     b.CommandBoth([](Servo& s) { s.SetStop(); });
     b.cmd_.mode = M::Idle_Nop;
@@ -28,13 +26,13 @@ void Shooter::TibuFoot() {
   }
 }
 
-void Shooter::TibuIndividual(int mid, AttRel ar) {
+void PPPShooter::TibuIndividual(int mid, AttRel ar) {
   b.CommandBoth([](Servo& s) { s.SetStop(); });
   b.cmd_.mode = M::Idle_Nop;
   b.mags_.SetStrength(mid, Bool2MS(ar));
 }
 
-void Shooter::RandomTibutibu() {
+void PPPShooter::RandomTibutibu() {
   if (idx == 23) {
     b.cmd_.mode = M::RandomMags_Init;
     b.cmd_.random_mags.min_phase_dur = 1000;
@@ -47,5 +45,3 @@ void Shooter::RandomTibutibu() {
     b.cmd_.random_mags.dur = 10000;
   }
 }
-
-}  // namespace ppp

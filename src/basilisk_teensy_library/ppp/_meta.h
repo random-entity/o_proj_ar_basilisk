@@ -23,19 +23,23 @@
 // 10000 ~ 19999 WalkToPos
 // 20000 ~ 29999 WalkToPosInField
 
-namespace ppp {
-
-struct Shooter {
+struct PPPShooter {
   using M = Basilisk::Command::Mode;
   using O = Basilisk::Command::Oneshots::ByteRep;
 
-  Shooter(Basilisk& _b) : b{_b} {}
+  PPPShooter(Basilisk& _b) : b{_b} {}
 
+  // mags.h
   void TibuFoot();
   void TibuIndividual(int mid, AttRel ar);
   void RandomTibutibu();
+
+  // set_g_var.h
   void SetGlobalVarSpeed(int level);
+  void SetGlobalVarSpeedFiner(int level);
+
   void LookRelativeToCenter(int);
+
   void Pivot(uint16_t);
   void Sufi(uint16_t);
   void PivSpin(uint16_t);
@@ -44,41 +48,71 @@ struct Shooter {
   void Shoot() {
     if (idx == ppp::idx::idle) {
       m = M::Idle_Init;
-    } else if (idx == ppp::idx::free) {
+    }
+
+    else if (idx == ppp::idx::free) {
       m = M::Free;
-    } else if (idx == ppp::idx::crmux_xbee) {
+    }
+
+    else if (idx == ppp::idx::crmux_xbee) {
       // Processed at XbCR.
-    } else if (idx == ppp::idx::set_base_yaw_0) {
+    }
+
+    else if (idx == ppp::idx::set_base_yaw_0) {
       b.cmd_.oneshots.Add(O::SetBaseYaw);
       b.cmd_.set_base_yaw.offset = 0.0;
-    } else if (idx == ppp::idx::set_base_yaw_m025) {
+    }
+
+    else if (idx == ppp::idx::set_base_yaw_m025) {
       b.cmd_.oneshots.Add(O::SetBaseYaw);
       b.cmd_.set_base_yaw.offset = -0.25;
     }
 
     else if (idx == ppp::range::tibu_foot) {
       TibuFoot();
-    } else if (idx == ppp::range::tibu_indiv) {
+    }
+
+    else if (idx == ppp::range::tibu_individual) {
       int mid = (idx - 5) / 2;
       AttRel ar = idx % 2 ? BOOL_RELEASE : BOOL_ATTACH;
       TibuIndividual(mid, ar);
-    } else if (idx == ppp::range::random_tibutibu) {
+    }
+
+    else if (idx == ppp::range::random_tibutibu) {
       RandomTibutibu();
-    } else if (idx == ppp::range::set_g_var_speed) {
+    }
+
+    else if (idx == ppp::range::set_g_var_speed) {
       SetGlobalVarSpeed(idx - 30);
-    } else if (idx == ppp::range::look_rel_to_center) {
+    }
+
+    else if (idx == ppp::range::set_g_var_speed_finer) {
+      SetGlobalVarSpeed(idx - 300);
+    }
+
+    else if (idx == ppp::range::look_rel_to_center) {
       LookRelativeToCenter(idx % 10);
-    } else if (idx == ppp::range::bounce_walk) {
+    }
+
+    else if (idx == ppp::range::bounce_walk) {
       m = M::BounceWalk_Init;
       b.cmd_.bounce_walk.init_tgt_yaw = random(360) / 360.0;
-    } else if (idx == ppp::range::pivot) {
+    }
+
+    else if (idx == ppp::range::pivot) {
       Pivot(idx);
-    } else if (idx == ppp::range::sufi) {
+    }
+
+    else if (idx == ppp::range::sufi) {
       Sufi(idx);
-    } else if (idx == ppp::range::piv_spin) {
+    }
+
+    else if (idx == ppp::range::piv_spin) {
       PivSpin(idx);
-    } else if (idx == ppp::range::walk_to_pos_in_field ||
-               (10000 <= idx && idx <= 19999)) {
+    }
+
+    else if (idx == ppp::range::walk_to_pos_in_field ||
+             (10000 <= idx && idx <= 19999)) {
       WalkToPosInField(static_cast<int>(idx) % 10000);
     }
     // ...
@@ -88,5 +122,3 @@ struct Shooter {
   const uint16_t& idx{b.cmd_.ppp.idx};
   M& m{b.cmd_.mode};
 };
-
-}  // namespace ppp

@@ -2,13 +2,11 @@
 
 #include "_meta.h"
 
-namespace ppp {
-
-namespace pivot {
+namespace ppp::pivot {
 double tgt_yaw;
-}  // namespace pivot
+}  // namespace ppp::pivot
 
-void Shooter::Pivot(uint16_t idx) {
+void PPPShooter::Pivot(uint16_t idx) {
   // PPP Pivot range
   // Decimal ABCD
   // A = didim = 1 ~ 2
@@ -67,5 +65,3 @@ void Shooter::Pivot(uint16_t idx) {
 
   return;
 }
-
-}  // namespace ppp

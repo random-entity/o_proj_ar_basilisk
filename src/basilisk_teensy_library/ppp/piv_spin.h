@@ -2,9 +2,7 @@
 
 #include "_meta.h"
 
-namespace ppp {
-
-void Shooter::PivSpin(uint16_t idx) {
+void PPPShooter::PivSpin(uint16_t idx) {
   // PPP PivSpin range
   // Decimal 3ABC
   // A = didim = 1 ~ 2
@@ -45,5 +43,3 @@ void Shooter::PivSpin(uint16_t idx) {
   c.interval = 0;
   c.steps = -1;
 }
-
-}  // namespace ppp

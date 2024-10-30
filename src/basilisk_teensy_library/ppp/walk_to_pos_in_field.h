@@ -2,10 +2,9 @@
 
 #include "_meta.h"
 
-namespace ppp {
-void Shooter::WalkToPosInField(int last_4_digits) {
+void PPPShooter::WalkToPosInField(int last_4_digits) {
   // PPP WalkToPosInField range
-  // Decimal 1ABCD
+  // Decimal 2ABCD
   // (AB) = tgt_pos_x
   //          == (AB) * 10cm
   // (CD) = tgt_pos_y
@@ -22,4 +21,3 @@ void Shooter::WalkToPosInField(int last_4_digits) {
   double y = (10 * digits[1] + digits[0]) * 10.0;
   c.tgt_pos = Vec2{x, y};
 }
-}  // namespace ppp

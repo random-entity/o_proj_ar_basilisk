@@ -2,9 +2,7 @@
 
 #include "_meta.h"
 
-namespace ppp {
-
-void Shooter::LookRelativeToCenter(int senw) {
+void PPPShooter::LookRelativeToCenter(int senw) {
   m = M::Sufi;
   auto& c = b.cmd_.sufi;
 
@@ -29,5 +27,3 @@ void Shooter::LookRelativeToCenter(int senw) {
   c.interval = 100;
   c.steps = -1;
 }
-
-}  // namespace ppp

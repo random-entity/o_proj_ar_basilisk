@@ -17,11 +17,11 @@ struct OneshotShooters {
     }
 
     if (o.Has(O::BPPP)) {
-      ppp.Shoot();
+      pppshooter.Shoot();
       o.Remove(O::BPPP);
     }
   }
 
   Basilisk& b;
-  ppp::Shooter ppp{b};
+  PPPShooter pppshooter{b};
 };

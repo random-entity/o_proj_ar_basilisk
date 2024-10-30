@@ -5,9 +5,9 @@
 #define DEBUG_SETUP (1)
 #define DEBUG_FAILURE (1)
 #define DEBUG_SERVOS (1)
-#define DEBUG_XBEE (0)
-#define DEBUG_NEOKEYCR (1)
-#define DEBUG_SERIALRS (1)
+#define DEBUG_XBEE (1)
+#define DEBUG_NEOKEYCR (0)
+#define DEBUG_SERIALRS (0)
 // Add to the OR chain of ENABLE_SERIAL/ whenever adding a new flag.
 
 #define ENABLE_SERIAL                                            \
