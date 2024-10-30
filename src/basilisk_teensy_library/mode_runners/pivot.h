@@ -5,13 +5,12 @@
 #include "_meta.h"
 
 void ModeRunners::Pivot() {
-  pv.didim_idx = pv.c.didimbal == BOOL_L ? IDX_L : IDX_R;
-  pv.kick_idx = pv.c.didimbal == BOOL_L ? IDX_R : IDX_L;
-
   switch (m) {
     case M::Pivot_Init: {
       pv.since_init = 0;
       pv.didim_init_yaw = b.rpl_.yaw();
+      pv.didim_idx = pv.c.didimbal == BOOL_L ? IDX_L : IDX_R;
+      pv.kick_idx = pv.c.didimbal == BOOL_L ? IDX_R : IDX_L;
 
       // Check if we need to set didimbal.
       if (pv.c.bend[pv.didim_idx].isnan()) {
@@ -41,8 +40,8 @@ void ModeRunners::Pivot() {
       ph.c.tgt_phispeed[pv.didim_idx] = pv.c.speed;
       ph.c.tgt_phiacclim[pv.didim_idx] = pv.c.acclim;
       ph.c.tgt_phi[pv.kick_idx] = [] { return NaN; };
-      ph.c.damp_thr = 0.05;
-      ph.c.fix_thr = 0.005;
+      ph.c.damp_thr = g::c::phithr::damp::standard;
+      ph.c.fix_thr = g::c::phithr::fix::standard;
       ph.c.fixing_cycles_thr = 1;
       ph.c.min_dur = 0;
       ph.c.max_dur = isnan(pv.c.stride()) ? pv.c.max_dur : pv.c.max_dur / 4;
@@ -93,8 +92,8 @@ void ModeRunners::Pivot() {
       ph.c.tgt_phispeed[pv.kick_idx] = pv.c.speed;
       ph.c.tgt_phiacclim[pv.didim_idx] = pv.c.acclim;
       ph.c.tgt_phiacclim[pv.kick_idx] = pv.c.acclim;
-      ph.c.damp_thr = 0.05;
-      ph.c.fix_thr = 0.005;
+      ph.c.damp_thr = g::c::phithr::damp::standard;
+      ph.c.fix_thr = g::c::phithr::fix::standard;
       ph.c.fixing_cycles_thr = 1;
       ph.c.min_dur =
           pv.c.min_dur > pv.since_init ? pv.c.min_dur - pv.since_init : 0;
