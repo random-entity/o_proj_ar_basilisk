@@ -39,8 +39,8 @@ void xbsendtiming_listin(t_xbsendtiming* x, t_symbol* s,  //
       x->polls.head = new_node;
       x->polls.tail = new_node;
     } else {
-      x->cmds.tail->next = new_node;
-      x->cmds.tail = new_node;
+      x->polls.tail->next = new_node;
+      x->polls.tail = new_node;
     }
   } else {
     // This is a non-Poll Command.
@@ -55,7 +55,8 @@ void xbsendtiming_listin(t_xbsendtiming* x, t_symbol* s,  //
 }
 
 void cmd_tick(t_xbsendtiming* x) {
-  if (x->cmds.head != NULL) {
+  int count = 0;
+  while (x->cmds.head != NULL && count < 4) {
     t_node* node = x->cmds.head;
     outlet_list(x->out, &s_list, node->argc, node->list);
 
@@ -68,13 +69,16 @@ void cmd_tick(t_xbsendtiming* x) {
     // Free the dequeued node
     free(node->list);
     free(node);
+
+    count++;
   }
 
   clock_delay(x->polls.clk, 10);  // Poll next turn.
 }
 
 void poll_tick(t_xbsendtiming* x) {
-  if (x->polls.head != NULL) {
+  int count = 0;
+  while (x->polls.head != NULL && count < 4) {
     t_node* node = x->polls.head;
     outlet_list(x->out, &s_list, node->argc, node->list);
 
@@ -87,6 +91,8 @@ void poll_tick(t_xbsendtiming* x) {
     // Free the dequeued node
     free(node->list);
     free(node);
+
+    count++;
   }
 
   clock_delay(x->cmds.clk, 90);  // Command next turn.
