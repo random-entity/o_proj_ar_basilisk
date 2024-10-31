@@ -67,13 +67,13 @@ class LedReplySender {
   };
 
   struct Heartbeat : Form {
-    Heartbeat(LedReplySender& p) : heartbeat{250} {
+    Heartbeat(LedReplySender& p) : heartbeat{500} {
       set = [&p, this] {
         const int num_hearts = p.suid_ >= 13 ? 4 : p.suidm1_ / 3 + 1;
-        const uint32_t color = p.suid_ >= 13        ? 0x202020
-                               : p.suidm1_ % 3 == 0 ? 0x400000
-                               : p.suidm1_ % 3 == 1 ? 0x004000
-                                                    : 0x000040;
+        const uint32_t color = p.suid_ >= 13        ? 0x101010
+                               : p.suidm1_ % 3 == 0 ? 0x200000
+                               : p.suidm1_ % 3 == 1 ? 0x002000
+                                                    : 0x000020;
         static bool high = false;
 
         if (!heartbeat.Hit()) return;
@@ -95,7 +95,7 @@ class LedReplySender {
           double brightness =
               1.0 - static_cast<double>(p.b_.rpl_.since_xbrx_us.bppp) / (100e3);
           brightness = max(0.0, brightness);
-          brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
+          brightness = map(brightness, 0.0, 1.0, 0.0, 200.0);
           ca.a[3].g = static_cast<uint8_t>(brightness);
         }
 
@@ -119,6 +119,20 @@ class LedReplySender {
             brightness = max(0.0, brightness);
             double hue = static_cast<double>(fellow_suidm1) / 13.0;
             ca.a[2].u.matome += HsvToRgb(hue, 1.0, brightness);
+          }
+        }
+
+        /* Missing FellowReply */ {
+          ca.a[1].u.matome = 0;
+          for (int fellow_suidm1 = 0; fellow_suidm1 < 13; fellow_suidm1++) {
+            if (fellow_suidm1 == p.suidm1_) continue;
+
+            double brightness =
+                p.b_.rpl_.since_xbrx_us.fellow_rpl(fellow_suidm1) > 3000000
+                    ? 0.75
+                    : 0.0;
+            double hue = static_cast<double>(fellow_suidm1) / 13.0;
+            ca.a[1].u.matome += HsvToRgb(hue, 1.0, brightness);
           }
         }
 
