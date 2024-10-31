@@ -24,7 +24,7 @@ void SetPhis(Basilisk& b) {
 
   m = M::SetPhis_Init;
   ph.tgt_phi[IDX_L] = [] { return 0.0; };
-  ph.tgt_phi[IDX_R] = [] { return 0.0; };
+  ph.tgt_phi[IDX_R] = [] { return 0.125; };
   ph.tgt_phispeed[IDX_L] = [] { return 0.1; };
   ph.tgt_phispeed[IDX_R] = [] { return 0.1; };
   ph.tgt_phiacclim[IDX_L] = [] { return g::c::acclim::standard; };
@@ -47,11 +47,12 @@ void Pivot(Basilisk& b) {
   pv.tgt_yaw = [] { return NaN; };
   pv.stride = [] { return 0.125; };
   pv.bend[IDX_L] = 0.0;
-  pv.bend[IDX_R] = -0.125;
-  pv.speed = [] { return g::c::speed::fast; };
+  pv.bend[IDX_R] = 0.125;
+  pv.speed = [] { return g::c::speed::normal; };
   pv.acclim = [] { return g::c::acclim::standard; };
   pv.min_dur = 2000;
   pv.max_dur = -1;
+  pv.exit_condition = [] { return false; };
   pv.exit_to_mode = M::Idle_Init;
 }
 
