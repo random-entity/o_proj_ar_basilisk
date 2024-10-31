@@ -103,7 +103,7 @@ class LedReplySender {
           double brightness =
               1.0 - static_cast<double>(p.b_.rpl_.since_xbrx_us.bpoll) / (50e3);
           brightness = max(0.0, brightness);
-          brightness = map(brightness, 0.0, 1.0, 0.0, 100.0);
+          brightness = map(brightness, 0.0, 1.0, 0.0, 150.0);
           ca.a[3].b = static_cast<uint8_t>(brightness);
         }
 
@@ -123,7 +123,7 @@ class LedReplySender {
         }
 
         /* Missing FellowReply */ {
-          ca.a[1].u.matome = 0;
+          ca.a[0].u.matome = 0;
           for (int fellow_suidm1 = 0; fellow_suidm1 < 13; fellow_suidm1++) {
             if (fellow_suidm1 == p.suidm1_) continue;
 
@@ -132,7 +132,7 @@ class LedReplySender {
                     ? 0.75
                     : 0.0;
             double hue = static_cast<double>(fellow_suidm1) / 13.0;
-            ca.a[1].u.matome += HsvToRgb(hue, 1.0, brightness);
+            ca.a[0].u.matome += HsvToRgb(hue, 1.0, brightness);
           }
         }
 

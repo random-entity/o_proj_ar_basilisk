@@ -6,8 +6,8 @@
 #define DEBUG_FAILURE (1)
 #define DEBUG_SERVOS (1)
 #define DEBUG_XBEE (1)
-#define DEBUG_NEOKEYCR (0)
-#define DEBUG_SERIALRS (0)
+#define DEBUG_NEOKEYCR (1)
+#define DEBUG_SERIALRS (1)
 // Add to the OR chain of ENABLE_SERIAL/ whenever adding a new flag.
 
 #define ENABLE_SERIAL                                            \
@@ -29,7 +29,7 @@ void HALT(const char* err_str = nullptr) {
   while (1);
 }
 
-#define KAKTUGI_14_SUID (12)
+#define KAKTUGI_14_SUID (2)
 
 #define MOCK_AUX2 (0)
 #define MOCK_LPS (0)
