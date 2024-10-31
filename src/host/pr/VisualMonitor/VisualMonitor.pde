@@ -8,14 +8,13 @@ void runXbRR() {
     xbPort.read();
   }
   while (true) {
-    rr.Run();
-    delay(1);
+    rr.run();
   }
 }
 
 // ALL lengths in cm
-final float stageDimX = 860, stageDimY = 910;
-final float lpsBoundMinX = 100, lpsBoundMaxX = 760, lpsBoundMinY = 100, lpsBoundMaxY = 810;
+final float stageDimX = 880, stageDimY = 550;
+final float lpsBoundMinX = 50, lpsBoundMaxX = 1010, lpsBoundMinY = -110, lpsBoundMaxY = 430;
 float marginX, marginY;
 
 ArrayList<Basilisk> bs;
@@ -23,12 +22,12 @@ ArrayList<Basilisk> bs;
 void setup() {
   String[] ports = Serial.list();
   printArray(ports);
-  xbPort = new Serial(this, "/dev/ttyUSB1", 115200);
+  xbPort = new Serial(this, "/dev/ttyUSB0", 115200);
   rr = new XbRR(xbPort);
   thread("runXbRR");
 
   size(1300, 1000);
-  frameRate(2);
+  frameRate(10);
 
   marginX = (width - stageDimX) / 2;
   marginY = (height - stageDimY) / 2;
@@ -40,6 +39,10 @@ void setup() {
 }
 
 void draw() {
+  for (int i = 0; i < 10; i++) {
+    rr.run();
+  }
+  
   background(255);
 
   pushMatrix();  // Enter stage local xy
@@ -52,13 +55,13 @@ void draw() {
   stroke(0);
   rect(0, 0, stageDimX, stageDimY);
 
-  for (int x = 0; x < stageDimX; x += 50) {
-    for (int y = 0; y < stageDimY; y+= 50) {
+  for (int x = 0; x <= stageDimX + 150; x += 50) {
+    for (int y = 0; y <= stageDimY; y+= 50) {
       pushMatrix();
       translate(x, y);
       scale(1, -1);
-      textSize(10);
-      text((x / 10) + "," + (y / 10), 0, 0);
+      textSize(12);
+      text((x / 10) + ", " + (y / 10), 0, 0);
       popMatrix();
     }
   }
