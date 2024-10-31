@@ -40,6 +40,7 @@ const Range<uint16_t> look_rel_to_center{91, 98};          // O    X
 const Range<uint16_t> bounce_walk_random{99, 99};          // O    O
 const Range<uint16_t> walk_to_dir_relto_curyaw{101, 108};  // O    X
 const Range<uint16_t> bounce_walk_nesw{111, 118};          // O    X
+const Range<uint16_t> set_pivot_tadak{120, 129};           // O    X
 const Range<uint16_t> find_suid{201, 213};                 // X    X
 const Range<uint16_t> set_g_var_speed_finer{300, 319};     // O    X
 const Range<uint16_t> arrange_to_circle_0_13{701, 713};    // O    X
