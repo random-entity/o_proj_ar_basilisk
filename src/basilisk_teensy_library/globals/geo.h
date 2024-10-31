@@ -39,5 +39,4 @@ const Vec2 circle013[13]{
     {800.0, -50.0},
 };
 
-
 }  // namespace g::geo

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../globals/geo.h"
 #include "_meta.h"
 
 void PPPShooter::ArrangeToGrid() {
@@ -76,27 +77,17 @@ void PPPShooter::ArrangeToCircle148(int senw) {
   m = M::WalkToPosInField_Init;
   auto& c = b.cmd_.walk_to_pos_in_field;
 
-  static const auto center = Vec2{(b.cfg_.lps.minx + b.cfg_.lps.maxx) * 0.5,
-                                  (b.cfg_.lps.miny + b.cfg_.lps.maxy) * 0.5};
-
   if (b.cfg_.suid <= 8) {
-    double arg = (senw + b.cfg_.suid - 4) * 0.125;
-    c.tgt_pos = center + 220.0 * Vec2{arg};
+    c.tgt_pos = g::geo::circle148_outer[(b.cfg_.suid - 1 + senw - 1 + 8) % 8];
   } else if (b.cfg_.suid <= 12) {
-    double arg = (senw + b.cfg_.suid * 2 - 21) * 0.125;
-    c.tgt_pos = center + 110.0 * Vec2{arg};
+    c.tgt_pos = g::geo::circle148_outer[(b.cfg_.suid - 9 + senw - 1 + 16) % 8];
   } else {
-    c.tgt_pos = center;
+    c.tgt_pos = g::geo::circle148_center;
   }
 }
 
-void PPPShooter::ArrangeToCircle013(int robin) {
+void PPPShooter::ArrangeToCircle013(int robin) {  // Ignore robin for now.
   m = M::WalkToPosInField_Init;
   auto& c = b.cmd_.walk_to_pos_in_field;
-
-  static const auto center = Vec2{(b.cfg_.lps.minx + b.cfg_.lps.maxx) * 0.5,
-                                  (b.cfg_.lps.miny + b.cfg_.lps.maxy) * 0.5};
-
-  double arg = (robin + b.cfg_.suid) * (1.0 / 13.0);
-  c.tgt_pos = center + 240.0 * Vec2{arg};
+  c.tgt_pos = g::geo::circle013[b.cfg_.suidm1];
 }
