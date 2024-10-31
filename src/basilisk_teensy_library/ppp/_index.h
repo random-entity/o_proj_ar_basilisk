@@ -31,6 +31,7 @@ const Range<uint16_t> tibu_individual{5, 12};              // O    O
 const Range<uint16_t> random_tibutibu{23, 24};             // O    O
 const Range<uint16_t> set_g_var_speed{30, 34};             // O    O
 const Range<uint16_t> diamond{50, 51};                     // X    X
+const Range<uint16_t> set_pivot_tadak{60, 69};             // O    X
 const Range<uint16_t> arrange_to_grid{70, 70};             // O    X
 const Range<uint16_t> arrange_to_pyramid{71, 71};          // O    X
 const Range<uint16_t> arrange_to_solo_n_chorus{72, 72};    // O    X
@@ -40,7 +41,6 @@ const Range<uint16_t> look_rel_to_center{91, 98};          // O    X
 const Range<uint16_t> bounce_walk_random{99, 99};          // O    O
 const Range<uint16_t> walk_to_dir_relto_curyaw{101, 108};  // O    X
 const Range<uint16_t> bounce_walk_nesw{111, 118};          // O    X
-const Range<uint16_t> set_pivot_tadak{120, 129};           // O    X
 const Range<uint16_t> find_suid{201, 213};                 // X    X
 const Range<uint16_t> set_g_var_speed_finer{300, 319};     // O    X
 const Range<uint16_t> arrange_to_circle_0_13{701, 713};    // O    X

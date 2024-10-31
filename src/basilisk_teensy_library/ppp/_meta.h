@@ -101,6 +101,10 @@ struct PPPShooter {
       // Not implemented.
     }
 
+    else if (idx == ppp::range::set_pivot_tadak) {
+      g::vars::pivot_tadak = 100 * (idx % 10);
+    }
+
     else if (idx == ppp::range::arrange_to_grid) {
       ArrangeToGrid();
     }
@@ -138,10 +142,6 @@ struct PPPShooter {
       m = M::BounceWalk_Init;
       int nesw = idx % 10;
       b.cmd_.bounce_walk.init_tgt_yaw = (nesw - 3) * 0.125;
-    }
-
-    else if (idx == ppp::range::set_pivot_tadak) {
-      g::vars::pivot_tadak = 100 * (idx % 10);
     }
 
     else if (idx == ppp::range::find_suid) {
