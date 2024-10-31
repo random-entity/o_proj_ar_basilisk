@@ -71,6 +71,14 @@ struct PPPShooter {
       b.cmd_.set_base_yaw.offset = -0.25;
     }
 
+    else if (idx == ppp::idx::save_real_base_yaw) {
+      b.cmd_.oneshots.Add(O::SaveRealBaseYaw);
+    }
+
+    else if (idx == ppp::idx::restore_real_base_yaw) {
+      b.cmd_.oneshots.Add(O::RestoreRealBaseYaw);
+    }
+
     else if (idx == ppp::range::tibu_foot) {
       TibuFoot();
     }

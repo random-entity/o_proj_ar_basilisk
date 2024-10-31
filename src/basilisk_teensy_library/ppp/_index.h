@@ -20,6 +20,8 @@ inline constexpr uint16_t free = 50001;
 inline constexpr uint16_t crmux_xbee = 50002;
 inline constexpr uint16_t set_base_yaw_0 = 50003;
 inline constexpr uint16_t set_base_yaw_m025 = 50004;
+inline constexpr uint16_t save_real_base_yaw = 50005;
+inline constexpr uint16_t restore_real_base_yaw = 50006;
 
 }  // namespace idx
 

@@ -160,15 +160,18 @@ class Basilisk {
         SetBaseYaw = 201,
 
         /* PPP: Parameterized-preset-protocol. */
-        BPPP = 202,      // PPP Command received by broadcast with payload being
-                         // array of PPP indices for all Basilisks in a single
-                         // packet.
+        BPPP = 202,  // PPP Command received by broadcast with payload being
+                     // array of PPP indices for all Basilisks in a single
+                     // packet.
         /* XPPP = n, */  // There may be additional PPP CR protocols, and PPP
                          // Oneshots corresponding to it, effectively acting as
                          // equivalent Oneshot.  Distinction in Oneshot byterep
                          // is explicitly exposed in order to let Basilisk know
                          // what payload parse logic the CommandSender has
                          // intended.
+
+        SaveRealBaseYaw = 203,
+        RestoreRealBaseYaw = 204,
       };
 
       uint8_t ToMask(ByteRep o) const {

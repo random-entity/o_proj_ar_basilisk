@@ -4,6 +4,7 @@
 #include <elapsedMillis.h>
 
 #include "../globals/serials.h"
+#include "../helpers/vec2.h"
 
 /* Angle unit of incoming data from the EBIMU board are in 'degrees', and
  * between -180.0 and 180.0, but the rest of the program assumes 'revolutions'
@@ -78,6 +79,9 @@ class Imu {
     base_yaw_ = GetYaw(false) - offset;
   }
 
+  void SaveRealBaseYaw() { real_base_yaw_saved_ = base_yaw_; }
+  void RestoreRealBaseYaw() { base_yaw_ = real_base_yaw_saved_; }
+
   HardwareSerial& ser_ = g::serials::imu;
   inline static constexpr int buf_size_ = 64;
   char buf_[buf_size_];
@@ -85,5 +89,6 @@ class Imu {
   double euler_[3] = {0.0};  // [0]: roll, [1]: pitch, [2]: yaw
   int yaw_revs_ = 0;
   double base_yaw_ = 0.0;
+  double real_base_yaw_saved_ = 0.0;
   elapsedMillis since_update_;
 };

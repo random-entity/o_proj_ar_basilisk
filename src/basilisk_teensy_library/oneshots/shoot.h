@@ -20,6 +20,16 @@ struct OneshotShooters {
       pppshooter.Shoot();
       o.Remove(O::BPPP);
     }
+
+    if (o.Has(O::SaveRealBaseYaw)) {
+      b.imu_.SaveRealBaseYaw();
+      o.Remove(O::SaveRealBaseYaw);
+    }
+
+    if (o.Has(O::RestoreRealBaseYaw)) {
+      b.imu_.RestoreRealBaseYaw();
+      o.Remove(O::RestoreRealBaseYaw);
+    }
   }
 
   Basilisk& b;
