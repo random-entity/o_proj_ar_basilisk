@@ -66,7 +66,7 @@ struct Timing {
   inline static constexpr uint32_t first_us = 20 * 1000;
   inline static constexpr uint32_t last_us = 80 * 1000;
   inline static constexpr uint32_t gap_us = 15 * 1000;
-  inline static constexpr uint32_t send_timeout_us = gap_us * 4 / 5;
+  inline static constexpr uint32_t send_timeout_us = 5 * 1000;
 
   inline static int span;
 

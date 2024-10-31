@@ -11,12 +11,13 @@ class XbeeReplySender {
 
   // Run continuously.
   void Run() {  // Time-slotted Reply to Broadcasted Poll
-    const auto send_time_us = g::xb::Timing::mod13_to_send_time_us.at(
+    auto send_time_us = g::xb::Timing::mod13_to_send_time_us.at(
         (b_.cfg_.suidm1 + b_.cmd_.bpoll.round_robin) % 13);
     if (send_time_us <= b_.cmd_.bpoll.since_us &&
         b_.cmd_.bpoll.since_us <=
             send_time_us + g::xb::Timing::send_timeout_us) {
       Send();
+      b_.cmd_.bpoll.since_us = 1e9;
     }
   }
 
@@ -28,6 +29,15 @@ class XbeeReplySender {
     xb_rpl_.decoded.yaw = b_.rpl_.yaw();
 
     tx_.Send(xb_rpl_.raw_bytes, 20);
+
+#if DEBUG_XBEE
+    P("Sent -> ");
+    for (int i = 0; i < 20; i++) {
+      Serial.print(xb_rpl_.raw_bytes[i]);
+      P(", ");
+    }
+    Serial.println();
+#endif
   }
 
  private:
