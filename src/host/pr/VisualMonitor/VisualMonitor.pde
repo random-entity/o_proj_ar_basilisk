@@ -59,6 +59,9 @@ void draw() {
     for (int y = 0; y <= stageDimY; y+= 50) {
       pushMatrix();
       translate(x, y);
+      strokeWeight(4);
+      point(x, y);
+      strokeWeight(1);
       scale(1, -1);
       textSize(12);
       text((x / 10) + ", " + (y / 10), 0, 0);

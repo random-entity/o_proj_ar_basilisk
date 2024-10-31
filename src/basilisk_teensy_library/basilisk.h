@@ -68,7 +68,7 @@ class Basilisk {
     } mags;
     double gr = 21.0;  // delta_rotor = delta_output * gr
     double boundary_collision_thr = 100.0;
-    double overlapping_collision_thr = 20.0;
+    double overlapping_collision_thr = 25.0;
   } cfg_;
 
   const PmCmd* const pm_cmd_template_;
