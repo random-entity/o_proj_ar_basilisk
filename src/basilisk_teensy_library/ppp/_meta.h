@@ -9,10 +9,6 @@
 #include "../globals/vars.h"
 #include "_index.h"
 
-// NOT added to ppp::range
-// ?? ~ ?? Set Base Yaw towards Center and counterclockwise  ###TODO###
-// 60 ~ 69 Set Pivot Tadak interval                          ###TODO###
-
 struct PPPShooter {
   using M = Basilisk::Command::Mode;
   using O = Basilisk::Command::Oneshots::ByteRep;
