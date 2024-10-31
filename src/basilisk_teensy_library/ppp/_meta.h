@@ -98,7 +98,7 @@ struct PPPShooter {
     }
 
     else if (idx == ppp::range::set_pivot_tadak) {
-      g::vars::pivot_tadak = 100 * (idx % 10);
+      g::vars::pivot_tadak = 200 * (idx % 10);
     }
 
     else if (idx == ppp::range::arrange_to_grid) {
@@ -145,7 +145,7 @@ struct PPPShooter {
     }
 
     else if (idx == ppp::range::set_g_var_speed_finer) {
-      SetGlobalVarSpeed(idx - 300);
+      SetGlobalVarSpeedFiner(static_cast<int>(idx) - 300);
     }
 
     else if (idx == ppp::range::arrange_to_circle_0_13) {

@@ -8,14 +8,14 @@ void PPPShooter::SetGlobalVarSpeed(int level) {
                    : level == 2 ? g::c::speed::normal
                    : level == 3 ? g::c::speed::fast
                    : level == 4 ? g::c::speed::faster
-                                : g::c::speed::fastest;
+                                : g::c::speed::yunakim;
 }
 
 void PPPShooter::SetGlobalVarSpeedFiner(int level) {
   level = constrain(level, 0, 19);
   g::vars::speed = map(static_cast<double>(level),  //
                        0.0, 19.0,                   //
-                       g::c::speed::sloth, g::c::speed::yunakim);
+                       g::c::speed::sloth, g::c::speed::fastest);
   /*
     0:  0.025
     1:  0.050

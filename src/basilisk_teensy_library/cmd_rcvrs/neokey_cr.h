@@ -56,8 +56,8 @@ class NeokeyCommandReceiver {
       } break;
       case 4: {  // Left for debug purposes.
         // tests::SetPhis(b_);
-        tests::BounceWalk(b_);
-        // tests::WalkToPosInField(b_);
+        // tests::BounceWalk(b_);
+        tests::WalkToPosInField(b_);
       } break;
       default: {
       } break;

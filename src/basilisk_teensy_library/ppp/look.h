@@ -11,7 +11,7 @@ void PPPShooter::LookRelativeToCenter(int senw) {
 
   c.init_didimbal = BOOL_L;
   c.dest_yaw = nearest_pmn(b.imu_.GetYaw(true),
-                           (center - b.lps_.GetPos()).arg() + (senw / 8.0));
+                           (center - b.lps_.GetPos()).arg() + ((senw - 1) / 8.0));
   c.exit_thr = 0.01;
   c.stride = 30.0 / 360.0;
   bool dest_is_greater = c.dest_yaw > b.imu_.GetYaw(true);
