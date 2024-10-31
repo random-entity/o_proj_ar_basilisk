@@ -77,7 +77,7 @@ struct Timing {
     for (int i = 0; i < 13;) {
       uint32_t maybe_send_time_us = first_us + i_within_cmd_itv * gap_us;
       if (maybe_send_time_us <= last_us) {
-        result[i] = maybe_send_time_us;
+        result[i] = (cmd_itv * 100000) + maybe_send_time_us;
         i++;
         i_within_cmd_itv++;
       } else {
