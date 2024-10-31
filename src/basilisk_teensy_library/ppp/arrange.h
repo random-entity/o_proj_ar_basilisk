@@ -80,7 +80,7 @@ void PPPShooter::ArrangeToCircle148(int senw) {
   if (b.cfg_.suid <= 8) {
     c.tgt_pos = g::geo::circle148_outer[(b.cfg_.suid - 1 + senw - 1 + 8) % 8];
   } else if (b.cfg_.suid <= 12) {
-    c.tgt_pos = g::geo::circle148_outer[(b.cfg_.suid - 9 + senw - 1 + 16) % 8];
+    c.tgt_pos = g::geo::circle148_inner[(b.cfg_.suid - 9 + senw - 1 + 16) % 8];
   } else {
     c.tgt_pos = g::geo::circle148_center;
   }

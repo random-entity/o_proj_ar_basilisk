@@ -122,6 +122,11 @@ class Basilisk {
     Pln("Basilisk: Both Servos Stopped, Queried and Printed");
     Pln("Basilisk: All components setup succeeded");
 #endif
+
+    // Speical care for Basilisk #2's left foot.
+    if (cfg.suid == 2) {
+      l_.kControlPositionError_threshold_ = 2.0;
+    }
   }
 
   ////////////////////////
@@ -160,9 +165,9 @@ class Basilisk {
         SetBaseYaw = 201,
 
         /* PPP: Parameterized-preset-protocol. */
-        BPPP = 202,  // PPP Command received by broadcast with payload being
-                     // array of PPP indices for all Basilisks in a single
-                     // packet.
+        BPPP = 202,      // PPP Command received by broadcast with payload being
+                         // array of PPP indices for all Basilisks in a single
+                         // packet.
         /* XPPP = n, */  // There may be additional PPP CR protocols, and PPP
                          // Oneshots corresponding to it, effectively acting as
                          // equivalent Oneshot.  Distinction in Oneshot byterep

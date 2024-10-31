@@ -8,7 +8,7 @@ void ModeRunners::WalkToPosInField() {
       wf.reinit = false;
 
       m = M::WalkToDir;
-      wd.c.init_didimbal = BOOL_L;
+      wd.c.init_didimbal = pv.c.didimbal;
       wd.c.auto_moonwalk = true;
       wd.c.tgt_yaw = [this] {
         auto pos = b.lps_.GetPos();
@@ -48,23 +48,25 @@ void ModeRunners::WalkToPosInField() {
         } else if (wf.exit_force.second < 10000) {
           result_vec += wf.exit_force.first.rotate(0.125);
         } else if (wf.exit_force.second < 15000) {
-          result_vec += wf.exit_force.first.rotate(0.375);
+          result_vec += wf.exit_force.first.rotate(0.25);
         }
 
         if (!b.lps_.BoundMinX())
-          result_vec += Vec2{0.0};
+          result_vec += 1e9 * Vec2{0.0};
         else if (!b.lps_.BoundMaxX())
-          result_vec += Vec2{0.5};
+          result_vec += 1e9 * Vec2{0.5};
         if (!b.lps_.BoundMinY())
-          result_vec += Vec2{0.25};
+          result_vec += 1e9 * Vec2{0.25};
         else if (!b.lps_.BoundMaxY())
-          result_vec += Vec2{-0.25};
+          result_vec += 1e9 * Vec2{-0.25};
 
         wf.cur_tgt_yaw = result_vec.arg();
         return result_vec.arg();
       };
       wd.c.tgt_yaw();  // Update aforehead.
       wd.c.stride = [] { return 0.125; };
+      const auto init_didim_idx = wd.c.init_didimbal == BOOL_L ? IDX_L : IDX_R;
+      wd.c.bend[init_didim_idx] = NaN;
       wd.c.speed = [] { return g::vars::speed; };
       wd.c.acclim = [] { return g::c::acclim::standard; };
       wd.c.min_stepdur = 0;

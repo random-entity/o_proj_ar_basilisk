@@ -56,7 +56,7 @@ void draw() {
   rect(0, 0, stageDimX, stageDimY);
 
   for (int x = 0; x <= stageDimX + 150; x += 50) {
-    for (int y = 0; y <= stageDimY; y+= 50) {
+    for (int y = -150; y <= stageDimY; y+= 50) {
       pushMatrix();
       translate(x, y);
       strokeWeight(4);

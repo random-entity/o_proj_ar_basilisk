@@ -46,7 +46,8 @@ class Servo : public Moteus {
         (rpl.abs_position != Phi{rpl.abs_position});
     failure_.aux2pos_frozen =
         (abs(prev_rpl.abs_position - rpl.abs_position) < 1e-4);
-    failure_.stuck = (abs(GetExtraValue(rpl, kControlPositionError)) > 0.5);
+    failure_.stuck = (abs(GetExtraValue(rpl, kControlPositionError)) >
+                      kControlPositionError_threshold_);
     failure_.overtorque =
         (abs(rpl.torque) > 0.9 * g::moteus_fmt::pm_cmd_template.maximum_torque);
 
@@ -116,6 +117,8 @@ class Servo : public Moteus {
   const int id_;
   const PmFmt* const pm_fmt_;
   const QFmt* const q_fmt_;
+
+  double kControlPositionError_threshold_ = 0.25;
 
   void Print() const {
 #if DEBUG_SERVOS
