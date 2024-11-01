@@ -20,11 +20,15 @@ public class Basilisk {
 
     pushMatrix();
     scale(1, -1);
-    fill(0);
+    int elapsed = millis() - lastRplTime;
+    if (elapsed < 3000) {
+      fill(0);
+    } else {
+      fill(255, 0, 0);
+    }
     textSize(15);
     text(suid, 0, 15);
     textSize(10);
-    int elapsed = millis() - lastRplTime;
     if (elapsed < 3000) {
       text(elapsed / 1000.0, 0, 25);
     } else {

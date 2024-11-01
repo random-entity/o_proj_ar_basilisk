@@ -13,6 +13,11 @@ void PPPShooter::SetGlobalVarSpeed(int level) {
 
 void PPPShooter::SetGlobalVarSpeedFiner(int level) {
   level = constrain(level, 0, 19);
+  if (level >= 10) {
+    b.cmd_.sufi.interval = 125;
+  } else if (level >= 13) {
+    b.cmd_.sufi.interval = 100;
+  }
   g::vars::speed = map(static_cast<double>(level),  //
                        0.0, 19.0,                   //
                        g::c::speed::sloth, g::c::speed::fastest);
