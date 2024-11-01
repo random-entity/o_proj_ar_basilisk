@@ -124,9 +124,12 @@ class Basilisk {
 #endif
 
     // Speical care for Basilisk #2's left foot.
-    if (cfg.suid == 2) {
-      l_.kControlPositionError_threshold_ = 2.0;
-    }
+    // if (cfg.suid == 2) {
+    //   l_.kControlPositionError_threshold_ = 2.0;
+    //   l_.failure_.stuck.persist_thr = 2000;
+    //   r_.kControlPositionError_threshold_ = 2.0;
+    //   r_.failure_.stuck.persist_thr = 2000;
+    // }
   }
 
   ////////////////////////
@@ -346,7 +349,7 @@ class Basilisk {
     } set_phis;
 
     struct Pivot {
-      LR didimbal;
+      LR didimbal = BOOL_L;
 
       // NaN means yaw at Pivot_Init.
       std::function<double()> tgt_yaw;

@@ -50,13 +50,13 @@ class NeokeyCommandReceiver {
       case 2: {  // Free Mode
         m = M::Free;
       } break;
-      case 3: {  // SetBaseYaw(0.0)
+      case 3: {  // SetBaseYaw(-0.25)
         c.oneshots.Add(O::SetBaseYaw);
-        c.set_base_yaw.offset = 0.0;
+        c.set_base_yaw.offset = -0.25;
       } break;
       case 4: {  // Left for debug purposes.
-        // tests::SetPhis(b_);
         tests::BounceWalk(b_);
+        // tests::SetPhis(b_);
         // tests::WalkToPosInField(b_);
         // tests::SetPhis(b_);
         // tests::Pivot(b_);

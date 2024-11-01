@@ -144,7 +144,8 @@ struct ModeRunners {
 
   struct WalkToPosInField {
     C::WalkToPosInField& c;
-    std::pair<Vec2, elapsedMillis> exit_force;
+    std::pair<Vec2, elapsedMillis> exit_force = {{1e9, 1e9}, 1e9};
+    Vec2 stuck_pos{1e9, 1e9};
     double cur_tgt_yaw;
     bool reinit;
   } wf;

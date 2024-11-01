@@ -43,30 +43,26 @@ void ModeRunners::WalkToPosInField() {
           result_vec += force;
         }
 
-        if (wf.exit_force.second < 5000) {
+        if (b.lps_.GetPos().dist(wf.stuck_pos) < 65.0) {
           result_vec += wf.exit_force.first;
-        } else if (wf.exit_force.second < 10000) {
-          result_vec += wf.exit_force.first.rotate(0.125);
-        } else if (wf.exit_force.second < 15000) {
+        } else if (wf.exit_force.second < 20000) {
           result_vec += wf.exit_force.first.rotate(0.25);
         }
 
         if (!b.lps_.BoundMinX())
-          result_vec += 1e9 * Vec2{0.0};
+          result_vec += 2e6 * Vec2{0.0};
         else if (!b.lps_.BoundMaxX())
-          result_vec += 1e9 * Vec2{0.5};
+          result_vec += 2e6 * Vec2{0.5};
         if (!b.lps_.BoundMinY())
-          result_vec += 1e9 * Vec2{0.25};
+          result_vec += 2e6 * Vec2{0.25};
         else if (!b.lps_.BoundMaxY())
-          result_vec += 1e9 * Vec2{-0.25};
+          result_vec += 2e6 * Vec2{-0.25};
 
         wf.cur_tgt_yaw = result_vec.arg();
         return result_vec.arg();
       };
       wd.c.tgt_yaw();  // Update aforehead.
       wd.c.stride = [] { return 0.125; };
-      const auto init_didim_idx = wd.c.init_didimbal == BOOL_L ? IDX_L : IDX_R;
-      wd.c.bend[init_didim_idx] = NaN;
       wd.c.speed = [] { return g::vars::speed; };
       wd.c.acclim = [] { return g::c::acclim::standard; };
       wd.c.min_stepdur = 0;
@@ -112,8 +108,16 @@ void ModeRunners::WalkToPosInField() {
     } break;
     case M::WalkToPosInField_Reinit: {
       wf.reinit = false;
-      wf.exit_force = {1e9 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{0}};
-      m = M::WalkToPosInField_Init;
+      wf.exit_force = {1e6 * Vec2{wf.cur_tgt_yaw + 0.5}, elapsedMillis{0}};
+      wf.stuck_pos = b.lps_.GetPos();
+
+      b.mags_.AttachAll();
+      m = M::Wait;
+      wt.c.since_init = 0;
+      wt.c.exit_condition = [this] { return wt.c.since_init > 500; };
+      wt.c.exit_to_mode = M::WalkToPosInField_Init;
+
+      // m = M::WalkToPosInField_Init;
     } break;
     default:
       break;

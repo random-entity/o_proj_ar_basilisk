@@ -157,7 +157,13 @@ void ModeRunners::BounceWalk() {
     } break;
     case M::BounceWalk_Reinit: {
       bw.reinit = false;
-      m = M::WalkToDir;
+
+      b.mags_.AttachAll();
+      m = M::Wait;
+      wt.c.since_init = 0;
+      wt.c.exit_condition = [this] { return wt.c.since_init > 500; };
+      wt.c.exit_to_mode = M::WalkToDir;
+
       wd.c.exit_to_mode = M::BounceWalk_Reinit;
     } break;
     default:

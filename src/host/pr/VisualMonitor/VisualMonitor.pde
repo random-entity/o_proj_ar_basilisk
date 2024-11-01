@@ -22,7 +22,7 @@ ArrayList<Basilisk> bs;
 void setup() {
   String[] ports = Serial.list();
   printArray(ports);
-  xbPort = new Serial(this, "/dev/ttyUSB0", 115200);
+  xbPort = new Serial(this, "/dev/ttyUSB1", 115200);
   rr = new XbRR(xbPort);
   thread("runXbRR");
 

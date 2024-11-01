@@ -67,7 +67,7 @@ void PPPShooter::ArrangeToSoloNChorus() {
               : suid == 9  ? Vec2{450, 750}
               : suid == 10 ? Vec2{600, 750}
               : suid == 12 ? Vec2{750, 750}
-              : suid == 11 ? Vec2{425, 125}
+              : suid == 11 ? g::geo::solo
                            : Vec2{425, 425};
 }
 

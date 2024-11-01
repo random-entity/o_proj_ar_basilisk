@@ -78,7 +78,7 @@ class Servo : public Moteus {
     struct Item {
       bool present = false;
       elapsedMillis since = 0;
-      const uint32_t persist_thr;
+      uint32_t persist_thr;
 
       Item(const uint32_t& _persist_thr) : persist_thr{_persist_thr} {}
 

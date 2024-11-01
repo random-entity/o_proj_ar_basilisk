@@ -13,11 +13,7 @@ void ModeRunners::Walk() {
         const auto kick_idx = p.didimbal == BOOL_L ? IDX_R : IDX_L;
         p.tgt_yaw = wa.c.tgt_yaw[didim_idx];
         p.stride = wa.c.stride[didim_idx];
-        if (step == 0) {
-          p.bend[didim_idx] = wa.c.bend[didim_idx];
-        } else {
-          p.bend[didim_idx] = NaN;
-        }
+        p.bend[didim_idx] = NaN;
         p.bend[kick_idx] = wa.c.bend[kick_idx];
         p.speed = wa.c.speed[didim_idx];
         p.acclim = wa.c.acclim[didim_idx];
