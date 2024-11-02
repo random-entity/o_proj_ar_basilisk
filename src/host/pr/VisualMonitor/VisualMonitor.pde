@@ -26,7 +26,7 @@ void setup() {
   rr = new XbRR(xbPort);
   thread("runXbRR");
 
-  size(1300, 1000);
+  size(1200, 800);
   frameRate(10);
 
   marginX = (width - stageDimX) / 2;
