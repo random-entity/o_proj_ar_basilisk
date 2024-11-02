@@ -122,14 +122,6 @@ class Basilisk {
     Pln("Basilisk: Both Servos Stopped, Queried and Printed");
     Pln("Basilisk: All components setup succeeded");
 #endif
-
-    // Speical care for Basilisk #2's left foot.
-    // if (cfg.suid == 2) {
-    //   l_.kControlPositionError_threshold_ = 2.0;
-    //   l_.failure_.stuck.persist_thr = 2000;
-    //   r_.kControlPositionError_threshold_ = 2.0;
-    //   r_.failure_.stuck.persist_thr = 2000;
-    // }
   }
 
   ////////////////////////

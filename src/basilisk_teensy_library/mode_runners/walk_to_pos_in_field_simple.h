@@ -36,7 +36,8 @@ void ModeRunners::WalkToPosInField() {
 
           const auto at_right = watch < 0.0;
 
-          const double r = max(dist - b.cfg_.boundary_collision_thr, 1e-3);
+          const double r =
+              max(dist - (b.cfg_.boundary_collision_thr / 2.0), 1e-3);
           const double mag = 1.0 / sq(r);
           Vec2 force =
               mag * Vec2{dist_vec.arg() + (at_right ? 1.0 : -1.0) * 0.25};
